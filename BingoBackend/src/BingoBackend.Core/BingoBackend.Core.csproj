@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\BingoBackend.Shared\BingoBackend.Shared.csproj"/>
         <ProjectReference Include="..\BingoBackend.Data\BingoBackend.Data.csproj"/>
+        <ProjectReference Include="..\BingoBackend.Shared\BingoBackend.Shared.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

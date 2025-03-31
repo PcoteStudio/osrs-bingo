@@ -1,0 +1,13 @@
+﻿<Solution>
+    <Folder Name="/src/">
+        <Project Path="src\BingoBackend.Shared\BingoBackend.Shared.csproj" Type="Classic C#"/>
+        <Project Path="src\BingoBackend.Core\BingoBackend.Core.csproj" Type="Classic C#"/>
+        <Project Path="src\BingoBackend.Data\BingoBackend.Data.csproj" Type="Classic C#"/>
+        <Project Path="src\BingoBackend.Web\BingoBackend.Web.csproj" Type="Classic C#"/>
+    </Folder>
+    <Folder Name="/tests/">
+        <Project Path="tests\BingoBackend.Core.Tests\BingoBackend.Core.Tests.csproj" Type="Classic C#"/>
+        <Project Path="tests\BingoBackend.Data.Tests\BingoBackend.Data.Tests.csproj" Type="Classic C#"/>
+        <Project Path="tests\BingoBackend.Web.Tests\BingoBackend.Web.Tests.csproj" Type="Classic C#"/>
+    </Folder>
+</Solution>
