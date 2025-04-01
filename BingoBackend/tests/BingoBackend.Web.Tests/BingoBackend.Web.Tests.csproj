@@ -29,6 +29,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\BingoBackend.Web\BingoBackend.Web.csproj"/>
+        <ProjectReference Include="..\BingoBackend.TestUtils\BingoBackend.TestUtils.csproj"/>
     </ItemGroup>
 
 </Project>

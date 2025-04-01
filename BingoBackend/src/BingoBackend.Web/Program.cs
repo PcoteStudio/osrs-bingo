@@ -6,10 +6,16 @@ public class Program
 {
     internal static void Main(string[] args)
     {
-        WebHost
-            .CreateDefaultBuilder(args)
-            .UseStartup<Startup>()
-            .Build()
-            .Run();
+        CreateHostBuilder(args).Build().Run();
     }
+
+    public static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
+    }
+        
 }

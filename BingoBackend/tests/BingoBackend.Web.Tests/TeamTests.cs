@@ -1,13 +1,11 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using BingoBackend.TestUtils;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
-using Socolin.ANSITerminalColor;
-using Socolin.TestUtils.JsonComparer.Color;
-using Socolin.TestUtils.JsonComparer.NUnitExtensions;
 
 namespace BingoBackend.Web.Tests;
 
@@ -43,7 +41,7 @@ public class Tests
     public async Task Create_A_Team_As_Admin()
     {
         var client = new HttpClient();
-        var teamName = "Les Barboteux";
+        var teamName = RandomStringGenerator.GenerateRandomLength(10, 20);
         var jsonContent = /* language=json */
             $$"""
               {
@@ -68,22 +66,15 @@ public class Tests
 
         var response = await client.PostAsync(new Uri(_baseUrl, "/api/teams"), stringContent);
 
-        var contentText = await response.Content.ReadAsStringAsync();
-        if (response.StatusCode != HttpStatusCode.Created)
-            Assert.Fail($"Server returned {response.StatusCode} with {contentText}");
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+        await Expect.StatusCodeFromResponse(HttpStatusCode.Created, response);
 
-        var jsonColorOptions = new JsonComparerColorOptions
-        {
-            ColorizeDiff = true,
-            ColorizeJson = true,
-            Theme = new JsonComparerColorTheme
-            {
-                DiffAddition = AnsiColor.Background(TerminalRgbColor.FromHex("21541A")),
-                DiffDeletion = AnsiColor.Background(TerminalRgbColor.FromHex("542822"))
-            }
-        };
-        Assert.That(contentText,
-            IsJson.EquivalentTo(expectedContent).WithColoredOutput().WithColorOptions(jsonColorOptions));
+        var contentText = await response.Content.ReadAsStringAsync();
+        Expect.EquivalentJsonWithPrettyOutput(contentText, expectedContent);
+
+        var response2 = await client.GetAsync(new Uri(_baseUrl, "/api/teams"));
+
+        await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response2);
+        var contentText2 = await response.Content.ReadAsStringAsync();
+        Expect.EquivalentJsonWithPrettyOutput(contentText2, $"[{expectedContent}]");
     }
 }

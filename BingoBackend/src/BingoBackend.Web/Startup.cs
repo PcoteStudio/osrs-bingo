@@ -1,11 +1,29 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using BingoBackend.Core.Features.Team;
+using BingoBackend.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+
+public class DatabaseOptions
+{
+    [Required] public string ConnectionString { get; set; } = string.Empty;
+}
 
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        services
+            .AddOptions<DatabaseOptions>()
+            .BindConfiguration("Sqlite")
+            .ValidateOnStart();
+
+        services.AddDbContext<ApplicationDbContext>((sp, options) =>
+            options.UseSqlite(sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString)
+        );
+
         services.AddTeamService();
         services.AddMvc().AddJsonOptions(options =>
         {
@@ -31,7 +49,15 @@ public class Startup
                 await context.Response.WriteAsync(e.ToString());
             }
         });
+
+        using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()!.CreateScope())
+        {
+            var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            context.Database.Migrate();
+        }
+
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
         app.Run(async context =>
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
