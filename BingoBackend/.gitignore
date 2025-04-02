@@ -3,7 +3,7 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
-.DotSettings.user
+*.DotSettings.user
 
 # Sqlite db
 data/*.db
