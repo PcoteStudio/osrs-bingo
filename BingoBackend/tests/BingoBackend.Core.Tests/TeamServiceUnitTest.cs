@@ -1,5 +1,6 @@
 using AutoMapper;
 using BingoBackend.Core.Features.Team;
+using BingoBackend.Data;
 using BingoBackend.Data.Team;
 using Moq;
 
@@ -15,7 +16,9 @@ public class TeamServiceUnitTest
         _mapperMock = new Mock<IMapper>(MockBehavior.Strict);
         _teamRepositoryMock = new Mock<ITeamRepository>(MockBehavior.Strict);
         _teamFactoryMock = new Mock<ITeamFactory>(MockBehavior.Strict);
-        _service = new TeamService(_teamFactoryMock.Object, _teamRepositoryMock.Object, _mapperMock.Object);
+        _dbContext = new Mock<ApplicationDbContext>(MockBehavior.Strict);
+        _service = new TeamService(_teamFactoryMock.Object, _teamRepositoryMock.Object, _mapperMock.Object,
+            _dbContext.Object);
     }
 
     [TearDown]
@@ -27,11 +30,12 @@ public class TeamServiceUnitTest
     private Mock<IMapper> _mapperMock;
     private Mock<ITeamRepository> _teamRepositoryMock;
     private Mock<ITeamFactory> _teamFactoryMock;
+    private Mock<ApplicationDbContext> _dbContext;
 
     [Test]
     public void CreateTeam()
     {
-        var teamArguments = new CreateTeamArguments();
+        var teamArguments = new TeamCreateArguments();
         var teamEntity = new TeamEntity();
         var team = new Team();
 
@@ -39,13 +43,15 @@ public class TeamServiceUnitTest
             .Returns(teamEntity).Verifiable(Times.Once);
         _teamRepositoryMock.Setup(x => x.Add(teamEntity))
             .Verifiable(Times.Once);
+        _dbContext.Setup(x => x.SaveChanges())
+            .Returns(1).Verifiable(Times.Once);
         _mapperMock.Setup(x => x.Map<Team>(teamEntity))
             .Returns(team).Verifiable(Times.Once);
 
         var actualTeam = _service.CreateTeam(teamArguments);
 
         Assert.That(actualTeam, Is.EqualTo(team));
-        Mock.VerifyAll(_teamFactoryMock, _teamRepositoryMock, _mapperMock);
+        Mock.VerifyAll(_teamFactoryMock, _teamRepositoryMock, _mapperMock, _dbContext);
     }
 
     [Test]

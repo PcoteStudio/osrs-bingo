@@ -14,7 +14,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     }
 
     [HttpPost("/api/teams")]
-    public ActionResult<TeamResponse> CreateTeam([FromBody] CreateTeamArguments arguments)
+    public ActionResult<TeamResponse> CreateTeam([FromBody] TeamCreateArguments arguments)
     {
         // EnsureIsAdmin();
         var team = teamService.CreateTeam(arguments);

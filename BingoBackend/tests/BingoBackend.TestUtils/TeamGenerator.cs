@@ -5,9 +5,9 @@ namespace BingoBackend.TestUtils;
 
 public static class TeamGenerator
 {
-    public static CreateTeamArguments CreateRandomTeamArguments()
+    public static TeamCreateArguments CreateRandomTeamArguments()
     {
-        return new CreateTeamArguments
+        return new TeamCreateArguments
         {
             Name = StringGenerator.GenerateRandomLength(1, 100)
         };

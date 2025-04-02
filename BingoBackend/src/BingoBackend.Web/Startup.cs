@@ -22,7 +22,10 @@ public class Startup
             .ValidateOnStart();
 
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
-            options.UseSqlite(sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString)
+            {
+                var test2 = sp.GetRequiredService<IOptions<DatabaseOptions>>();
+                options.UseSqlite(sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString);
+            }
         );
 
         services.AddTeamService();
