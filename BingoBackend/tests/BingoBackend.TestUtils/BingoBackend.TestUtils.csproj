@@ -12,4 +12,8 @@
         <PackageReference Include="Socolin.TestUtils.JsonComparer.NUnitExtensions" Version="1.16.0"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\BingoBackend.Core\BingoBackend.Core.csproj"/>
+    </ItemGroup>
+
 </Project>

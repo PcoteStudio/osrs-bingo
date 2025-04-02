@@ -4,6 +4,11 @@ using BingoBackend.Data.Team;
 
 namespace BingoBackend.Core.Features.Team;
 
+public interface ITeamRepository : IGenericRepository<TeamEntity>
+{
+    IEnumerable<TeamEntity> GetRecentTeams(int count);
+}
+
 public class TeamRepository(ApplicationDbContext context) : GenericRepository<TeamEntity>(context), ITeamRepository
 {
     public IEnumerable<TeamEntity> GetRecentTeams(int count)

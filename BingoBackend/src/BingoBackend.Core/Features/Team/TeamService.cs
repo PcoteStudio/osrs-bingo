@@ -1,24 +1,29 @@
 using AutoMapper;
-using BingoBackend.Data.Team;
 
 namespace BingoBackend.Core.Features.Team;
 
-public class TeamService(ITeamRepository teamRepository)
+public interface ITeamService
 {
-    // TODO Move Automapper to dependency injection
-    private static readonly MapperConfiguration configFromEntity = new(cfg => cfg.CreateMap<TeamEntity, Team>());
-    private static readonly Mapper mapperFromEntity = new(configFromEntity);
+    Team CreateTeam(CreateTeamArguments arguments);
+    Task<List<Team>> ListTeams();
+}
 
-    public Team CreateTeam(string name)
+public class TeamService(
+    ITeamFactory teamFactory,
+    ITeamRepository teamRepository,
+    IMapper mapper
+) : ITeamService
+{
+    public Team CreateTeam(CreateTeamArguments arguments)
     {
-        var teamEntity = new TeamEntity { Name = name };
-        var savedEntity = teamRepository.Add(teamEntity);
-        return mapperFromEntity.Map<Team>(savedEntity);
+        var teamEntity = teamFactory.Create(arguments);
+        teamRepository.Add(teamEntity);
+        return mapper.Map<Team>(teamEntity);
     }
 
-    public IEnumerable<Team> ListTeams()
+    public async Task<List<Team>> ListTeams()
     {
-        var savedEntity = teamRepository.GetAll();
-        return savedEntity.Select(x => mapperFromEntity.Map<Team>(x));
+        var savedEntity = await teamRepository.GetAll();
+        return savedEntity.Select(mapper.Map<Team>).ToList();
     }
 }

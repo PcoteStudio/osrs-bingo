@@ -1,6 +1,6 @@
 ﻿namespace BingoBackend.TestUtils;
 
-public static class RandomStringGenerator
+public static class StringGenerator
 {
     public enum CharacterType
     {

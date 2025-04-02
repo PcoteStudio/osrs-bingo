@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BingoBackend.Core.Features.Team;
 using BingoBackend.Data;
+using BingoBackend.Web.Team;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -25,6 +26,7 @@ public class Startup
         );
 
         services.AddTeamService();
+        services.AddTeamWebService();
         services.AddMvc().AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
