@@ -4,16 +4,16 @@ namespace BingoBackend.Core.Features.Team;
 
 public interface ITeamFactory
 {
-    TeamEntity Create(TeamCreateArguments arguments);
+    TeamEntity Create(TeamCreateArguments args);
 }
 
 public class TeamFactory : ITeamFactory
 {
-    public TeamEntity Create(TeamCreateArguments arguments)
+    public TeamEntity Create(TeamCreateArguments args)
     {
         return new TeamEntity
         {
-            Name = arguments.Name
+            Name = args.Name
         };
     }
 }

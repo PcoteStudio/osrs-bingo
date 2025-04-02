@@ -4,7 +4,7 @@ using BingoBackend.Data;
 using BingoBackend.Data.Team;
 using Moq;
 
-namespace BingoBackend.Core.Tests;
+namespace BingoBackend.Core.Tests.Features.Team;
 
 [TestFixture]
 [TestOf(typeof(TeamService))]
@@ -21,11 +21,6 @@ public class TeamServiceUnitTest
             _dbContext.Object);
     }
 
-    [TearDown]
-    public void AfterEach()
-    {
-    }
-
     private TeamService _service;
     private Mock<IMapper> _mapperMock;
     private Mock<ITeamRepository> _teamRepositoryMock;
@@ -35,9 +30,10 @@ public class TeamServiceUnitTest
     [Test]
     public void CreateTeam()
     {
+        // Arrange
         var teamArguments = new TeamCreateArguments();
         var teamEntity = new TeamEntity();
-        var team = new Team();
+        var team = new Core.Features.Team.Team();
 
         _teamFactoryMock.Setup(x => x.Create(teamArguments))
             .Returns(teamEntity).Verifiable(Times.Once);
@@ -45,11 +41,13 @@ public class TeamServiceUnitTest
             .Verifiable(Times.Once);
         _dbContext.Setup(x => x.SaveChanges())
             .Returns(1).Verifiable(Times.Once);
-        _mapperMock.Setup(x => x.Map<Team>(teamEntity))
+        _mapperMock.Setup(x => x.Map<Core.Features.Team.Team>(teamEntity))
             .Returns(team).Verifiable(Times.Once);
 
+        // Act
         var actualTeam = _service.CreateTeam(teamArguments);
 
+        // Assert
         Assert.That(actualTeam, Is.EqualTo(team));
         Mock.VerifyAll(_teamFactoryMock, _teamRepositoryMock, _mapperMock, _dbContext);
     }
@@ -57,20 +55,24 @@ public class TeamServiceUnitTest
     [Test]
     public async Task ListTeams()
     {
+        // Arrange
         const int entitiesCount = 3;
         var teamEntities = Enumerable.Range(0, entitiesCount).Select(_ => new TeamEntity()).ToList();
-        var teams = teamEntities.Select(_ => new Team()).ToList();
+        var teams = teamEntities.Select(_ => new Core.Features.Team.Team()).ToList();
 
         _teamRepositoryMock.Setup(x => x.GetAll())
             .ReturnsAsync(teamEntities).Verifiable(Times.Once);
         for (var i = 0; i < entitiesCount; i++)
         {
             var index = i;
-            _mapperMock.Setup(x => x.Map<Team>(teamEntities[index]))
+            _mapperMock.Setup(x => x.Map<Core.Features.Team.Team>(teamEntities[index]))
                 .Returns(teams[index]).Verifiable(Times.Once);
         }
 
+        // Act
         var actualTeams = await _service.ListTeams();
+
+        // Assert
         Assert.That(actualTeams, Is.EquivalentTo(teams));
         Mock.VerifyAll(_teamRepositoryMock, _mapperMock);
     }
