@@ -4,6 +4,7 @@
     <attachedFolders />
     <explicitIncludes>
       <Path>.gitignore</Path>
+      <Path>data</Path>
     </explicitIncludes>
     <explicitExcludes />
   </component>
