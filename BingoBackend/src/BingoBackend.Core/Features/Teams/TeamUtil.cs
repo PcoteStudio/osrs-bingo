@@ -1,3 +1,4 @@
+using BingoBackend.Core.Features.Teams.Arguments;
 using BingoBackend.Data.Entities;
 
 namespace BingoBackend.Core.Features.Teams;

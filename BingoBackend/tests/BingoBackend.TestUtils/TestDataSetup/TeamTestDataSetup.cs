@@ -1,4 +1,4 @@
-using BingoBackend.Core.Features.Teams;
+using BingoBackend.Core.Features.Teams.Arguments;
 using BingoBackend.Data.Entities;
 
 namespace BingoBackend.TestUtils.TestDataSetup;
@@ -49,6 +49,19 @@ public partial class TestDataSetup
         {
             Name = RandomUtil.GetPrefixedRandomHexString("Name_", Random.Shared.Next(5, 25))
         };
+        customizer?.Invoke(args);
+        return args;
+    }
+
+    public static TeamPlayersArguments GenerateTeamPlayersArguments(int playerCount,
+        Action<TeamPlayersArguments>? customizer = null)
+    {
+        var args = new TeamPlayersArguments();
+        for (var i = 0; i < playerCount; i++)
+            args.PlayerNames.Add(RandomUtil.GetPrefixedRandomHexString(
+                "Name",
+                Random.Shared.Next(5, 25)
+            ));
         customizer?.Invoke(args);
         return args;
     }

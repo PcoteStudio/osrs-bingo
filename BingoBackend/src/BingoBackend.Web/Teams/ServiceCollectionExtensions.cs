@@ -1,4 +1,4 @@
-namespace BingoBackend.Web.Team;
+namespace BingoBackend.Web.Teams;
 
 public static class ServiceCollectionExtensions
 {

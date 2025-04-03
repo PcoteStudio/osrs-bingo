@@ -1,6 +1,7 @@
 using AutoMapper;
+using BingoBackend.Web.Teams;
 
-namespace BingoBackend.Web.Team;
+namespace BingoBackend.Web.Teams;
 
 public class TeamResponseMappingProfile : Profile
 {

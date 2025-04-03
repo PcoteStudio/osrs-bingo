@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BingoBackend.Core.Features.Teams;
+namespace BingoBackend.Core.Features.Teams.Arguments;
 
 public class TeamUpdateArguments
 {

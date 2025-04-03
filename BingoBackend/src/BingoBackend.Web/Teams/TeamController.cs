@@ -1,11 +1,13 @@
 using AutoMapper;
+using BingoBackend.Core.Features.Players;
 using BingoBackend.Core.Features.Teams;
+using BingoBackend.Core.Features.Teams.Arguments;
 using BingoBackend.Core.Features.Teams.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BingoBackend.Web.Team;
+namespace BingoBackend.Web.Teams;
 
-public class TeamController(ITeamService teamService, IMapper mapper) : ControllerBase
+public class TeamController(ITeamService teamService, IPlayerService playerService, IMapper mapper) : ControllerBase
 {
     [HttpGet("/api/teams")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -33,10 +35,10 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
 
     [HttpPost("/api/teams")]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public ActionResult<TeamResponse> CreateTeam([FromBody] TeamCreateArguments arguments)
+    public ActionResult<TeamResponse> CreateTeam([FromBody] TeamCreateArguments args)
     {
         // EnsureIsAdmin();
-        var team = teamService.CreateTeam(arguments);
+        var team = teamService.CreateTeam(args);
         return StatusCode(StatusCodes.Status201Created, mapper.Map<TeamResponse>(team));
     }
 
@@ -44,12 +46,12 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TeamResponse>> UpdateTeam(
-        [FromRoute] int teamId, [FromBody] TeamUpdateArguments arguments)
+        [FromRoute] int teamId, [FromBody] TeamUpdateArguments args)
     {
         try
         {
             // EnsureIsAdmin();
-            var team = await teamService.UpdateTeamAsync(teamId, arguments);
+            var team = await teamService.UpdateTeamAsync(teamId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
         catch (TeamNotFoundException ex)
@@ -63,7 +65,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<TeamResponse> UpdateTeamPlayers(
         [FromRoute] int teamId,
-        [FromBody] List<string> playerNames)
+        [FromBody] TeamPlayersArguments args)
     {
         // EnsureIsAdmin();
         throw new NotImplementedException();
@@ -72,12 +74,21 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     [HttpPost("/api/teams/{teamId:min(0)}/players")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<TeamResponse> AddTeamPlayers(
+    public async Task<ActionResult<TeamResponse>> AddTeamPlayers(
         [FromRoute] int teamId,
-        [FromBody] List<string> playerNames)
+        [FromBody] TeamPlayersArguments args)
     {
-        // EnsureIsAdmin();
-        throw new NotImplementedException();
+        try
+        {
+            // EnsureIsAdmin();
+            var team = await teamService.AddTeamPlayers(teamId, args);
+
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
+        }
+        catch (TeamNotFoundException ex)
+        {
+            return NotFound();
+        }
     }
 
     [HttpDelete("/api/teams/{teamId:min(0)}/players/{playerId:min(0)}")]

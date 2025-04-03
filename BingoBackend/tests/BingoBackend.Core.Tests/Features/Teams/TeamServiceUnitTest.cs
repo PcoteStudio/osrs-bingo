@@ -1,6 +1,7 @@
 using AutoMapper;
 using BingoBackend.Core.Features.Players;
 using BingoBackend.Core.Features.Teams;
+using BingoBackend.Core.Features.Teams.Arguments;
 using BingoBackend.Data;
 using BingoBackend.Data.Entities;
 using Moq;
@@ -95,7 +96,7 @@ public class TeamServiceUnitTest
         var teamEntity = new TeamEntity();
         var team = new Team();
 
-        _teamRepositoryMock.Setup(x => x.GetByIdAsync(teamId))
+        _teamRepositoryMock.Setup(x => x.GetCompleteByIdAsync(teamId))
             .ReturnsAsync(teamEntity).Verifiable(Times.Once);
         _mapperMock.Setup(x => x.Map<Team>(teamEntity))
             .Returns(team).Verifiable(Times.Once);

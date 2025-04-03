@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using BingoBackend.Core.Features.Players;
 using BingoBackend.Core.Features.Teams;
 using BingoBackend.Data;
-using BingoBackend.Web.Team;
+using BingoBackend.Web.Teams;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 

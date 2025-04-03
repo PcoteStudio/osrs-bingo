@@ -1,5 +1,6 @@
 using AutoMapper;
 using BingoBackend.Core.Features.Players;
+using BingoBackend.Core.Features.Teams.Arguments;
 using BingoBackend.Core.Features.Teams.Exceptions;
 using BingoBackend.Data;
 
@@ -11,6 +12,7 @@ public interface ITeamService
     Task<List<Team>> ListTeamsAsync();
     Task<Team> GetTeamAsync(int teamId);
     Task<Team> UpdateTeamAsync(int teamId, TeamUpdateArguments args);
+    Task<Team> AddTeamPlayers(int teamId, TeamPlayersArguments args);
 }
 
 public class TeamService(
@@ -38,18 +40,27 @@ public class TeamService(
 
     public async Task<Team> GetTeamAsync(int teamId)
     {
-        var teamEntity = await teamRepository.GetByIdAsync(teamId);
+        var teamEntity = await teamRepository.GetCompleteByIdAsync(teamId);
         if (teamEntity == null) throw new TeamNotFoundException(teamId);
         return mapper.Map<Team>(teamEntity);
     }
 
     public async Task<Team> UpdateTeamAsync(int teamId, TeamUpdateArguments args)
     {
-        var teamEntity = await teamRepository.GetByIdAsync(teamId);
+        var teamEntity = await teamRepository.GetCompleteByIdAsync(teamId);
         if (teamEntity == null) throw new TeamNotFoundException(teamId);
         teamUtil.UpdateTeamEntity(teamEntity, args);
         dbContext.Update(teamEntity);
         await dbContext.SaveChangesAsync();
+        return mapper.Map<Team>(teamEntity);
+    }
+
+    public async Task<Team> AddTeamPlayers(int teamId, TeamPlayersArguments args)
+    {
+        var teamEntity = await teamRepository.GetCompleteByIdAsync(teamId);
+        if (teamEntity == null) throw new TeamNotFoundException(teamId);
+        var players = await playerService.GetOrCreatePlayersByNames(args.PlayerNames);
+        // TODO Add players to team and save
         return mapper.Map<Team>(teamEntity);
     }
 }
