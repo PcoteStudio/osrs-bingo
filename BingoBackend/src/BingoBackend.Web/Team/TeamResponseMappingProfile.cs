@@ -6,6 +6,6 @@ public class TeamResponseMappingProfile : Profile
 {
     public TeamResponseMappingProfile()
     {
-        CreateMap<Core.Features.Team.Team, TeamResponse>();
+        CreateMap<Core.Features.Teams.Team, TeamResponse>();
     }
 }

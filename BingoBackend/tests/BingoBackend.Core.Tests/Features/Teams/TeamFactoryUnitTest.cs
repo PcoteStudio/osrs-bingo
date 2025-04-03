@@ -1,7 +1,7 @@
-using BingoBackend.Core.Features.Team;
+using BingoBackend.Core.Features.Teams;
 using BingoBackend.TestUtils.TestDataSetup;
 
-namespace BingoBackend.Core.Tests.Features.Team;
+namespace BingoBackend.Core.Tests.Features.Teams;
 
 [TestFixture]
 [TestOf(typeof(TeamFactory))]

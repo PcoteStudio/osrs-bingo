@@ -1,4 +1,5 @@
 using BingoBackend.Data;
+using BingoBackend.Web;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;

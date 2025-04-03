@@ -1,7 +1,7 @@
 using BingoBackend.Shared;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BingoBackend.Core.Features.Team;
+namespace BingoBackend.Core.Features.Teams;
 
 public static class ServiceCollectionExtensions
 {
@@ -11,6 +11,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITeamService, TeamService>();
         services.AddScoped<ITeamRepository, TeamRepository>();
         services.AddSingleton<ITeamFactory, TeamFactory>();
-        services.AddAutoMapper(typeof(TeamEntityMappingProfile));
+        services.AddAutoMapper(typeof(TeamMappingProfile));
     }
 }

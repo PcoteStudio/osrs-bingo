@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using BingoBackend.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,14 +5,13 @@ namespace BingoBackend.Core.Features.Generic;
 
 public interface IGenericRepository<T> where T : class
 {
-    ValueTask<T?> GetById(int id);
-    T GetRequiredById(int id);
-    Task<List<T>> GetAll();
-    Task<List<T>> Find(Expression<Func<T, bool>> expression);
+    ValueTask<T?> GetByIdAsync(int id);
+    Task<T> GetRequiredByIdAsync(int id);
+    Task<List<T>> GetAllAsync();
     void Add(T entity);
-    void AddMultiple(IEnumerable<T> entities);
+    void Add(IEnumerable<T> entities);
     void Remove(T entity);
-    void RemoveMultiple(IEnumerable<T> entities);
+    void Remove(IEnumerable<T> entities);
 }
 
 public class GenericRepository<T>(ApplicationDbContext context) : IGenericRepository<T>
@@ -26,29 +24,24 @@ public class GenericRepository<T>(ApplicationDbContext context) : IGenericReposi
         Context.Set<T>().Add(entity);
     }
 
-    public void AddMultiple(IEnumerable<T> entities)
+    public void Add(IEnumerable<T> entities)
     {
         Context.Set<T>().AddRange(entities);
     }
 
-    public Task<List<T>> Find(Expression<Func<T, bool>> expression)
-    {
-        return Context.Set<T>().Where(expression).ToListAsync();
-    }
-
-    public Task<List<T>> GetAll()
+    public Task<List<T>> GetAllAsync()
     {
         return Context.Set<T>().ToListAsync();
     }
 
-    public ValueTask<T?> GetById(int id)
+    public ValueTask<T?> GetByIdAsync(int id)
     {
         return Context.Set<T>().FindAsync(id);
     }
 
-    public T GetRequiredById(int id)
+    public async Task<T> GetRequiredByIdAsync(int id)
     {
-        return Context.Set<T>().Find(id) ??
+        return await Context.Set<T>().FindAsync(id) ??
                throw new Exception($"Required entity of type {typeof(T)} not found for id {id}");
     }
 
@@ -57,7 +50,7 @@ public class GenericRepository<T>(ApplicationDbContext context) : IGenericReposi
         Context.Set<T>().Remove(entity);
     }
 
-    public void RemoveMultiple(IEnumerable<T> entities)
+    public void Remove(IEnumerable<T> entities)
     {
         Context.Set<T>().RemoveRange(entities);
     }

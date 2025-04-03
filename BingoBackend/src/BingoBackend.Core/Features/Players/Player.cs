@@ -1,6 +1,6 @@
-﻿namespace BingoBackend.Core.Features.Team;
+﻿namespace BingoBackend.Core.Features.Players;
 
-public class Team
+public class Player
 {
     public int Id { get; set; }
 

@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BingoBackend.Core.Features.Team;
+namespace BingoBackend.Core.Features.Players;
 
-public class TeamCreateArguments
+public class PlayerCreateArguments
 {
     [Required] public string Name { get; set; } = string.Empty;
 }

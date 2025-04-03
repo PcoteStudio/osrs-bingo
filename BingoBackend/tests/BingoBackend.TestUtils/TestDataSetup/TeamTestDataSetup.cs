@@ -1,65 +1,55 @@
-using BingoBackend.Core.Features.Team;
-using BingoBackend.Data.Team;
+using BingoBackend.Core.Features.Teams;
+using BingoBackend.Data.Entities;
 
 namespace BingoBackend.TestUtils.TestDataSetup;
 
 public partial class TestDataSetup
 {
-    private readonly TeamFactory _teamFactory = new();
-
-    public TestDataSetup AddTeam()
+    public TestDataSetup AddTeam(Action<TeamEntity>? customizer = null)
     {
-        return AddTeam(out _);
+        return AddTeam(out _, customizer);
     }
 
-    public TestDataSetup AddTeam(out TeamEntity teamEntity)
+    public TestDataSetup AddTeam(out TeamEntity team, Action<TeamEntity>? customizer = null)
     {
-        return AddTeam(GenerateTeamCreateArguments(), out teamEntity);
-    }
-
-    public TestDataSetup AddTeam(TeamCreateArguments args)
-    {
-        return AddTeam(args, out _);
-    }
-
-    public TestDataSetup AddTeam(TeamCreateArguments args, out TeamEntity teamEntity)
-    {
-        return AddTeam(_teamFactory.Create(args), out teamEntity);
-    }
-
-    public TestDataSetup AddTeam(TeamEntity team)
-    {
-        return AddTeam(team, out _);
-    }
-
-    public TestDataSetup AddTeam(TeamEntity team, out TeamEntity teamEntity)
-    {
+        team = GenerateTeamEntity(customizer);
         dbContext.Teams.Add(team);
         dbContext.SaveChanges();
-        teamEntity = team;
         return this;
     }
 
-    public TestDataSetup AddTeams(int count)
+    public TestDataSetup AddTeams(int count, Action<TeamEntity>? customizer = null)
     {
-        return AddTeams(count, out _);
+        return AddTeams(count, out _, customizer);
     }
 
-    public TestDataSetup AddTeams(int count, out List<TeamEntity> teamEntities)
+    public TestDataSetup AddTeams(int count, out List<TeamEntity> teams, Action<TeamEntity>? customizer = null)
     {
-        teamEntities = Enumerable.Range(0, count).Select(_ =>
+        teams = Enumerable.Range(0, count).Select(_ =>
         {
-            AddTeam(out var teamEntity);
-            return teamEntity;
+            AddTeam(out var team, customizer);
+            return team;
         }).ToList();
         return this;
     }
 
-    public static TeamCreateArguments GenerateTeamCreateArguments()
+    public static TeamCreateArguments GenerateTeamCreateArguments(Action<TeamCreateArguments>? customizer = null)
     {
-        return new TeamCreateArguments
+        var args = new TeamCreateArguments
         {
-            Name = "Name_" + StringGenerator.GenerateRandomLength(1, 100)
+            Name = RandomUtil.GetPrefixedRandomHexString("Name_", Random.Shared.Next(5, 25))
         };
+        customizer?.Invoke(args);
+        return args;
+    }
+
+    private static TeamEntity GenerateTeamEntity(Action<TeamEntity>? customizer = null)
+    {
+        var teamEntity = new TeamEntity
+        {
+            Name = RandomUtil.GetPrefixedRandomHexString("Name_", Random.Shared.Next(5, 25))
+        };
+        customizer?.Invoke(teamEntity);
+        return teamEntity;
     }
 }

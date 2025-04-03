@@ -1,8 +1,8 @@
 using BingoBackend.Core.Features.Generic;
 using BingoBackend.Data;
-using BingoBackend.Data.Team;
+using BingoBackend.Data.Entities;
 
-namespace BingoBackend.Core.Features.Team;
+namespace BingoBackend.Core.Features.Teams;
 
 public interface ITeamRepository : IGenericRepository<TeamEntity>
 {

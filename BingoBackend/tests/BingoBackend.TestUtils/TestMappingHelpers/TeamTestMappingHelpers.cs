@@ -1,4 +1,4 @@
-using BingoBackend.Data.Team;
+using BingoBackend.Data.Entities;
 
 namespace BingoBackend.TestUtils.TestMappingHelpers;
 

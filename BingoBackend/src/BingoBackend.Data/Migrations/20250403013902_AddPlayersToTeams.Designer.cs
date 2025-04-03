@@ -2,6 +2,7 @@
 using BingoBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BingoBackend.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250403013902_AddPlayersToTeams")]
+    partial class AddPlayersToTeams
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
@@ -27,10 +30,15 @@ namespace BingoBackend.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("TeamId");
 
                     b.ToTable("Players");
                 });
@@ -51,34 +59,16 @@ namespace BingoBackend.Data.Migrations
                     b.ToTable("Teams");
                 });
 
-            modelBuilder.Entity("PlayerEntityTeamEntity", b =>
+            modelBuilder.Entity("BingoBackend.Data.Entities.PlayerEntity", b =>
                 {
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TeamId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("PlayerId", "TeamId");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("PlayerEntityTeamEntity");
+                    b.HasOne("BingoBackend.Data.Entities.TeamEntity", null)
+                        .WithMany("Players")
+                        .HasForeignKey("TeamId");
                 });
 
-            modelBuilder.Entity("PlayerEntityTeamEntity", b =>
+            modelBuilder.Entity("BingoBackend.Data.Entities.TeamEntity", b =>
                 {
-                    b.HasOne("BingoBackend.Data.Entities.PlayerEntity", null)
-                        .WithMany()
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BingoBackend.Data.Entities.TeamEntity", null)
-                        .WithMany()
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Players");
                 });
 #pragma warning restore 612, 618
         }

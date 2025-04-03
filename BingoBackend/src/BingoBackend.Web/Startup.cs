@@ -1,11 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using BingoBackend.Core.Features.Team;
+using BingoBackend.Core.Features.Players;
+using BingoBackend.Core.Features.Teams;
 using BingoBackend.Data;
 using BingoBackend.Web.Team;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+
+namespace BingoBackend.Web;
 
 public class DatabaseOptions
 {
@@ -22,20 +25,21 @@ public class Startup
             .ValidateOnStart();
 
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
-            {
-                var test2 = sp.GetRequiredService<IOptions<DatabaseOptions>>();
-                options.UseSqlite(sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString);
-            }
-        );
+        {
+            options.UseSqlite(sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString);
+        });
 
-        services.AddTeamService();
-        services.AddTeamWebService();
         services.AddMvc().AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         });
+
+        // Features
+        services.AddPlayerService();
+        services.AddTeamService();
+        services.AddTeamWebService();
     }
 
     public void Configure(IApplicationBuilder app)

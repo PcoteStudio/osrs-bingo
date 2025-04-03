@@ -1,19 +1,19 @@
 using AutoMapper;
-using BingoBackend.Core.Features.Team;
+using BingoBackend.Core.Features.Teams;
 using BingoBackend.TestUtils.TestDataSetup;
 
-namespace BingoBackend.Core.Tests.Features.Team;
+namespace BingoBackend.Core.Tests.Features.Teams;
 
 [TestFixture]
-[TestOf(typeof(TeamEntityMappingProfile))]
-public class TeamEntityMappingProfileTest
+[TestOf(typeof(TeamMappingProfile))]
+public class TeamMappingProfileUnitTest
 {
     [OneTimeSetUp]
     public void BeforeAll()
     {
         _teamFactory = new TeamFactory();
         _mapper = new MapperConfiguration(
-            c => c.AddMaps(typeof(TeamEntityMappingProfile).Assembly)
+            c => c.AddMaps(typeof(TeamMappingProfile).Assembly)
         ).CreateMapper();
     }
 
@@ -27,7 +27,7 @@ public class TeamEntityMappingProfileTest
         var teamEntity = _teamFactory.Create(TestDataSetup.GenerateTeamCreateArguments());
 
         // Act
-        var team = _mapper.Map<Core.Features.Team.Team>(teamEntity);
+        var team = _mapper.Map<Team>(teamEntity);
 
         // Assert
         Assert.Multiple(() =>
