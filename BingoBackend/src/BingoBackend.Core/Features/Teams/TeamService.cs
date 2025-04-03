@@ -1,5 +1,6 @@
 using AutoMapper;
 using BingoBackend.Core.Features.Players;
+using BingoBackend.Core.Features.Teams.Exceptions;
 using BingoBackend.Data;
 
 namespace BingoBackend.Core.Features.Teams;
@@ -8,13 +9,14 @@ public interface ITeamService
 {
     Team CreateTeam(TeamCreateArguments args);
     Task<List<Team>> ListTeamsAsync();
-    Task<Team?> GetTeamAsync(int teamId);
-    Task<Team> UpdateTeam(TeamCreateArguments args);
+    Task<Team> GetTeamAsync(int teamId);
+    Task<Team> UpdateTeamAsync(int teamId, TeamUpdateArguments args);
 }
 
 public class TeamService(
     ITeamFactory teamFactory,
     ITeamRepository teamRepository,
+    ITeamUtil teamUtil,
     IPlayerService playerService,
     IMapper mapper,
     ApplicationDbContext dbContext
@@ -34,14 +36,20 @@ public class TeamService(
         return savedEntity.Select(mapper.Map<Team>).ToList();
     }
 
-    public async Task<Team?> GetTeamAsync(int teamId)
+    public async Task<Team> GetTeamAsync(int teamId)
     {
         var teamEntity = await teamRepository.GetByIdAsync(teamId);
+        if (teamEntity == null) throw new TeamNotFoundException(teamId);
         return mapper.Map<Team>(teamEntity);
     }
 
-    public Task<Team> UpdateTeam(TeamCreateArguments args)
+    public async Task<Team> UpdateTeamAsync(int teamId, TeamUpdateArguments args)
     {
-        throw new NotImplementedException();
+        var teamEntity = await teamRepository.GetByIdAsync(teamId);
+        if (teamEntity == null) throw new TeamNotFoundException(teamId);
+        teamUtil.UpdateTeamEntity(teamEntity, args);
+        dbContext.Update(teamEntity);
+        await dbContext.SaveChangesAsync();
+        return mapper.Map<Team>(teamEntity);
     }
 }

@@ -43,6 +43,16 @@ public partial class TestDataSetup
         return args;
     }
 
+    public static TeamUpdateArguments GenerateTeamUpdateArguments(Action<TeamUpdateArguments>? customizer = null)
+    {
+        var args = new TeamUpdateArguments
+        {
+            Name = RandomUtil.GetPrefixedRandomHexString("Name_", Random.Shared.Next(5, 25))
+        };
+        customizer?.Invoke(args);
+        return args;
+    }
+
     private static TeamEntity GenerateTeamEntity(Action<TeamEntity>? customizer = null)
     {
         var teamEntity = new TeamEntity

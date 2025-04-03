@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITeamService, TeamService>();
         services.AddScoped<ITeamRepository, TeamRepository>();
         services.AddSingleton<ITeamFactory, TeamFactory>();
+        services.AddSingleton<ITeamUtil, TeamUtil>();
         services.AddAutoMapper(typeof(TeamMappingProfile));
     }
 }

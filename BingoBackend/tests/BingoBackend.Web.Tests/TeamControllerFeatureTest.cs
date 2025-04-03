@@ -131,4 +131,50 @@ public class Tests
         var expectedContent = HttpResponseGenerator.GetExpectedJsonResponse(HttpStatusCode.NotFound);
         Expect.EquivalentJsonWithPrettyOutput(responseContent, expectedContent);
     }
+
+    [Test]
+    public async Task UpdateTeam_ShouldReturnTheUpdatedTeam()
+    {
+        // Arrange
+        _testDataSetup.AddTeams(3, out var teamEntities);
+        var expectedTeam = teamEntities[Random.Shared.Next(teamEntities.Count)];
+        var teamArgs = TestDataSetup.GenerateTeamUpdateArguments();
+        expectedTeam.Name = teamArgs.Name;
+        var postContent = /* language=json */
+            $$"""{ "name": "{{teamArgs.Name}}" }""";
+        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+
+        // Act
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{expectedTeam.Id}"), stringContent);
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
+
+        // Assert response content
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var expectedContent = TestMappingHelpers.TeamEntityToTeamResponseJson(expectedTeam);
+        Expect.EquivalentJsonWithPrettyOutput(responseContent, expectedContent);
+    }
+
+    [Test]
+    public async Task UpdateTeam_ShouldReturnNotFoundIfTeamDoesNotExist()
+    {
+        // Arrange
+        const int teamId = 1_000_000;
+        var teamArgs = TestDataSetup.GenerateTeamUpdateArguments();
+        var postContent = /* language=json */
+            $$"""{ "name": "{{teamArgs.Name}}" }""";
+        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+
+        // Act
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{teamId}"), stringContent);
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.NotFound, response);
+
+        // Assert response content
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var expectedContent = HttpResponseGenerator.GetExpectedJsonResponse(HttpStatusCode.NotFound);
+        Expect.EquivalentJsonWithPrettyOutput(responseContent, expectedContent);
+    }
 }

@@ -17,11 +17,13 @@ public class TeamServiceUnitTest
         _mapperMock = new Mock<IMapper>(MockBehavior.Strict);
         _teamRepositoryMock = new Mock<ITeamRepository>(MockBehavior.Strict);
         _teamFactoryMock = new Mock<ITeamFactory>(MockBehavior.Strict);
+        _teamUtilMock = new Mock<ITeamUtil>(MockBehavior.Strict);
         _playerServiceMock = new Mock<IPlayerService>(MockBehavior.Strict);
         _dbContext = new Mock<ApplicationDbContext>(MockBehavior.Strict);
         _service = new TeamService(
             _teamFactoryMock.Object,
             _teamRepositoryMock.Object,
+            _teamUtilMock.Object,
             _playerServiceMock.Object,
             _mapperMock.Object,
             _dbContext.Object
@@ -32,6 +34,7 @@ public class TeamServiceUnitTest
     private Mock<IMapper> _mapperMock;
     private Mock<ITeamRepository> _teamRepositoryMock;
     private Mock<ITeamFactory> _teamFactoryMock;
+    private Mock<ITeamUtil> _teamUtilMock;
     private Mock<IPlayerService> _playerServiceMock;
     private Mock<ApplicationDbContext> _dbContext;
 
