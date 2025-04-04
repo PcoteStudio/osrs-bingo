@@ -58,7 +58,7 @@ public class TeamServiceUnitTest
     }
 
     [Test]
-    public async Task ListTeams_ShouldReturnAllTeams()
+    public async Task GetTeams_ShouldReturnAllTeams()
     {
         // Arrange
         const int entitiesCount = 3;

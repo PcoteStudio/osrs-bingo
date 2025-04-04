@@ -26,4 +26,11 @@ public class PlayerRepository(ApplicationDbContext context)
             .Where(p => playerNames.Contains(p.Name))
             .ToListAsync();
     }
+
+    public Task<PlayerEntity?> GetCompletePlayerById(int playerId)
+    {
+        return Context.Players
+            .Include(p => p.Teams)
+            .FirstOrDefaultAsync(p => p.Id == playerId);
+    }
 }

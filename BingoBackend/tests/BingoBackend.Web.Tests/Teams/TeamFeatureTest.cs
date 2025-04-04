@@ -70,7 +70,7 @@ public class TeamFeatureTest
     }
 
     [Test]
-    public async Task ListTeams_ShouldReturnAllTeams()
+    public async Task GetTeams_ShouldReturnAllTeams()
     {
         // Arrange
         _testDataSetup.AddTeams(3);

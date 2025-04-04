@@ -18,4 +18,8 @@
         <ProjectReference Include="..\BingoBackend.Core\BingoBackend.Core.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="Events\"/>
+    </ItemGroup>
+
 </Project>
