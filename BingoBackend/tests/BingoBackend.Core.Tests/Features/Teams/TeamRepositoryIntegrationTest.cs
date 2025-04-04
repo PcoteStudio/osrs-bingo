@@ -13,9 +13,9 @@ public class TeamRepositoryIntegrationTest
     [SetUp]
     public void BeforeEach()
     {
-        _dbContext = TestSetupUtil.GetDbContext();
+        _dbContext = TestSetupUtil.GetDbContext(BingoProjects.Core);
         _testDataSetup = new TestDataSetup(_dbContext);
-        _teamRepository = new TeamRepository(TestSetupUtil.GetDbContext());
+        _teamRepository = new TeamRepository(TestSetupUtil.GetDbContext(BingoProjects.Core));
     }
 
     [TearDown]

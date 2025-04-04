@@ -37,7 +37,7 @@ public partial class TestDataSetup
     {
         var args = new TeamCreateArguments
         {
-            Name = RandomUtil.GetPrefixedRandomHexString("Name_", Random.Shared.Next(5, 25))
+            Name = GenerateTeamName()
         };
         customizer?.Invoke(args);
         return args;
@@ -47,7 +47,7 @@ public partial class TestDataSetup
     {
         var args = new TeamUpdateArguments
         {
-            Name = RandomUtil.GetPrefixedRandomHexString("Name_", Random.Shared.Next(5, 25))
+            Name = GenerateTeamName()
         };
         customizer?.Invoke(args);
         return args;

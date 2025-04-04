@@ -35,7 +35,7 @@ public class TeamFeatureTest
     [SetUp]
     public void BeforeEach()
     {
-        _dbContext = TestSetupUtil.GetDbContext();
+        _dbContext = TestSetupUtil.GetDbContext(BingoProjects.Web);
         _testDataSetup = new TestDataSetup(_dbContext);
         _client = new HttpClient();
     }

@@ -27,8 +27,4 @@
         <ProjectReference Include="..\BingoBackend.TestUtils\BingoBackend.TestUtils.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Features\Players\"/>
-    </ItemGroup>
-
 </Project>

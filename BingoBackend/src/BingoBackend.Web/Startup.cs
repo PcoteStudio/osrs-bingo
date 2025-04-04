@@ -27,7 +27,8 @@ public class Startup
 
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
-            options.UseSqlite(sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString);
+            var connectionString = sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString;
+            options.UseSqlite(connectionString);
         });
 
         services.AddMvc().AddJsonOptions(options =>
