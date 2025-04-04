@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BingoBackend.TestUtils;
 
-public static class TestSetup
+public static class TestSetupUtil
 {
     private static IConfigurationRoot GetTestConfiguration()
     {
@@ -19,7 +19,7 @@ public static class TestSetup
             .Build();
     }
 
-    public static ApplicationDbContext GetApplicationDbContext()
+    public static ApplicationDbContext GetDbContext()
     {
         var connectionString = GetTestConfiguration().GetValue<string>("Sqlite:ConnectionString");
         var dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
@@ -30,7 +30,7 @@ public static class TestSetup
 
     public static void RecreateDatabase()
     {
-        var dbContext = GetApplicationDbContext();
+        var dbContext = GetDbContext();
         dbContext.Database.EnsureDeleted();
         dbContext.Database.Migrate();
     }

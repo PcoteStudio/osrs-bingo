@@ -58,10 +58,7 @@ public partial class TestDataSetup
     {
         var args = new TeamPlayersArguments();
         for (var i = 0; i < playerCount; i++)
-            args.PlayerNames.Add(RandomUtil.GetPrefixedRandomHexString(
-                "Name",
-                Random.Shared.Next(5, 25)
-            ));
+            args.PlayerNames.Add(GenerateTeamName());
         customizer?.Invoke(args);
         return args;
     }
@@ -70,9 +67,14 @@ public partial class TestDataSetup
     {
         var teamEntity = new TeamEntity
         {
-            Name = RandomUtil.GetPrefixedRandomHexString("Name_", Random.Shared.Next(5, 25))
+            Name = GenerateTeamName()
         };
         customizer?.Invoke(teamEntity);
         return teamEntity;
+    }
+
+    private static string GenerateTeamName()
+    {
+        return RandomUtil.GetPrefixedRandomHexString("TName_", Random.Shared.Next(5, 25));
     }
 }

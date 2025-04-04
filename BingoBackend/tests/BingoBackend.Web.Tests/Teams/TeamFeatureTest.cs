@@ -8,9 +8,9 @@ using BingoBackend.Web.Teams;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 
-namespace BingoBackend.Web.Tests;
+namespace BingoBackend.Web.Tests.Teams;
 
-public class Tests
+public class TeamFeatureTest
 {
     private Uri _baseUrl;
     private HttpClient _client;
@@ -21,15 +21,9 @@ public class Tests
     [OneTimeSetUp]
     public void BeforeAll()
     {
-        TestSetup.RecreateDatabase();
-
-        // Add a random amount of teams to simulate an existing DB
-        var testDataSetup = new TestDataSetup(TestSetup.GetApplicationDbContext());
-        testDataSetup.AddTeams(Random.Shared.Next(5, 15));
-
-        _host = TestSetup.BuildWebHost();
+        _host = TestSetupUtil.BuildWebHost();
         _host.Start();
-        _baseUrl = TestSetup.GetRequiredHostUri(_host);
+        _baseUrl = TestSetupUtil.GetRequiredHostUri(_host);
     }
 
     [OneTimeTearDown]
@@ -41,7 +35,7 @@ public class Tests
     [SetUp]
     public void BeforeEach()
     {
-        _dbContext = TestSetup.GetApplicationDbContext();
+        _dbContext = TestSetupUtil.GetDbContext();
         _testDataSetup = new TestDataSetup(_dbContext);
         _client = new HttpClient();
     }
