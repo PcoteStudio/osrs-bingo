@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using BingoBackend.Core.Features.Players;
 using BingoBackend.Core.Features.Teams;
 using BingoBackend.Data;
+using BingoBackend.Shared;
 using BingoBackend.Web.Players;
 using BingoBackend.Web.Teams;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,12 @@ public class Startup
 
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
-            var connectionString = sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString;
+            const string dataFolder = "data";
+            var dataPath = Path.Combine(FileSystemHelper.FindDirectoryContaining(dataFolder), dataFolder);
+            var connectionString = sp
+                .GetRequiredService<IOptions<DatabaseOptions>>()
+                .Value.ConnectionString
+                .Replace("{pathToData}", dataPath);
             options.UseSqlite(connectionString);
         });
 

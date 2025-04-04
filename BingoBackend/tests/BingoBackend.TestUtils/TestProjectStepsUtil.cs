@@ -11,7 +11,7 @@ public static class TestProjectStepsUtil
         // Add a random amount of teams to simulate an existing DB
         var dbContext = TestSetupUtil.GetDbContext(project);
         var testDataSetup = new TestDataSetup.TestDataSetup(dbContext);
-        // testDataSetup.AddTeams(Random.Shared.Next(5, 15));
+        testDataSetup.AddTeams(Random.Shared.Next(5, 15));
     }
 
     [OneTimeTearDown]

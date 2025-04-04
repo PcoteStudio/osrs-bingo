@@ -1,5 +1,5 @@
-using System.Reflection;
 using BingoBackend.Data;
+using BingoBackend.Shared;
 using BingoBackend.Web;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -19,19 +19,23 @@ public enum BingoProjects
 
 public static class TestSetupUtil
 {
-    private static IConfigurationRoot GetTestConfiguration()
+    public static string GetDatabaseFileName(BingoProjects project)
     {
-        return new ConfigurationBuilder()
-            .AddJsonFile("appsettings.Test.json")
-            .Build();
+        return project.ToString().ToLower() + "testdb.db";
+    }
+
+    public static string GetDatabaseConnectionString(BingoProjects project)
+    {
+        var databaseFile = Path.Combine("data", GetDatabaseFileName(project));
+        var databasePath = Path.Combine(FileSystemHelper.FindDirectoryContaining(databaseFile), databaseFile);
+        var connectionString = $"Data Source={databasePath};";
+        return connectionString;
     }
 
     public static ApplicationDbContext GetDbContext(BingoProjects project)
     {
-        var test = Assembly.GetExecutingAssembly();
-        var connectionString = $@"Data Source=..\..\..\..\..\data\{project.ToString().ToLower()}testdb.db";
         var dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite(connectionString)
+            .UseSqlite(GetDatabaseConnectionString(project))
             .Options;
         return new ApplicationDbContext(dbContextOptions);
     }
@@ -46,11 +50,10 @@ public static class TestSetupUtil
     public static IWebHost BuildWebHost()
     {
         return WebHost.CreateDefaultBuilder([])
-            .UseEnvironment("Test")
             .ConfigureAppConfiguration(config =>
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    ["Sqlite:ConnectionString"] = @"Data Source=..\..\..\..\..\data\webtestdb.db"
+                    ["Sqlite:ConnectionString"] = $"DataSource={{pathToData}}\\{GetDatabaseFileName(BingoProjects.Web)}"
                 }))
             .UseStartup<Startup>()
             .UseUrls("http://127.0.0.1:0")
