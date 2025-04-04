@@ -11,6 +11,5 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlayerService, PlayerService>();
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddSingleton<IPlayerFactory, PlayerFactory>();
-        services.AddAutoMapper(typeof(PlayerMappingProfile));
     }
 }

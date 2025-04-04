@@ -25,7 +25,7 @@ public class Tests
 
         // Add a random amount of teams to simulate an existing DB
         var testDataSetup = new TestDataSetup(TestSetup.GetApplicationDbContext());
-        testDataSetup.AddTeams(Random.Shared.Next(5, 15), out var teamEntities);
+        testDataSetup.AddTeams(Random.Shared.Next(5, 15));
 
         _host = TestSetup.BuildWebHost();
         _host.Start();
@@ -195,8 +195,8 @@ public class Tests
         var responseContent = await response.Content.ReadAsStringAsync();
         var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
         Assert.That(returnedTeam, Is.Not.Null);
-        // Assert.That(returnedTeam.Players, Has.Count.EqualTo(args.PlayerNames.Count));
-        // TODO Validate names
+        Assert.That(returnedTeam.Players, Has.Count.EqualTo(args.PlayerNames.Count));
+        Assert.That(returnedTeam.Players.Select(p => p.Name), Is.EquivalentTo(args.PlayerNames));
     }
 
     [Test]

@@ -1,5 +1,4 @@
 using AutoMapper;
-using BingoBackend.Core.Features.Players;
 using BingoBackend.Core.Features.Teams;
 using BingoBackend.Core.Features.Teams.Arguments;
 using BingoBackend.Core.Features.Teams.Exceptions;
@@ -7,13 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BingoBackend.Web.Teams;
 
-public class TeamController(ITeamService teamService, IPlayerService playerService, IMapper mapper) : ControllerBase
+public class TeamController(ITeamService teamService, IMapper mapper) : ControllerBase
 {
     [HttpGet("/api/teams")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<TeamResponse[]>> ListTeams()
     {
-        var teams = await teamService.ListTeamsAsync();
+        var teams = await teamService.GetTeamsAsync();
         return StatusCode(StatusCodes.Status200OK, teams.Select(mapper.Map<TeamResponse>).ToArray());
     }
 
@@ -35,10 +34,10 @@ public class TeamController(ITeamService teamService, IPlayerService playerServi
 
     [HttpPost("/api/teams")]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public ActionResult<TeamResponse> CreateTeam([FromBody] TeamCreateArguments args)
+    public async Task<ActionResult<TeamResponse>> CreateTeam([FromBody] TeamCreateArguments args)
     {
         // EnsureIsAdmin();
-        var team = teamService.CreateTeam(args);
+        var team = await teamService.CreateTeamAsync(args);
         return StatusCode(StatusCodes.Status201Created, mapper.Map<TeamResponse>(team));
     }
 

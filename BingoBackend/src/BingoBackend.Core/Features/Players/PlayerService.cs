@@ -1,36 +1,33 @@
-using AutoMapper;
 using BingoBackend.Data;
+using BingoBackend.Data.Entities;
 
 namespace BingoBackend.Core.Features.Players;
 
 public interface IPlayerService
 {
-    Task<Player?> GetPlayer(int playerId);
-    Task<Player> GetOrCreatePlayerByName(string name);
-    Task<List<Player>> GetOrCreatePlayersByNames(ICollection<string> names);
-    Task<List<Player>> ListPlayers();
+    ValueTask<PlayerEntity?> GetPlayer(int playerId);
+    Task<PlayerEntity> GetOrCreatePlayerByName(string name);
+    Task<List<PlayerEntity>> GetOrCreatePlayersByNames(ICollection<string> names);
+    Task<List<PlayerEntity>> GetPlayers();
 }
 
 public class PlayerService(
     IPlayerFactory playerFactory,
     IPlayerRepository playerRepository,
-    IMapper mapper,
     ApplicationDbContext dbContext
 ) : IPlayerService
 {
-    public async Task<Player?> GetPlayer(int playerId)
+    public ValueTask<PlayerEntity?> GetPlayer(int playerId)
     {
-        var playerEntity = await playerRepository.GetByIdAsync(playerId);
-        return mapper.Map<Player>(playerEntity);
+        return playerRepository.GetByIdAsync(playerId);
     }
 
-    public async Task<List<Player>> ListPlayers()
+    public async Task<List<PlayerEntity>> GetPlayers()
     {
-        var playerEntities = await playerRepository.GetAllAsync();
-        return playerEntities.Select(mapper.Map<Player>).ToList();
+        return await playerRepository.GetAllAsync();
     }
 
-    public async Task<Player> GetOrCreatePlayerByName(string name)
+    public async Task<PlayerEntity> GetOrCreatePlayerByName(string name)
     {
         var playerEntity = await playerRepository.GetByNameAsync(name);
         if (playerEntity is null)
@@ -40,21 +37,20 @@ public class PlayerService(
             await dbContext.SaveChangesAsync();
         }
 
-        return mapper.Map<Player>(playerEntity);
+        return playerEntity;
     }
 
-    public async Task<List<Player>> GetOrCreatePlayersByNames(ICollection<string> names)
+    public async Task<List<PlayerEntity>> GetOrCreatePlayersByNames(ICollection<string> names)
     {
-        var foundPlayerEntities = await playerRepository.GetByNamesAsync(names);
-        var namesNotFound = names.Except(foundPlayerEntities.Select(x => x.Name));
-        var newPlayerEntities = namesNotFound.Select(playerFactory.Create).ToList();
-        if (newPlayerEntities.Count > 0)
+        var foundPlayers = await playerRepository.GetByNamesAsync(names);
+        var namesNotFound = names.Except(foundPlayers.Select(x => x.Name));
+        var newPlayers = namesNotFound.Select(playerFactory.Create).ToList();
+        if (newPlayers.Count > 0)
         {
-            playerRepository.Add(newPlayerEntities);
+            playerRepository.Add(newPlayers);
             await dbContext.SaveChangesAsync();
         }
 
-        var playerEntities = foundPlayerEntities.Concat(newPlayerEntities);
-        return playerEntities.Select(mapper.Map<Player>).ToList();
+        return foundPlayers.Concat(newPlayers).ToList();
     }
 }

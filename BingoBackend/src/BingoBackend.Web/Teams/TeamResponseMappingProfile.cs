@@ -1,5 +1,5 @@
 using AutoMapper;
-using BingoBackend.Web.Teams;
+using BingoBackend.Data.Entities;
 
 namespace BingoBackend.Web.Teams;
 
@@ -7,6 +7,6 @@ public class TeamResponseMappingProfile : Profile
 {
     public TeamResponseMappingProfile()
     {
-        CreateMap<Core.Features.Teams.Team, TeamResponse>();
+        CreateMap<TeamEntity, TeamResponse>();
     }
 }

@@ -1,4 +1,3 @@
-using AutoMapper;
 using BingoBackend.Core.Features.Players;
 using BingoBackend.Core.Features.Teams;
 using BingoBackend.Core.Features.Teams.Arguments;
@@ -15,7 +14,6 @@ public class TeamServiceUnitTest
     [SetUp]
     public void BeforeEach()
     {
-        _mapperMock = new Mock<IMapper>(MockBehavior.Strict);
         _teamRepositoryMock = new Mock<ITeamRepository>(MockBehavior.Strict);
         _teamFactoryMock = new Mock<ITeamFactory>(MockBehavior.Strict);
         _teamUtilMock = new Mock<ITeamUtil>(MockBehavior.Strict);
@@ -26,13 +24,11 @@ public class TeamServiceUnitTest
             _teamRepositoryMock.Object,
             _teamUtilMock.Object,
             _playerServiceMock.Object,
-            _mapperMock.Object,
             _dbContext.Object
         );
     }
 
     private TeamService _service;
-    private Mock<IMapper> _mapperMock;
     private Mock<ITeamRepository> _teamRepositoryMock;
     private Mock<ITeamFactory> _teamFactoryMock;
     private Mock<ITeamUtil> _teamUtilMock;
@@ -40,28 +36,25 @@ public class TeamServiceUnitTest
     private Mock<ApplicationDbContext> _dbContext;
 
     [Test]
-    public void CreateTeam_ShouldCreateATeamWithTheSpecifiedArgumentsAndReturnIt()
+    public async Task CreateTeam_ShouldCreateATeamWithTheSpecifiedArgumentsAndReturnIt()
     {
         // Arrange
         var teamArguments = new TeamCreateArguments();
-        var teamEntity = new TeamEntity();
-        var team = new Team();
+        var team = new TeamEntity();
 
         _teamFactoryMock.Setup(x => x.Create(teamArguments))
-            .Returns(teamEntity).Verifiable(Times.Once);
-        _teamRepositoryMock.Setup(x => x.Add(teamEntity))
-            .Verifiable(Times.Once);
-        _dbContext.Setup(x => x.SaveChanges())
-            .Returns(1).Verifiable(Times.Once);
-        _mapperMock.Setup(x => x.Map<Team>(teamEntity))
             .Returns(team).Verifiable(Times.Once);
+        _teamRepositoryMock.Setup(x => x.Add(team))
+            .Verifiable(Times.Once);
+        _dbContext.Setup(x => x.SaveChangesAsync(CancellationToken.None))
+            .ReturnsAsync(1).Verifiable(Times.Once);
 
         // Act
-        var actualTeam = _service.CreateTeam(teamArguments);
+        var actualTeam = await _service.CreateTeamAsync(teamArguments);
 
         // Assert
         Assert.That(actualTeam, Is.EqualTo(team));
-        Mock.VerifyAll(_teamFactoryMock, _teamRepositoryMock, _mapperMock, _dbContext);
+        Mock.VerifyAll(_teamFactoryMock, _teamRepositoryMock, _dbContext);
     }
 
     [Test]
@@ -69,43 +62,33 @@ public class TeamServiceUnitTest
     {
         // Arrange
         const int entitiesCount = 3;
-        var teamEntities = Enumerable.Range(0, entitiesCount).Select(_ => new TeamEntity()).ToList();
-        var teams = teamEntities.Select(_ => new Team()).ToList();
+        var teams = Enumerable.Range(0, entitiesCount).Select(_ => new TeamEntity()).ToList();
 
         _teamRepositoryMock.Setup(x => x.GetAllAsync())
-            .ReturnsAsync(teamEntities).Verifiable(Times.Once);
-        for (var i = 0; i < entitiesCount; i++)
-        {
-            var index = i;
-            _mapperMock.Setup(x => x.Map<Team>(teamEntities[index]))
-                .Returns(teams[index]).Verifiable(Times.Once);
-        }
+            .ReturnsAsync(teams).Verifiable(Times.Once);
 
         // Act
-        var actualTeams = await _service.ListTeamsAsync();
+        var actualTeams = await _service.GetTeamsAsync();
 
         // Assert
         Assert.That(actualTeams, Is.EquivalentTo(teams));
-        Mock.VerifyAll(_teamRepositoryMock, _mapperMock);
+        Mock.VerifyAll(_teamRepositoryMock);
     }
 
     [Test]
     public async Task GetTeam_ShouldReturnTheSpecifiedTeam()
     {
         var teamId = Random.Shared.Next();
-        var teamEntity = new TeamEntity();
-        var team = new Team();
+        var team = new TeamEntity();
 
         _teamRepositoryMock.Setup(x => x.GetCompleteByIdAsync(teamId))
-            .ReturnsAsync(teamEntity).Verifiable(Times.Once);
-        _mapperMock.Setup(x => x.Map<Team>(teamEntity))
-            .Returns(team).Verifiable(Times.Once);
+            .ReturnsAsync(team).Verifiable(Times.Once);
 
         // Act
         var actualTeam = await _service.GetTeamAsync(teamId);
 
         // Assert
         Assert.That(actualTeam, Is.EqualTo(team));
-        Mock.VerifyAll(_teamRepositoryMock, _mapperMock);
+        Mock.VerifyAll(_teamRepositoryMock);
     }
 }
