@@ -1,6 +1,26 @@
 # Bingo-Style Event Manager for OldSchool RuneScape
 
 ## Website
+* Users
+  * CRUD
+  * Authentication
+  * Roles
+* Team
+  * CRUD
+  * Display team statistics
+* Player
+  * CRUD
+  * Display player statistics
+* Board
+  * Display the event board and its tiles
+  * Display board statistics
+* Tile
+  * CRUD
+  * Display the dynamic amount of points the tile is worth
+  * Display an image of the tile content
+  * Display the tile name and description
+  * Display the team or player who completed the tile
+  * Mark a tile as completed and indicate which player/team did it
 
 ## API
 
@@ -8,7 +28,7 @@
 * Multiple event formats
   * Classic bingo
   * Multi-layered bingo
-  * Snake and ladder
+  * Snakes and ladders
 * Multiple tile types
   * PvM drops
   * XP gains
