@@ -6,9 +6,9 @@ namespace BingoBackend.Core.Tests;
 public class ProjectTestSteps
 {
     [OneTimeSetUp]
-    public void RunBeforeAnyTests()
+    public async Task RunBeforeAnyTests()
     {
-        TestProjectStepsUtil.RunBeforeAnyTests(BingoProjects.Core);
+        await TestProjectStepsUtil.RunBeforeAnyTests(BingoProjects.Core);
     }
 
     [OneTimeTearDown]

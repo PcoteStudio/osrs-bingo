@@ -4,9 +4,9 @@ namespace BingoBackend.TestUtils;
 
 public static class TestProjectStepsUtil
 {
-    public static void RunBeforeAnyTests(BingoProjects project)
+    public static async Task RunBeforeAnyTests(BingoProjects project)
     {
-        TestSetupUtil.RecreateDatabase(project);
+        await TestSetupUtil.RecreateDatabase(project);
 
         // Add a random amount of teams to simulate an existing DB
         var dbContext = TestSetupUtil.GetDbContext(project);

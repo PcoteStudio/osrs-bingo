@@ -40,21 +40,26 @@ public static class TestSetupUtil
         return new ApplicationDbContext(dbContextOptions);
     }
 
-    public static void RecreateDatabase(BingoProjects project)
+    public static async Task RecreateDatabase(BingoProjects project)
     {
         var dbContext = GetDbContext(project);
-        dbContext.Database.EnsureDeleted();
-        dbContext.Database.Migrate();
+        await dbContext.Database.EnsureDeletedAsync();
+        await dbContext.Database.MigrateAsync();
     }
 
     public static IWebHost BuildWebHost()
     {
         return WebHost.CreateDefaultBuilder([])
             .ConfigureAppConfiguration(config =>
-                config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    ["Sqlite:ConnectionString"] = $"DataSource={{pathToData}}\\{GetDatabaseFileName(BingoProjects.Web)}"
-                }))
+                    config.AddInMemoryCollection(new Dictionary<string, string?>
+                    {
+                        ["Sqlite:ConnectionString"] =
+                            $"DataSource={{pathToData}}\\{GetDatabaseFileName(BingoProjects.Web)}"
+                    });
+                    config.AddUserSecrets<Program>();
+                }
+            )
             .UseStartup<Startup>()
             .UseUrls("http://127.0.0.1:0")
             .Build();

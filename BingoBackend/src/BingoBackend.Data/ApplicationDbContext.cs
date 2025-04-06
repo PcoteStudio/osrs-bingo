@@ -1,9 +1,10 @@
 using BingoBackend.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BingoBackend.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<UserEntity>
 {
     public ApplicationDbContext()
     {
@@ -13,6 +14,7 @@ public class ApplicationDbContext : DbContext
     {
     }
 
+    public DbSet<TokenEntity> Tokens { get; set; }
     public DbSet<TeamEntity> Teams { get; set; }
     public DbSet<PlayerEntity> Players { get; set; }
 }
