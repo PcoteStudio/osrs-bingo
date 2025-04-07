@@ -48,14 +48,14 @@ public class DbSeeder(
             throw new Exception($"Failed to create {name} user. Errors: {string.Join(",",
                 createUserResult.Errors.Select(e => e.Description))}");
         await AddRoleToUserAsync(user, role);
-        logger.LogInformation($"Created {name} user with {role} role.");
+        logger.LogInformation("Created {name} user with {role} role.", name, role);
         return user;
     }
 
     private async Task CreateRoles()
     {
-        await CreateRoleIfNotExistsAsync(Roles.Admin);
-        await CreateRoleIfNotExistsAsync(Roles.User);
+        await CreateRoleIfNotExistsAsync(Roles.Admin.ToString());
+        await CreateRoleIfNotExistsAsync(Roles.User.ToString());
     }
 
     public async Task Seed()
@@ -64,8 +64,8 @@ public class DbSeeder(
 
         if (!userManager.Users.Any())
         {
-            await CreateDevelopmentUser(Roles.Admin, "admin@local.host", "admin@local.host", "Password1!");
-            await CreateDevelopmentUser(Roles.User, "user@local.host", "user@local.host", "Password1!");
+            await CreateDevelopmentUser(Roles.Admin.ToString(), "admin@local.host", "admin@local.host", "Password1!");
+            await CreateDevelopmentUser(Roles.User.ToString(), "user@local.host", "user@local.host", "Password1!");
         }
     }
 }

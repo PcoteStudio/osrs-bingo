@@ -18,13 +18,13 @@ public class TeamServiceUnitTest
         _teamFactoryMock = new Mock<ITeamFactory>(MockBehavior.Strict);
         _teamUtilMock = new Mock<ITeamUtil>(MockBehavior.Strict);
         _playerServiceMock = new Mock<IPlayerService>(MockBehavior.Strict);
-        _dbContext = new Mock<ApplicationDbContext>(MockBehavior.Strict);
+        _dbContextMock = new Mock<ApplicationDbContext>(MockBehavior.Loose);
         _service = new TeamService(
             _teamFactoryMock.Object,
             _teamRepositoryMock.Object,
             _teamUtilMock.Object,
             _playerServiceMock.Object,
-            _dbContext.Object
+            _dbContextMock.Object
         );
     }
 
@@ -33,7 +33,7 @@ public class TeamServiceUnitTest
     private Mock<ITeamFactory> _teamFactoryMock;
     private Mock<ITeamUtil> _teamUtilMock;
     private Mock<IPlayerService> _playerServiceMock;
-    private Mock<ApplicationDbContext> _dbContext;
+    private Mock<ApplicationDbContext> _dbContextMock;
 
     [Test]
     public async Task CreateTeam_ShouldCreateATeamWithTheSpecifiedArgumentsAndReturnIt()
@@ -46,7 +46,7 @@ public class TeamServiceUnitTest
             .Returns(team).Verifiable(Times.Once);
         _teamRepositoryMock.Setup(x => x.Add(team))
             .Verifiable(Times.Once);
-        _dbContext.Setup(x => x.SaveChangesAsync(CancellationToken.None))
+        _dbContextMock.Setup(x => x.SaveChangesAsync(CancellationToken.None))
             .ReturnsAsync(1).Verifiable(Times.Once);
 
         // Act
@@ -54,7 +54,7 @@ public class TeamServiceUnitTest
 
         // Assert
         Assert.That(actualTeam, Is.EqualTo(team));
-        Mock.VerifyAll(_teamFactoryMock, _teamRepositoryMock, _dbContext);
+        Mock.VerifyAll(_teamFactoryMock, _teamRepositoryMock, _dbContextMock);
     }
 
     [Test]

@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BingoBackend.Web.Teams;
 
+[Route("/api/teams")]
+[ApiController]
 public class TeamController(ITeamService teamService, IMapper mapper) : ControllerBase
 {
-    [HttpGet("/api/teams")]
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<TeamResponse>>> GetTeamsAsync()
     {
@@ -16,7 +18,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
         return StatusCode(StatusCodes.Status200OK, mapper.Map<List<TeamResponse>>(teams));
     }
 
-    [HttpGet("/api/teams/{teamId:min(0)}")]
+    [HttpGet("{teamId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TeamResponse>> GetTeamAsync([FromRoute] int teamId)
@@ -32,7 +34,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
         }
     }
 
-    [HttpPost("/api/teams")]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<TeamResponse>> CreateTeamAsync([FromBody] TeamCreateArguments args)
     {
@@ -41,7 +43,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
         return StatusCode(StatusCodes.Status201Created, mapper.Map<TeamResponse>(team));
     }
 
-    [HttpPut("/api/teams/{teamId:min(0)}")]
+    [HttpPut("{teamId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TeamResponse>> UpdateTeamAsync(
@@ -59,7 +61,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
         }
     }
 
-    [HttpPut("/api/teams/{teamId:min(0)}/players")]
+    [HttpPut("{teamId:min(0)}/players")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<TeamResponse> UpdateTeamPlayersAsync(
@@ -70,7 +72,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
         throw new NotImplementedException();
     }
 
-    [HttpPost("/api/teams/{teamId:min(0)}/players")]
+    [HttpPost("{teamId:min(0)}/players")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TeamResponse>> AddTeamPlayersAsync(
@@ -90,7 +92,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
         }
     }
 
-    [HttpDelete("/api/teams/{teamId:min(0)}/players/{playerId:min(0)}")]
+    [HttpDelete("{teamId:min(0)}/players/{playerId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<TeamResponse> RemoveTeamPlayerAsync(

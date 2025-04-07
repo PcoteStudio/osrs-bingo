@@ -1,28 +1,19 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BingoBackend.Core.Features.Authentication;
 using BingoBackend.Core.Features.Players;
 using BingoBackend.Core.Features.Teams;
+using BingoBackend.Core.Features.Users;
 using BingoBackend.Data;
-using BingoBackend.Data.Entities;
 using BingoBackend.Shared;
+using BingoBackend.Web.Authentication;
 using BingoBackend.Web.Players;
 using BingoBackend.Web.Teams;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BingoBackend.Web;
-
-public class JwtOptions
-{
-    public string ValidAudience { get; set; } = string.Empty;
-    public string ValidIssuer { get; set; } = string.Empty;
-    public string Secret { get; set; } = string.Empty;
-}
 
 public class DatabaseOptions
 {
@@ -35,12 +26,10 @@ public class Startup
     {
         services.AddSingleton<ILogger, Logger<Program>>();
 
+        // TODO Move DB initialization to an extension
         services
             .AddOptionsWithValidateOnStart<DatabaseOptions>()
             .BindConfiguration("Sqlite");
-        services
-            .AddOptionsWithValidateOnStart<JwtOptions>()
-            .BindConfiguration("JWT");
 
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
@@ -53,36 +42,6 @@ public class Startup
             options.UseSqlite(connectionString);
         });
 
-        services.AddIdentity<UserEntity, IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
-
-        services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }
-        ).AddJwtBearer(options =>
-            {
-                // TODO avoid building the services provider manually
-                var serviceProvider = services.BuildServiceProvider();
-                var jwtOptions = serviceProvider.GetRequiredService<IOptions<JwtOptions>>().Value;
-
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = jwtOptions.ValidAudience,
-                    ValidIssuer = jwtOptions.ValidIssuer,
-                    ClockSkew = TimeSpan.Zero,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret))
-                };
-            }
-        );
-
         services.AddMvc().AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -91,13 +50,16 @@ public class Startup
         });
 
         // Features
+        services.AddAuthenticationService();
+        services.AddAuthenticationWebService();
+        services.AddUserService();
         services.AddPlayerService();
         services.AddPlayerWebService();
         services.AddTeamService();
         services.AddTeamWebService();
     }
 
-    public void Configure(IApplicationBuilder app)
+    public void Configure(IApplicationBuilder app, ILogger<Startup> logger)
     {
         app.UseRouting();
         app.Use(async (context, next) =>
@@ -106,11 +68,12 @@ public class Startup
             {
                 await next.Invoke();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                logger.LogError(ex, "An unhandled exception occured.");
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "text/plain";
-                await context.Response.WriteAsync(e.ToString());
+                await context.Response.WriteAsync(ex.ToString());
             }
         });
 
