@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BingoBackend.Core.Features.Users.Arguments;
+namespace BingoBackend.Core.Features.Authentication.Arguments;
 
 public class UserSignupArguments
 {

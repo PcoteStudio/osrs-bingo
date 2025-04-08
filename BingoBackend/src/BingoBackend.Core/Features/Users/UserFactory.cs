@@ -1,4 +1,4 @@
-using BingoBackend.Core.Features.Users.Arguments;
+using BingoBackend.Core.Features.Authentication.Arguments;
 using BingoBackend.Data.Entities;
 
 namespace BingoBackend.Core.Features.Users;
