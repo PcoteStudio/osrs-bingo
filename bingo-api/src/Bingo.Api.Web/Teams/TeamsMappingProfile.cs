@@ -3,9 +3,9 @@ using Bingo.Api.Data.Entities;
 
 namespace Bingo.Api.Web.Teams;
 
-public class TeamResponseMappingProfile : Profile
+public class TeamsMappingProfile : Profile
 {
-    public TeamResponseMappingProfile()
+    public TeamsMappingProfile()
     {
         CreateMap<TeamEntity, TeamResponse>();
     }

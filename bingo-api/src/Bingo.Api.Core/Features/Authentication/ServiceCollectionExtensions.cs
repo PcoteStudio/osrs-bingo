@@ -1,7 +1,6 @@
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data;
 using Bingo.Api.Data.Entities;
-using Bingo.Api.Web.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,7 +55,5 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ITokenRepository, TokenRepository>();
         services.AddScoped<IAuthService, AuthService>();
-
-        services.AddAutoMapper(typeof(UserResponseMappingProfile));
     }
 }

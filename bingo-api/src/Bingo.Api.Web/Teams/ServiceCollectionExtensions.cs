@@ -4,6 +4,6 @@ public static class ServiceCollectionExtensions
 {
     public static void AddTeamWebService(this IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(TeamResponseMappingProfile));
+        services.AddAutoMapper(typeof(TeamsMappingProfile));
     }
 }
