@@ -6,6 +6,8 @@ using Bingo.Api.Data;
 using Bingo.Api.Data.Entities;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataSetup;
+using Bingo.Api.Web.Authentication;
+using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -76,5 +78,14 @@ public class AuthenticationFeatureTest
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
+
+        // Assert response content
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var returnedTokens = JsonSerializer.Deserialize<TokenResponse>(responseContent, JsonSerializerOptions.Web);
+        returnedTokens.Should().NotBeNull();
+        returnedTokens.AccessToken.Length.Should().BeGreaterThan(0);
+        returnedTokens.RefreshToken.Length.Should().BeGreaterThan(0);
+
+        // TODO validate the token by calling the user route to get my user
     }
 }
