@@ -6,6 +6,7 @@ using Bingo.Api.Web.Teams;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Bingo.Api.Web.Tests.Teams;
@@ -19,12 +20,14 @@ public class TeamControllerUnitTest
     {
         _teamServiceMock = new Mock<ITeamService>();
         _mapperMock = new Mock<IMapper>();
-        _teamController = new TeamController(_teamServiceMock.Object, _mapperMock.Object);
+        _loggerMock = new Mock<ILogger<TeamController>>();
+        _teamController = new TeamController(_teamServiceMock.Object, _mapperMock.Object, _loggerMock.Object);
     }
 
     private TeamController _teamController;
     private Mock<ITeamService> _teamServiceMock;
     private Mock<IMapper> _mapperMock;
+    private Mock<ILogger<TeamController>> _loggerMock;
 
     [Test]
     public async Task GetTeamsAsync_ShouldReturnAllTeams()

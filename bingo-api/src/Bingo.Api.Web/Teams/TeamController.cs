@@ -8,7 +8,7 @@ namespace Bingo.Api.Web.Teams;
 
 [Route("/api/teams")]
 [ApiController]
-public class TeamController(ITeamService teamService, IMapper mapper) : ControllerBase
+public class TeamController(ITeamService teamService, IMapper mapper, ILogger<TeamController> logger) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -30,6 +30,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
         }
         catch (TeamNotFoundException ex)
         {
+            logger.LogWarning(ex.Message, ex);
             return NotFound();
         }
     }
@@ -57,6 +58,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
         }
         catch (TeamNotFoundException ex)
         {
+            logger.LogWarning(ex.Message, ex);
             return NotFound();
         }
     }
@@ -88,6 +90,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
         }
         catch (TeamNotFoundException ex)
         {
+            logger.LogWarning(ex.Message, ex);
             return NotFound();
         }
     }

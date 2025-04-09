@@ -64,7 +64,7 @@ public class AuthenticationFeatureTest
             Username = "user@local.host",
             Password = "Password1!"
         };
-        _testDataSetup.AddUser(out var user, new TestDataSetup.AddUserArguments
+        _testDataSetup.AddUser(new TestDataSetup.AddUserArguments
         {
             Name = "user",
             Email = loginArgs.Username,

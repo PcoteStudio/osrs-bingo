@@ -7,14 +7,6 @@ namespace Bingo.Api.TestUtils.TestDataSetup;
 
 public partial class TestDataSetup
 {
-    public class AddUserArguments
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public List<Roles> Roles { get; set; } = [];
-    }
-    
     public TestDataSetup AddRole(Roles role)
     {
         roleManager.Should().NotBeNull();
@@ -23,16 +15,17 @@ public partial class TestDataSetup
             var createRoleResult = roleManager.CreateAsync(new IdentityRole(role.ToString())).Result;
             createRoleResult.Succeeded.Should().BeTrue();
         }
+
         return this;
     }
-    
+
     private void AddRoleToUser(UserEntity user, Roles role)
     {
         userManager.Should().NotBeNull();
         var addRoleToUserResult = userManager.AddToRoleAsync(user, role.ToString()).Result;
         addRoleToUserResult.Succeeded.Should().BeTrue();
     }
-    
+
     public TestDataSetup AddUser(out UserEntity user, AddUserArguments args)
     {
         userManager.Should().NotBeNull();
@@ -52,12 +45,17 @@ public partial class TestDataSetup
         return this;
     }
 
-    
+    public TestDataSetup AddUser(AddUserArguments args)
+    {
+        return AddUser(out _, args);
+    }
+
+
     public TestDataSetup AddUser()
     {
         return AddUser(out _);
     }
-    
+
     public TestDataSetup AddUser(out UserEntity user)
     {
         var args = GenerateAddUserArguments();
@@ -67,11 +65,11 @@ public partial class TestDataSetup
 
     public static AddUserArguments GenerateAddUserArguments()
     {
-        return new AddUserArguments()
+        return new AddUserArguments
         {
             Name = GenerateUserName(),
             Email = GenerateUserEmail(),
-            Password = GenerateUserPassword(),
+            Password = GenerateUserPassword()
         };
     }
 
@@ -79,7 +77,7 @@ public partial class TestDataSetup
     {
         return RandomUtil.GetPrefixedRandomHexString("!Passw0rd", Random.Shared.Next(20, 30));
     }
-    
+
     private static string GenerateUserName()
     {
         return RandomUtil.GetPrefixedRandomHexString("UName_", Random.Shared.Next(5, 25));
@@ -88,5 +86,13 @@ public partial class TestDataSetup
     private static string GenerateUserEmail()
     {
         return RandomUtil.GetPrefixedRandomHexString("UMail_", Random.Shared.Next(5, 25)) + "@local.host";
+    }
+
+    public class AddUserArguments
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public List<Roles> Roles { get; set; } = [];
     }
 }

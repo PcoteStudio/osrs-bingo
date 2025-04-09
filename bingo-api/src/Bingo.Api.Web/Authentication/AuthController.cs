@@ -12,7 +12,11 @@ namespace Bingo.Api.Web.Authentication;
 
 [Route("/api/auth")]
 [ApiController]
-public class AuthController(IUserService userService, IAuthService authService, IMapper mapper) : ControllerBase
+public class AuthController(
+    IUserService userService,
+    IAuthService authService,
+    IMapper mapper,
+    ILogger<AuthController> logger) : ControllerBase
 {
     [HttpPost("signup")]
     public async Task<ActionResult<UserResponse>> Signup(AuthSignupArguments args)
@@ -40,10 +44,12 @@ public class AuthController(IUserService userService, IAuthService authService, 
         }
         catch (UserNotFoundException ex)
         {
+            logger.LogWarning(ex.Message, ex);
             return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
         }
         catch (InvalidCredentialsException ex)
         {
+            logger.LogWarning(ex.Message, ex);
             return StatusCode(StatusCodes.Status403Forbidden);
         }
     }
@@ -60,14 +66,17 @@ public class AuthController(IUserService userService, IAuthService authService, 
         }
         catch (InvalidAccessTokenException ex)
         {
+            logger.LogWarning(ex.Message, ex);
             return StatusCode(StatusCodes.Status403Forbidden);
         }
         catch (InvalidRefreshTokenException ex)
         {
+            logger.LogWarning(ex.Message, ex);
             return StatusCode(StatusCodes.Status403Forbidden);
         }
         catch (SecurityTokenException ex)
         {
+            logger.LogWarning(ex.Message, ex);
             return StatusCode(StatusCodes.Status403Forbidden);
         }
     }
@@ -83,10 +92,12 @@ public class AuthController(IUserService userService, IAuthService authService, 
         }
         catch (UserNotFoundException ex)
         {
+            logger.LogWarning(ex.Message, ex);
             return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
         }
         catch (InvalidAccessTokenException ex)
         {
+            logger.LogWarning(ex.Message, ex);
             return StatusCode(StatusCodes.Status403Forbidden);
         }
     }
