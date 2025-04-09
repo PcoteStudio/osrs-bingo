@@ -27,7 +27,7 @@ public static class TestSetupUtil
     public static string GetDatabaseConnectionString(BingoProjects project)
     {
         var databaseFile = Path.Combine("data", GetDatabaseFileName(project));
-        var databasePath = Path.Combine(FileSystemHelper.FindDirectoryContaining(databaseFile), databaseFile);
+        var databasePath = Path.Combine(FileSystemHelper.FindDirectoryContaining( "data"), databaseFile);
         var connectionString = $"Data Source={databasePath};";
         return connectionString;
     }

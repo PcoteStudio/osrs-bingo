@@ -6,8 +6,6 @@ using Bingo.Api.Data;
 using Bingo.Api.Data.Entities;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataSetup;
-using Bingo.Api.Web.Teams;
-using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,12 +19,12 @@ public class AuthenticationFeatureTest
     private ApplicationDbContext _dbContext;
     private IWebHost _host;
     private TestDataSetup _testDataSetup;
-    
+
     [OneTimeSetUp]
-    public void BeforeAll()
+    public async Task BeforeAll()
     {
         _host = TestSetupUtil.BuildWebHost();
-        _host.Start();
+        await _host.StartAsync();
         _baseUrl = TestSetupUtil.GetRequiredHostUri(_host);
     }
 
@@ -35,17 +33,16 @@ public class AuthenticationFeatureTest
     {
         _host.Dispose();
     }
-    
+
     [SetUp]
     public void BeforeEach()
     {
-        var test = _host.Services.GetRequiredService<UserManager<UserEntity>>();
         _dbContext = TestSetupUtil.GetDbContext(BingoProjects.Web);
         _testDataSetup = new TestDataSetup(
-            _dbContext, 
+            _dbContext,
             _host.Services.GetRequiredService<UserManager<UserEntity>>(),
             _host.Services.GetRequiredService<RoleManager<IdentityRole>>()
-            );
+        );
         _client = new HttpClient();
     }
 
@@ -60,23 +57,23 @@ public class AuthenticationFeatureTest
     public async Task Login_ShouldReturnNewTokens()
     {
         // Arrange
-        var loginArgs = new AuthLoginArguments()
+        var loginArgs = new AuthLoginArguments
         {
             Username = "user@local.host",
-            Password = "Password1!",
+            Password = "Password1!"
         };
-        _testDataSetup.AddUser(out var user, new TestDataSetup.AddUserArguments()
+        _testDataSetup.AddUser(out var user, new TestDataSetup.AddUserArguments
         {
             Name = "user",
             Email = loginArgs.Username,
-            Password = loginArgs.Password,
+            Password = loginArgs.Password
         });
         var postContent = JsonSerializer.Serialize(loginArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
-        
+
         // Act
         var response = await _client.PostAsync(new Uri(_baseUrl, "/api/auth/login"), stringContent);
-        
+
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
     }

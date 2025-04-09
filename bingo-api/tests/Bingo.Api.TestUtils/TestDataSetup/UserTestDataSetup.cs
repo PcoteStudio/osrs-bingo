@@ -7,7 +7,7 @@ namespace Bingo.Api.TestUtils.TestDataSetup;
 
 public partial class TestDataSetup
 {
-    public class AddUserArguments()
+    public class AddUserArguments
     {
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

@@ -45,3 +45,9 @@
 
 ## TODO
 * Implement [Verify](https://github.com/VerifyTests/Verify) in feature tests to validate that the output of the API doesn't change unexpectedly between versions.
+
+## TO RUN
+```bash
+winget upgrade Microsoft.DotNet.SDK.9
+dotnet restore
+```

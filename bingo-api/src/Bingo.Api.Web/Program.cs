@@ -1,24 +1,30 @@
 using Bingo.Api.Data;
 using Bingo.Api.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bingo.Api.Web;
 
 public class Program
 {
-    internal static void Main(string[] args)
+    private static async Task CreateAndSeedDatabase(IHost host)
+    {
+        var scope = host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.MigrateAsync();
+        await new DbSeeder(
+            scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>(),
+            scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
+            scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>(),
+            scope.ServiceProvider.GetRequiredService<ILogger>()
+        ).Seed();
+    }
+
+    internal static async Task Main(string[] args)
     {
         var host = CreateHostBuilder(args).Build();
-
-        using var scope = host.Services.CreateScope();
-        var sp = scope.ServiceProvider;
-        new DbSeeder(sp.GetRequiredService<UserManager<UserEntity>>(),
-                sp.GetRequiredService<RoleManager<IdentityRole>>(),
-                sp.GetRequiredService<IWebHostEnvironment>(),
-                sp.GetRequiredService<ILogger>())
-            .Seed().Wait();
-
-        host.Run();
+        await CreateAndSeedDatabase(host);
+        await host.RunAsync();
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args)

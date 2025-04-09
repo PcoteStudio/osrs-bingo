@@ -1,9 +1,8 @@
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Bingo.Api.Data;
-using Bingo.Api.Shared;
 using Bingo.Api.Core.Features.Authentication;
+using Bingo.Api.Core.Features.Database;
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Users;
@@ -13,37 +12,15 @@ using Bingo.Api.Web.Teams;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
 namespace Bingo.Api.Web;
-
-public class DatabaseOptions
-{
-    [Required] public string ConnectionString { get; set; } = string.Empty;
-}
 
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ILogger, Logger<Program>>();
-
-        // TODO Move DB initialization to an extension
-        services
-            .AddOptionsWithValidateOnStart<DatabaseOptions>()
-            .BindConfiguration("Sqlite");
-
-        services.AddDbContext<ApplicationDbContext>((sp, options) =>
-        {
-            const string dataFolder = "data";
-            var dataPath = Path.Combine(FileSystemHelper.FindDirectoryContaining(dataFolder), dataFolder);
-            var connectionString = sp
-                .GetRequiredService<IOptions<DatabaseOptions>>()
-                .Value.ConnectionString
-                .Replace("{pathToData}", dataPath);
-            options.UseSqlite(connectionString);
-        });
 
         services.AddMvc().AddJsonOptions(options =>
         {
@@ -56,6 +33,7 @@ public class Startup
         services.AddOpenApi();
 
         // Features
+        services.AddSqliteDatabase();
         services.AddAuthenticationService();
         services.AddAuthenticationWebService();
         services.AddUserService();
