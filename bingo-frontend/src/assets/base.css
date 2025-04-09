@@ -58,6 +58,11 @@
   font-weight: normal;
 }
 
+@font-face {
+  font-family: 'Runescape';
+  src: url('fonts/runescape.ttf');
+}
+
 body {
   min-height: 100vh;
   color: var(--color-text);
@@ -67,6 +72,7 @@ body {
     background-color 0.5s;
   line-height: 1.6;
   font-family:
+    Runescape,
     Inter,
     -apple-system,
     BlinkMacSystemFont,
@@ -79,8 +85,37 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scrollbar-color: #222222 #111111;
+}
+
+.highlight {
+  color: deepskyblue;
+  outline-color: deepskyblue;
+}
+
+img {
+  image-rendering: pixelated;
+}
+
+.p-select-overlay, .p-treeselect-overlay {
+  max-width: 0;
+}
+
+.p-tree-node-label {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+}
+
+.p-treetable-thead {
+  top: 0;
+}
+
+.highlight-match {
+  font-weight: bold;
+  background-color: darkblue;
 }
