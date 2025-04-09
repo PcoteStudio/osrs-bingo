@@ -1,0 +1,14 @@
+﻿<Solution>
+  <Folder Name="/src/">
+    <Project Path="src\Bingo.Api.Core\Bingo.Api.Core.csproj" Type="Classic C#" />
+    <Project Path="src\Bingo.Api.Data\Bingo.Api.Data.csproj" Type="Classic C#" />
+    <Project Path="src\Bingo.Api.Shared\Bingo.Api.Shared.csproj" Type="Classic C#" />
+    <Project Path="src\Bingo.Api.Web\Bingo.Api.Web.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests\Bingo.Api.Core.Tests\Bingo.Api.Core.Tests.csproj" Type="Classic C#" />
+    <Project Path="tests\Bingo.Api.Data.Tests\Bingo.Api.Data.Tests.csproj" Type="Classic C#" />
+    <Project Path="tests\Bingo.Api.TestUtils\Bingo.Api.TestUtils.csproj" Type="Classic C#" />
+    <Project Path="tests\Bingo.Api.Web.Tests\Bingo.Api.Web.Tests.csproj" Type="Classic C#" />
+  </Folder>
+</Solution>
