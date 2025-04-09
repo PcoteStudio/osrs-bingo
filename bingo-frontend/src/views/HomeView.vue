@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import NotificationComponent from '@/components/Notification/NotificationComponent.vue'
+import SideMenuContainer from '@/components/SideMenu/SideMenuContainer.vue'
 </script>
 
 <template>
@@ -11,6 +12,7 @@ import NotificationComponent from '@/components/Notification/NotificationCompone
     wololo
 
     <!--  Regular components  -->
+    <SideMenuContainer />
   </main>
 </template>
 

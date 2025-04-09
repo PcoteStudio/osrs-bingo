@@ -8,17 +8,33 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Avatar: typeof import('primevue/avatar')['default']
+    Button: typeof import('primevue/button')['default']
+    Drawer: typeof import('primevue/drawer')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']
     IconEcosystem: typeof import('./src/components/icons/IconEcosystem.vue')['default']
     IconSupport: typeof import('./src/components/icons/IconSupport.vue')['default']
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
+    MenuItem: typeof import('./src/components/Menu/MenuItem.vue')['default']
+    MenuSection: typeof import('./src/components/Menu/MenuSection.vue')['default']
     NotificationComponent: typeof import('./src/components/Notification/NotificationComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Sidebar: typeof import('primevue/sidebar')['default']
+    SideMenu: typeof import('./src/components/SideMenu/SideMenu.vue')['default']
+    SideMenuBody: typeof import('./src/components/SideMenu/SideMenuBody.vue')['default']
+    SideMenuContainer: typeof import('./src/components/SideMenu/SideMenuContainer.vue')['default']
+    SideMenuFooter: typeof import('./src/components/SideMenu/SideMenuFooter.vue')['default']
+    SideMenuHeader: typeof import('./src/components/SideMenu/SideMenuHeader.vue')['default']
+    SubMenuItem: typeof import('./src/components/Menu/SubMenuItem.vue')['default']
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
     Toast: typeof import('primevue/toast')['default']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    Ripple: typeof import('primevue/ripple')['default']
+    StyleClass: typeof import('primevue/styleclass')['default']
   }
 }
