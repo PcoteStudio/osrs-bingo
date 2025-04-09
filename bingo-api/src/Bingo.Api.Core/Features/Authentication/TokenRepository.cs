@@ -15,7 +15,6 @@ public class TokenRepository(ApplicationDbContext context)
 {
     public Task<TokenEntity?> GetByUsernameAsync(string username)
     {
-        return Context.Tokens
-            .FirstOrDefaultAsync(t => t.Username == username);
+        return Context.Tokens.FirstOrDefaultAsync(t => t.Username == username);
     }
 }

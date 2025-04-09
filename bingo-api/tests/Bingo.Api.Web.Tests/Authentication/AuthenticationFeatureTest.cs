@@ -74,18 +74,26 @@ public class AuthenticationFeatureTest
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
-        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/auth/login"), stringContent);
+        var loginResponse = await _client.PostAsync(new Uri(_baseUrl, "/api/auth/login"), stringContent);
 
         // Assert response status
-        await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
+        await Expect.StatusCodeFromResponse(HttpStatusCode.OK, loginResponse);
 
         // Assert response content
-        var responseContent = await response.Content.ReadAsStringAsync();
+        var responseContent = await loginResponse.Content.ReadAsStringAsync();
         var returnedTokens = JsonSerializer.Deserialize<TokenResponse>(responseContent, JsonSerializerOptions.Web);
         returnedTokens.Should().NotBeNull();
         returnedTokens.AccessToken.Length.Should().BeGreaterThan(0);
         returnedTokens.RefreshToken.Length.Should().BeGreaterThan(0);
 
-        // TODO validate the token by calling the user route to get my user
+        // Arrange
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", returnedTokens.AccessToken);
+
+        // Act
+        var meResponse = await _client.PostAsync(new Uri(_baseUrl, "/api/users/me"), stringContent);
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.OK, meResponse);
     }
 }

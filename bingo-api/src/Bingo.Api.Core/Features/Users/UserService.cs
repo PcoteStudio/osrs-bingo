@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.Core.Features.Users.Exceptions;
 using Bingo.Api.Data;
@@ -10,6 +11,7 @@ namespace Bingo.Api.Core.Features.Users;
 public interface IUserService
 {
     Task<UserEntity> SignupUser(AuthSignupArguments args);
+    Task<UserEntity> GetMe(ClaimsPrincipal principal);
 }
 
 public class UserService(
@@ -20,13 +22,21 @@ public class UserService(
 {
     public async Task<UserEntity> SignupUser(AuthSignupArguments args)
     {
-        var existingUser = await userManager.FindByNameAsync(args.Email);
+        var existingUser = await userManager.FindByEmailAsync(args.Email);
         if (existingUser is not null) throw new EmailAlreadyInUseException(args.Email);
 
         var user = userFactory.Create(args);
         user = await CreateUser(user, args.Password);
         user = await AddRoleToUser(user, Roles.User);
         return user;
+    }
+
+    public async Task<UserEntity> GetMe(ClaimsPrincipal principal)
+    {
+        if (principal.Identity?.Name is null) throw new InvalidAccessTokenException();
+        var existingUser = await userManager.FindByNameAsync(principal.Identity.Name);
+        if (existingUser is null) throw new UserNotFoundException(principal.Identity.Name);
+        return existingUser;
     }
 
     private async Task<UserEntity> CreateUser(UserEntity user, string password)
