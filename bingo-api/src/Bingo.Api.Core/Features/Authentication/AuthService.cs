@@ -87,7 +87,7 @@ public class AuthService(
             Issuer = jwtOptions.Value.ValidIssuer,
             Audience = jwtOptions.Value.ValidAudience,
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddMinutes(60),
+            Expires = DateTime.UtcNow.AddMinutes(60),
             SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         };
 

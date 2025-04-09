@@ -1,6 +1,5 @@
 using Bingo.Api.Data.Constants;
 using Bingo.Api.Data.Entities;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -10,7 +9,7 @@ namespace Bingo.Api.Data;
 public class DbSeeder(
     UserManager<UserEntity> userManager,
     RoleManager<IdentityRole> roleManager,
-    IWebHostEnvironment environment,
+    IHostEnvironment environment,
     ILogger logger)
 {
     private async Task CreateRoleIfNotExistsAsync(string role)
