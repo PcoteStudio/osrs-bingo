@@ -1,0 +1,13 @@
+{
+  "global": {
+    "title": "OSRS Planner"
+  },
+  "home": {
+    "title": "Home"
+  },
+  "about": {
+    "title": "About"
+  },
+  "quests": "Quests",
+  "items": "Items"
+}
