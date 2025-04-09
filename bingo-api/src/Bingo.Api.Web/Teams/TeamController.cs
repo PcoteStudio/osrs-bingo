@@ -95,14 +95,22 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
         }
     }
 
-    [HttpDelete("{teamId:min(0)}/players/{playerId:min(0)}")]
+    [HttpDelete("{teamId:min(0)}/players/{playerName:minlength(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<TeamResponse> RemoveTeamPlayerAsync(
-        [FromRoute] int teamId,
-        [FromRoute] int playerId)
+    public async Task<ActionResult<TeamResponse>> RemoveTeamPlayerAsync(
+        [FromRoute] int teamId, [FromRoute] string playerName)
     {
-        // EnsureIsAdmin();
-        throw new NotImplementedException();
+        try
+        {
+            // EnsureIsAdmin();
+            var team = await teamService.RemoveTeamPlayerAsync(teamId, playerName);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
+        }
+        catch (TeamNotFoundException ex)
+        {
+            logger.LogWarning(ex.Message, ex);
+            return NotFound();
+        }
     }
 }
