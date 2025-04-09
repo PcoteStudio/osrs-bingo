@@ -10,8 +10,11 @@ using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Web.Authentication;
 using Bingo.Api.Web.Players;
 using Bingo.Api.Web.Teams;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Scalar.AspNetCore;
 
 namespace Bingo.Api.Web;
 
@@ -48,6 +51,9 @@ public class Startup
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         });
+        
+        // Swagger
+        services.AddOpenApi();
 
         // Features
         services.AddAuthenticationService();
@@ -59,7 +65,7 @@ public class Startup
         services.AddTeamWebService();
     }
 
-    public void Configure(IApplicationBuilder app, ILogger<Startup> logger)
+    public void Configure(IApplicationBuilder app, ILogger<Startup> logger, IServer server)
     {
         app.UseRouting();
         app.Use(async (context, next) =>
@@ -86,7 +92,12 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapOpenApi();
+            endpoints.MapScalarApiReference();
+        });
 
         app.Run(async context =>
         {
@@ -96,5 +107,7 @@ public class Startup
                 new { Message = "Invalid route: " + context.Request.Method + " " + context.Request.Path }
             );
         });
+        
+        logger.LogInformation($"API URL: {new Uri(new Uri(server.Features.Get<IServerAddressesFeature>()?.Addresses.First()!), "scalar/v1") }");
     }
 }
