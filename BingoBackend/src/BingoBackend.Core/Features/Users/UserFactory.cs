@@ -5,12 +5,12 @@ namespace BingoBackend.Core.Features.Users;
 
 public interface IUserFactory
 {
-    UserEntity Create(UserSignupArguments args);
+    UserEntity Create(AuthSignupArguments args);
 }
 
 public class UserFactory : IUserFactory
 {
-    public UserEntity Create(UserSignupArguments args)
+    public UserEntity Create(AuthSignupArguments args)
     {
         return new UserEntity
         {

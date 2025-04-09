@@ -7,6 +7,6 @@ public class TokenResponseMappingProfile : Profile
 {
     public TokenResponseMappingProfile()
     {
-        CreateMap<TokenRefreshArguments, TokenResponse>();
+        CreateMap<AuthRefreshArguments, TokenResponse>();
     }
 }

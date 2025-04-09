@@ -9,7 +9,7 @@ namespace BingoBackend.Core.Features.Users;
 
 public interface IUserService
 {
-    Task<UserEntity> SignupUser(UserSignupArguments args);
+    Task<UserEntity> SignupUser(AuthSignupArguments args);
 }
 
 public class UserService(
@@ -18,7 +18,7 @@ public class UserService(
     ApplicationDbContext dbContext
 ) : IUserService
 {
-    public async Task<UserEntity> SignupUser(UserSignupArguments args)
+    public async Task<UserEntity> SignupUser(AuthSignupArguments args)
     {
         var existingUser = await userManager.FindByNameAsync(args.Email);
         if (existingUser is not null) throw new EmailAlreadyInUseException(args.Email);

@@ -13,22 +13,23 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BingoBackend.Core.Features.Authentication;
 
-public interface ITokenService
+public interface IAuthService
 {
-    Task<TokenRefreshArguments> Login(UserLoginArguments args);
+    Task<AuthRefreshArguments> Login(AuthLoginArguments args);
     string GenerateAccessToken(IEnumerable<Claim> claims);
     string GenerateRefreshToken();
     ClaimsPrincipal GetPrincipalFromExpiredToken(string accessToken);
-    Task<TokenRefreshArguments> RefreshToken(TokenRefreshArguments tokenRefreshArguments);
+    Task<AuthRefreshArguments> RefreshToken(AuthRefreshArguments args);
+    Task RevokeToken(ClaimsPrincipal principal);
 }
 
-public class TokenService(
+public class AuthService(
     IOptions<JwtOptions> jwtOptions,
     UserManager<UserEntity> userManager,
     ITokenRepository tokenRepository,
-    ApplicationDbContext dbContext) : ITokenService
+    ApplicationDbContext dbContext) : IAuthService
 {
-    public async Task<TokenRefreshArguments> Login(UserLoginArguments args)
+    public async Task<AuthRefreshArguments> Login(AuthLoginArguments args)
     {
         var user = await userManager.FindByNameAsync(args.Username);
         if (user is null) throw new UserNotFoundException(args.Username);
@@ -66,7 +67,7 @@ public class TokenService(
 
         await dbContext.SaveChangesAsync();
 
-        return new TokenRefreshArguments
+        return new AuthRefreshArguments
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken
@@ -124,15 +125,15 @@ public class TokenService(
         return principal;
     }
 
-    public async Task<TokenRefreshArguments> RefreshToken(TokenRefreshArguments tokenRefreshArguments)
+    public async Task<AuthRefreshArguments> RefreshToken(AuthRefreshArguments args)
     {
-        var principal = GetPrincipalFromExpiredToken(tokenRefreshArguments.AccessToken);
-        if (principal.Identity is null) throw new InvalidAccessTokenException();
+        var principal = GetPrincipalFromExpiredToken(args.AccessToken);
+        if (principal.Identity?.Name is null) throw new InvalidAccessTokenException();
         var username = principal.Identity.Name;
 
         var tokenInfo = dbContext.Tokens.SingleOrDefault(u => u.Username == username);
         if (tokenInfo == null
-            || tokenInfo.RefreshToken != tokenRefreshArguments.RefreshToken
+            || tokenInfo.RefreshToken != args.RefreshToken
             || tokenInfo.ExpiredAt <= DateTime.UtcNow)
             throw new InvalidRefreshTokenException();
 
@@ -141,10 +142,22 @@ public class TokenService(
         tokenInfo.RefreshToken = newRefreshToken;
         await dbContext.SaveChangesAsync();
 
-        return new TokenRefreshArguments
+        return new AuthRefreshArguments
         {
             AccessToken = newAccessToken,
             RefreshToken = newRefreshToken
         };
+    }
+
+    public async Task RevokeToken(ClaimsPrincipal principal)
+    {
+        if (principal.Identity?.Name is null) throw new InvalidAccessTokenException();
+        var username = principal.Identity.Name;
+
+        var user = dbContext.Tokens.SingleOrDefault(u => u.Username == username);
+        if (user == null) throw new UserNotFoundException(username);
+
+        user.RefreshToken = string.Empty;
+        await dbContext.SaveChangesAsync();
     }
 }

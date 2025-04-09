@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BingoBackend.Core.Features.Authentication.Arguments;
 
-public class UserSignupArguments
+public class AuthSignupArguments
 {
     [Required] [MaxLength(30)] public string Name { get; set; } = string.Empty;
 

@@ -46,6 +46,6 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<ITokenRepository, TokenRepository>();
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthService, AuthService>();
     }
 }

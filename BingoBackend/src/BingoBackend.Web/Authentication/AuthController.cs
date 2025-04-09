@@ -4,6 +4,7 @@ using BingoBackend.Core.Features.Authentication.Arguments;
 using BingoBackend.Core.Features.Users;
 using BingoBackend.Core.Features.Users.Exceptions;
 using BingoBackend.Web.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,10 +12,10 @@ namespace BingoBackend.Web.Authentication;
 
 [Route("/api/auth")]
 [ApiController]
-public class AuthController(IUserService userService, ITokenService tokenService, IMapper mapper) : ControllerBase
+public class AuthController(IUserService userService, IAuthService authService, IMapper mapper) : ControllerBase
 {
     [HttpPost("signup")]
-    public async Task<ActionResult<UserResponse>> Signup(UserSignupArguments args)
+    public async Task<ActionResult<UserResponse>> Signup(AuthSignupArguments args)
     {
         try
         {
@@ -29,17 +30,17 @@ public class AuthController(IUserService userService, ITokenService tokenService
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(UserLoginArguments args)
+    public async Task<IActionResult> Login(AuthLoginArguments args)
     {
         try
         {
-            var tokenModel = await tokenService.Login(args);
+            var tokenModel = await authService.Login(args);
             var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
             return StatusCode(StatusCodes.Status200OK, tokenResponse);
         }
         catch (UserNotFoundException ex)
         {
-            return StatusCode(StatusCodes.Status403Forbidden);
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
         }
         catch (InvalidCredentialsException ex)
         {
@@ -47,12 +48,13 @@ public class AuthController(IUserService userService, ITokenService tokenService
         }
     }
 
+    [Authorize]
     [HttpPost("refresh")]
-    public async Task<ActionResult<TokenResponse>> RefreshToken(TokenRefreshArguments args)
+    public async Task<ActionResult<TokenResponse>> RefreshToken(AuthRefreshArguments args)
     {
         try
         {
-            var tokenModel = await tokenService.RefreshToken(args);
+            var tokenModel = await authService.RefreshToken(args);
             var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
             return StatusCode(StatusCodes.Status200OK, tokenResponse);
         }
@@ -65,6 +67,25 @@ public class AuthController(IUserService userService, ITokenService tokenService
             return StatusCode(StatusCodes.Status403Forbidden);
         }
         catch (SecurityTokenException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden);
+        }
+    }
+
+    [Authorize]
+    [HttpPost("revoke")]
+    public async Task<IActionResult> Revoke()
+    {
+        try
+        {
+            await authService.RevokeToken(User);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+        catch (UserNotFoundException ex)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+        }
+        catch (InvalidAccessTokenException ex)
         {
             return StatusCode(StatusCodes.Status403Forbidden);
         }
