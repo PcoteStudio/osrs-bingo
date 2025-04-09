@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using BingoBackend.Core.Features.Authentication.Arguments;
 using BingoBackend.Core.Features.Users;
 using BingoBackend.Core.Features.Users.Exceptions;
@@ -77,8 +76,7 @@ public class AuthService(
     public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var authSigningKey = new SymmetricSecurityKey
-            (Encoding.UTF8.GetBytes(jwtOptions.Value.Secret));
+        var authSigningKey = new SymmetricSecurityKey(Convert.FromHexString(jwtOptions.Value.Secret));
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -86,8 +84,7 @@ public class AuthService(
             Audience = jwtOptions.Value.ValidAudience,
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.Now.AddMinutes(60),
-            SigningCredentials = new SigningCredentials
-                (authSigningKey, SecurityAlgorithms.HmacSha256)
+            SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -112,7 +109,7 @@ public class AuthService(
             ValidIssuer = jwtOptions.Value.ValidIssuer,
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Value.Secret))
+            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromHexString(jwtOptions.Value.Secret))
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
