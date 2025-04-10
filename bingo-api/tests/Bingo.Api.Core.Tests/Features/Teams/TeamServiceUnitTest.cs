@@ -1,8 +1,7 @@
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams;
-using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Data;
-using Bingo.Api.Data.Entities;
+using Bingo.Api.TestUtils.TestDataGenerators;
 using Moq;
 
 namespace Bingo.Api.Core.Tests.Features.Teams;
@@ -39,10 +38,11 @@ public class TeamServiceUnitTest
     public async Task CreateTeam_ShouldCreateATeamWithTheSpecifiedArgumentsAndReturnIt()
     {
         // Arrange
-        var teamArguments = new TeamCreateArguments();
-        var team = new TeamEntity();
+        var eventId = Random.Shared.Next();
+        var teamArgs = TestDataGenerator.GenerateTeamCreateArguments();
+        var team = TestDataGenerator.GenerateTeamEntity();
 
-        _teamFactoryMock.Setup(x => x.Create(teamArguments))
+        _teamFactoryMock.Setup(x => x.Create(eventId, teamArgs))
             .Returns(team).Verifiable(Times.Once);
         _teamRepositoryMock.Setup(x => x.Add(team))
             .Verifiable(Times.Once);
@@ -50,7 +50,7 @@ public class TeamServiceUnitTest
             .ReturnsAsync(1).Verifiable(Times.Once);
 
         // Act
-        var actualTeam = await _service.CreateTeamAsync(teamArguments);
+        var actualTeam = await _service.CreateTeamAsync(eventId, teamArgs);
 
         // Assert
         Assert.That(actualTeam, Is.EqualTo(team));
@@ -58,17 +58,17 @@ public class TeamServiceUnitTest
     }
 
     [Test]
-    public async Task GetTeams_ShouldReturnAllTeams()
+    public async Task GetEventTeamsAsync_ShouldReturnAllTeams()
     {
         // Arrange
-        const int entitiesCount = 3;
-        var teams = Enumerable.Range(0, entitiesCount).Select(_ => new TeamEntity()).ToList();
+        var eventId = Random.Shared.Next();
+        var teams = TestDataGenerator.GenerateTeamEntities(3);
 
-        _teamRepositoryMock.Setup(x => x.GetAllAsync())
+        _teamRepositoryMock.Setup(x => x.GetAllByEventIdAsync(eventId))
             .ReturnsAsync(teams).Verifiable(Times.Once);
 
         // Act
-        var actualTeams = await _service.GetTeamsAsync();
+        var actualTeams = await _service.GetEventTeamsAsync(eventId);
 
         // Assert
         Assert.That(actualTeams, Is.EquivalentTo(teams));
@@ -78,14 +78,14 @@ public class TeamServiceUnitTest
     [Test]
     public async Task GetTeam_ShouldReturnTheSpecifiedTeam()
     {
-        var teamId = Random.Shared.Next();
-        var team = new TeamEntity();
+        // Arrange
+        var team = TestDataGenerator.GenerateTeamEntity();
 
-        _teamRepositoryMock.Setup(x => x.GetCompleteByIdAsync(teamId))
+        _teamRepositoryMock.Setup(x => x.GetCompleteByIdAsync(team.Id))
             .ReturnsAsync(team).Verifiable(Times.Once);
 
         // Act
-        var actualTeam = await _service.GetTeamAsync(teamId);
+        var actualTeam = await _service.GetTeamAsync(team.Id);
 
         // Assert
         Assert.That(actualTeam, Is.EqualTo(team));

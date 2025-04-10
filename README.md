@@ -51,3 +51,17 @@
 winget upgrade Microsoft.DotNet.SDK.9
 dotnet restore
 ```
+## Setup
+### Configure a JWT secret
+```bash
+cd bingo-api/src/Bingo.Api.Web
+dotnet user-secrets set "JWT:Secret" "your-32-characters-long-jwt-secret-key"
+```
+## Entity Framework
+### Add a new migration
+```bash
+cd bingo-api
+dotnet.exe ef migrations add NameOfTheMigration --project src\Bingo.Api.Data\Bingo.Api.Data.csproj --startup-project src\Bingo.Api.Web\Bingo.Api.Web.csproj --context Bingo.Api.Data.ApplicationDbContext --configuration Debug --verbose --output-dir Migrations
+```
+### Updating the databases
+Both the local and test databases are automatically migrated upon launching their respective projects.

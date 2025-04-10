@@ -2,14 +2,14 @@ using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Teams.Exceptions;
 using Bingo.Api.Data;
-using Bingo.Api.Data.Entities;
+using Bingo.Api.Data.Entities.Events;
 
 namespace Bingo.Api.Core.Features.Teams;
 
 public interface ITeamService
 {
-    Task<TeamEntity> CreateTeamAsync(TeamCreateArguments args);
-    Task<List<TeamEntity>> GetTeamsAsync();
+    Task<TeamEntity> CreateTeamAsync(int eventId, TeamCreateArguments args);
+    Task<List<TeamEntity>> GetEventTeamsAsync(int eventId);
     Task<TeamEntity> GetTeamAsync(int teamId);
     Task<TeamEntity> UpdateTeamAsync(int teamId, TeamUpdateArguments args);
     Task<TeamEntity> AddTeamPlayers(int teamId, TeamPlayersArguments args);
@@ -24,17 +24,17 @@ public class TeamService(
     ApplicationDbContext dbContext
 ) : ITeamService
 {
-    public async Task<TeamEntity> CreateTeamAsync(TeamCreateArguments args)
+    public async Task<TeamEntity> CreateTeamAsync(int eventId, TeamCreateArguments args)
     {
-        var team = teamFactory.Create(args);
+        var team = teamFactory.Create(eventId, args);
         teamRepository.Add(team);
         await dbContext.SaveChangesAsync();
         return team;
     }
 
-    public Task<List<TeamEntity>> GetTeamsAsync()
+    public Task<List<TeamEntity>> GetEventTeamsAsync(int eventId)
     {
-        return teamRepository.GetAllAsync();
+        return teamRepository.GetAllByEventIdAsync(eventId);
     }
 
     public async Task<TeamEntity> GetTeamAsync(int teamId)

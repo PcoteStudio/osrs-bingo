@@ -3,7 +3,7 @@ using Bingo.Api.Data.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 
-namespace Bingo.Api.TestUtils.TestDataSetup;
+namespace Bingo.Api.TestUtils.TestDataSetups;
 
 public partial class TestDataSetup
 {

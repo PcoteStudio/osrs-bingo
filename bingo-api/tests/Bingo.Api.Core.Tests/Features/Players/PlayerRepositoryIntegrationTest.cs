@@ -1,7 +1,7 @@
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Data;
 using Bingo.Api.TestUtils;
-using Bingo.Api.TestUtils.TestDataSetup;
+using Bingo.Api.TestUtils.TestDataSetups;
 using FluentAssertions;
 
 namespace Bingo.Api.Core.Tests.Features.Players;

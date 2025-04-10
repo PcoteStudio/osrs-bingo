@@ -63,8 +63,8 @@ public class DbSeeder(
 
         if (!userManager.Users.Any())
         {
-            await CreateDevelopmentUser(Roles.Admin.ToString(), "admin@local.host", "admin@local.host", "Password1!");
-            await CreateDevelopmentUser(Roles.User.ToString(), "user@local.host", "user@local.host", "Password1!");
+            await CreateDevelopmentUser(Roles.Admin.ToString(), "admin@local.host", "Admin", "Password1!");
+            await CreateDevelopmentUser(Roles.User.ToString(), "user@local.host", "User", "Password1!");
         }
     }
 }

@@ -1,6 +1,6 @@
-using Bingo.Api.Data.Entities;
+using Bingo.Api.Data.Entities.Events;
 
-namespace Bingo.Api.TestUtils.TestDataSetup;
+namespace Bingo.Api.TestUtils.TestDataSetups;
 
 public partial class TestDataSetup
 {
@@ -11,10 +11,8 @@ public partial class TestDataSetup
 
     public TestDataSetup AddPlayer(out PlayerEntity player, Action<PlayerEntity>? customizer = null)
     {
-        player = GeneratePlayerEntity(customizer);
-        dbContext.Players.Add(player);
-        dbContext.SaveChanges();
-        return this;
+        player = GeneratePlayerEntity();
+        return SaveEntity(player, customizer);
     }
 
     public TestDataSetup AddPlayers(int count, Action<PlayerEntity>? customizer = null)
@@ -32,18 +30,14 @@ public partial class TestDataSetup
         return this;
     }
 
-    private static PlayerEntity GeneratePlayerEntity(Action<PlayerEntity>? customizer)
+    private PlayerEntity GeneratePlayerEntity()
     {
         var player = new PlayerEntity
         {
-            Name = GeneratePlayerName()
+            Name = RandomUtil.GetPrefixedRandomHexString("PName_", Random.Shared.Next(5, 25))
         };
-        customizer?.Invoke(player);
+        var lastTeamAdded = GetLast<TeamEntity>();
+        if (lastTeamAdded is not null) player.Teams.Add(lastTeamAdded);
         return player;
-    }
-
-    private static string GeneratePlayerName()
-    {
-        return RandomUtil.GetPrefixedRandomHexString("PName_", Random.Shared.Next(5, 25));
     }
 }

@@ -1,6 +1,5 @@
 using AutoMapper;
-using Bingo.Api.Core.Features.Teams;
-using Bingo.Api.TestUtils.TestDataSetup;
+using Bingo.Api.TestUtils.TestDataGenerators;
 using Bingo.Api.Web.Teams;
 
 namespace Bingo.Api.Web.Tests.Teams;
@@ -12,29 +11,27 @@ public class PlayersMappingProfileUnitTest
     [OneTimeSetUp]
     public void BeforeAll()
     {
-        _teamFactory = new TeamFactory();
         _mapper = new MapperConfiguration(
             c => c.AddMaps(typeof(TeamsMappingProfile).Assembly)
         ).CreateMapper();
     }
 
     private IMapper _mapper;
-    private ITeamFactory _teamFactory;
 
     [Test]
     public void TeamEntity_ShouldBeProperlyMappedToATeamResponse()
     {
         // Arrange
-        var teamEntity = _teamFactory.Create(TestDataSetup.GenerateTeamCreateArguments());
+        var team = TestDataGenerator.GenerateTeamEntity();
 
         // Act
-        var teamResponse = _mapper.Map<TeamResponse>(teamEntity);
+        var teamResponse = _mapper.Map<TeamResponse>(team);
 
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(teamResponse.Id, Is.EqualTo(teamEntity.Id));
-            Assert.That(teamResponse.Name, Is.EqualTo(teamEntity.Name));
+            Assert.That(teamResponse.Id, Is.EqualTo(team.Id));
+            Assert.That(teamResponse.Name, Is.EqualTo(team.Name));
         });
     }
 }

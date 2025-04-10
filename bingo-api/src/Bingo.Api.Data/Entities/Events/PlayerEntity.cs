@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bingo.Api.Data.Entities;
+namespace Bingo.Api.Data.Entities.Events;
 
 [Table("Players")]
 [Index(nameof(Name), IsUnique = true)]

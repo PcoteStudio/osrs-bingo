@@ -1,19 +1,20 @@
 using Bingo.Api.Core.Features.Teams.Arguments;
-using Bingo.Api.Data.Entities;
+using Bingo.Api.Data.Entities.Events;
 
 namespace Bingo.Api.Core.Features.Teams;
 
 public interface ITeamFactory
 {
-    TeamEntity Create(TeamCreateArguments args);
+    TeamEntity Create(int eventId, TeamCreateArguments args);
 }
 
 public class TeamFactory : ITeamFactory
 {
-    public TeamEntity Create(TeamCreateArguments args)
+    public TeamEntity Create(int eventId, TeamCreateArguments args)
     {
         return new TeamEntity
         {
+            EventId = eventId,
             Name = args.Name
         };
     }

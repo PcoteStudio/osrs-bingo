@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Bingo.Api.Data\Bingo.Api.Data.csproj" />
-        <ProjectReference Include="..\Bingo.Api.Shared\Bingo.Api.Shared.csproj" />
+        <ProjectReference Include="..\Bingo.Api.Data\Bingo.Api.Data.csproj"/>
+        <ProjectReference Include="..\Bingo.Api.Shared\Bingo.Api.Shared.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -21,11 +21,4 @@
     <ItemGroup>
         <Folder Include="Features\Users\Arguments\"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Bingo.Api.Web">
-        <HintPath>..\..\tests\Bingo.Api.Web.Tests\bin\Debug\net9.0\Bingo.Api.Web.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
 </Project>

@@ -1,7 +1,7 @@
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Data;
 using Bingo.Api.TestUtils;
-using Bingo.Api.TestUtils.TestDataSetup;
+using Bingo.Api.TestUtils.TestDataSetups;
 using FluentAssertions;
 
 namespace Bingo.Api.Core.Tests.Features.Teams;
@@ -33,18 +33,22 @@ public class TeamRepositoryIntegrationTest
     {
         // Arrange
         _testDataSetup
-            .AddPlayers(3)
-            .AddPlayers(4, out var players)
+            .AddEvent()
+            .AddTeam(out var team)
             .AddPlayers(2)
-            .AddTeam(out var team, t => t.Players.AddRange(players));
+            .AddTeam()
+            .AddPlayers(3);
 
         // Act
         var actualTeam = await _teamRepository.GetCompleteByIdAsync(team.Id);
 
         // Assert
         actualTeam.Should().NotBeNull();
-        actualTeam.Players.Should().BeEquivalentTo(players, options => options.IgnoringCyclicReferences());
-        actualTeam.Should().BeEquivalentTo(team, options => options.IgnoringCyclicReferences());
+        actualTeam.Id.Should().Be(team.Id);
+        actualTeam.Players.Count.Should().Be(team.Players.Count);
+        actualTeam.Players[0].Id.Should().Be(team.Players[0].Id);
+        actualTeam.Players[1].Id.Should().Be(team.Players[1].Id);
+        actualTeam.Event.Id.Should().Be(team.EventId);
     }
 
     [Test]

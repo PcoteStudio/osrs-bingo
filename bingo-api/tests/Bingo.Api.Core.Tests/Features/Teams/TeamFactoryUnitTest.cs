@@ -1,5 +1,6 @@
 using Bingo.Api.Core.Features.Teams;
-using Bingo.Api.TestUtils.TestDataSetup;
+using Bingo.Api.TestUtils.TestDataGenerators;
+using FluentAssertions;
 
 namespace Bingo.Api.Core.Tests.Features.Teams;
 
@@ -19,27 +20,30 @@ public class TeamFactoryUnitTest
     public void Create_ShouldReturnAProperlyMappedTeamEntity()
     {
         // Arrange
-        var args = TestDataSetup.GenerateTeamCreateArguments();
+        var eventId = Random.Shared.Next();
+        var args = TestDataGenerator.GenerateTeamCreateArguments();
 
         // Act
-        var createdTeam = _teamFactory.Create(args);
+        var createdTeam = _teamFactory.Create(eventId, args);
 
         // Assert
-        Assert.That(createdTeam, Is.Not.Null);
-        Assert.That(createdTeam.Name, Is.EqualTo(args.Name));
+        createdTeam.Should().NotBeNull();
+        createdTeam.EventId.Should().Be(eventId);
+        createdTeam.Name.Should().Be(args.Name);
     }
 
     [Test]
     public void Create_ShouldNotSetTheIdOfTheTeamEntity()
     {
         // Arrange
-        var args = TestDataSetup.GenerateTeamCreateArguments();
+        var eventId = Random.Shared.Next();
+        var args = TestDataGenerator.GenerateTeamCreateArguments();
 
         // Act
-        var createdTeam = _teamFactory.Create(args);
+        var createdTeam = _teamFactory.Create(eventId, args);
 
         // Assert
-        Assert.That(createdTeam, Is.Not.Null);
-        Assert.That(createdTeam.Id, Is.Default);
+        createdTeam.Should().NotBeNull();
+        createdTeam.Id.Should().Be(0);
     }
 }

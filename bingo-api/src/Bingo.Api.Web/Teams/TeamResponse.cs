@@ -5,6 +5,7 @@ namespace Bingo.Api.Web.Teams;
 public class TeamResponse
 {
     public int Id { get; set; }
+    public int EventId { get; set; }
     public string Name { get; set; } = string.Empty;
     public List<PlayerResponse> Players { get; set; } = [];
 }

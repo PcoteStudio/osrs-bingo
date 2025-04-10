@@ -1,3 +1,4 @@
+using Bingo.Api.TestUtils.TestDataSetups;
 using NUnit.Framework;
 
 namespace Bingo.Api.TestUtils;
@@ -10,7 +11,8 @@ public static class TestProjectStepsUtil
 
         // Add a random amount of teams to simulate an existing DB
         var dbContext = TestSetupUtil.GetDbContext(project);
-        var testDataSetup = new TestDataSetup.TestDataSetup(dbContext);
+        var testDataSetup = new TestDataSetup(dbContext);
+        testDataSetup.AddEvent();
         testDataSetup.AddTeams(Random.Shared.Next(5, 15));
     }
 

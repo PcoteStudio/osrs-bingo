@@ -5,7 +5,7 @@ using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.Data;
 using Bingo.Api.Data.Entities;
 using Bingo.Api.TestUtils;
-using Bingo.Api.TestUtils.TestDataSetup;
+using Bingo.Api.TestUtils.TestDataSetups;
 using Bingo.Api.Web.Authentication;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;

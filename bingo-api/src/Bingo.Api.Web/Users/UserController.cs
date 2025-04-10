@@ -1,7 +1,6 @@
 using AutoMapper;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Core.Features.Users.Exceptions;
-using Bingo.Api.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +20,7 @@ public class AuthController(
         try
         {
             var user = await userService.GetMe(User);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<UserEntity>(user));
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<UserResponse>(user));
         }
         catch (UserNotFoundException ex)
         {

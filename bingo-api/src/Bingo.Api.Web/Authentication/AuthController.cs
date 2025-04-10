@@ -34,7 +34,7 @@ public class AuthController(
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(AuthLoginArguments args)
+    public async Task<ActionResult<TokenResponse>> Login(AuthLoginArguments args)
     {
         try
         {
