@@ -4,11 +4,19 @@ export const useGlobalStore = defineStore('globalStore', {
   state: () => {
     const notifications: Notification[] = [];
 
+    const loginModalState = {
+      showModal: true,
+    };
+
     return {
-      notifications: notifications
+      notifications: notifications,
+      loginModalState: loginModalState,
     };
   },
   getters: {
+    getLoginModalState: (state) => {
+      return state.loginModalState;
+    },
   },
   actions: {
     addNotification(notification: Notification) {

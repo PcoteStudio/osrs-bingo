@@ -2,6 +2,7 @@
 import NotificationComponent from '@/components/Notification/NotificationComponent.vue'
 import SideMenuContainer from '@/components/SideMenu/SideMenuContainer.vue'
 import GameBoard from '@/components/GameBoard.vue'
+import LoginModal from '@/components/LoginModal.vue';
 </script>
 
 <template>
@@ -10,6 +11,7 @@ import GameBoard from '@/components/GameBoard.vue'
     <NotificationComponent />
 
     <!--  Modals  -->
+    <LoginModal />
 
     <!--  Regular components  -->
     <SideMenuContainer />

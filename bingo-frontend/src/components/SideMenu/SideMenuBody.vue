@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { MenuSectionType } from '@/types/MenuTypes.ts'
-import MenuSection from '@/components/Menu/MenuSection.vue'
-import { faCog } from '@fortawesome/free-solid-svg-icons'
+import type { MenuSectionType } from '@/types/MenuTypes.ts';
+import MenuSection from '@/components/Menu/MenuSection.vue';
 
 const menuSections = ref<MenuSectionType[]>([
   {
