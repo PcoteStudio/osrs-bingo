@@ -1,22 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import md5 from 'md5';
+import { useGlobalStore } from '@/stores/globalStore.ts'
 
-const props = defineProps({
-  email: {
-    type: String,
-    required: true
-  },
-  username: {
-    type: String,
-    required: true
-  },
-});
+const store = useGlobalStore();
+
+const currentUser = computed(() => store.getCurrentUser);
 
 const initials = computed(() => {
-  if (!props.username) return '?';
+  if (!currentUser?.value.name) return '?';
 
-  const nameParts = props.username.trim().split(' ').filter(Boolean);
+  const nameParts = currentUser?.value.name.trim().split(' ').filter(Boolean);
   if (nameParts.length === 0) return '?';
 
   if (nameParts.length === 1) {
@@ -26,40 +19,42 @@ const initials = computed(() => {
 
   return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
 });
-
-
-const gravatarUrl = computed(() => {
-  const hash = md5(props.email.trim().toLowerCase());
-  return `https://www.gravatar.com/avatar/${hash}`;
-});
-
-function handleImageError(event: Event) {
-  const target = event.target as HTMLImageElement;
-
-  target.style.display = 'none';
-  (target.nextElementSibling as HTMLElement).style.display = 'flex';
-}
 </script>
 
 <template>
   <div class="drawer-footer">
-    <a href="#" class="user-profile">
+    <div v-if="currentUser.isAuthenticated" class="user-profile">
       <div class="avatar">
-        <img
-          :src="gravatarUrl"
-          :alt="props.username"
-          @error="handleImageError"
-          class="gravatar-img"
-        />
-        <span class="initials" style="display: none;">{{ initials }}</span>
+        <span class="initials">{{ initials }}</span>
       </div>
-      <span class="user-name">{{ props.username }}</span>
-    </a>
+      <span class="user-name">{{ currentUser.name }}</span>
+      <Button
+        @click="store.disconnect"
+        icon="fa-solid fa-right-from-bracket"
+        type="button"
+        variant="outlined"
+        rounded
+        size="small"
+        class="ml-auto"
+      />
+    </div>
+    <div v-else>
+      <Button
+        @click="store.toggleLoginModal"
+        icon="fa-solid fa-right-to-bracket"
+        type="button"
+        variant="outlined"
+        rounded
+        size="small"
+        class="float-right"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
 .drawer-footer {
+  height: 72px;
   padding: 16px;
   margin-top: auto;
   display: flex;
@@ -67,22 +62,17 @@ function handleImageError(event: Event) {
 }
 
 .user-profile {
-  font-size: 1.25em;
+  font-size: 1em;
   color: yellow;
   display: flex;
   align-items: center;
   text-decoration: none;
-  padding: 8px;
   border-radius: 4px;
 }
 
-.user-profile:hover {
-  background-color: #090909;
-}
-
 .avatar {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: #222;
   display: flex;
@@ -91,12 +81,6 @@ function handleImageError(event: Event) {
   margin-right: 12px;
   position: relative;
   overflow: hidden;
-}
-
-.gravatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .initials {
@@ -112,5 +96,9 @@ function handleImageError(event: Event) {
 
 .user-name {
   font-weight: bold;
+  max-width: 50%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

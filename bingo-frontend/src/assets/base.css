@@ -111,3 +111,13 @@ img {
   font-weight: bold;
   background-color: darkblue;
 }
+
+
+.p-floatlabel {
+  margin-top: 1.5em;
+  margin-bottom: 2.5em;
+
+  .p-message {
+    position: absolute;
+  }
+}

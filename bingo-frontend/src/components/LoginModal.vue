@@ -1,30 +1,39 @@
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores/globalStore';
-import { ref } from 'vue';
+import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast';
+import  * as zResolver from '@primevue/forms/resolvers/zod';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '@primevue/forms'
 
-const toast = useToast();
 const store = useGlobalStore();
 
-const email = ref();
-const password = ref();
+const initialValues = ref({
+  email: '',
+  password: ''
+});
 
-const login = () => {
-  if (!email.value || !password.value) {
-    toast.add({
-      severity: 'warn',
-      detail: 'Please provide import data',
-      life: 5000,
-    });
+
+const formSchema = z.object({
+  email: z.string()
+    .min(1, { message: 'Email is required' })
+    .email({ message: 'Please enter a valid email address' }),
+  password: z.string()
+    .min(1, { message: 'Password is required' })
+});
+const resolver = ref(zResolver.zodResolver(formSchema));
+
+const onFormSubmit = (submit: FormSubmitEvent) => {
+  if (!submit.valid) {
+    store.addNotification({
+      logLevel: 'warn',
+      message: 'Form is not valid',
+      life: 5000
+    })
+    return;
   }
 
-  toast.add({
-    severity: 'info',
-    detail: 'Login in progress . . .',
-    life: 5000,
-  });
-
-  console.log('Login', email, password);
+  store.authenticate(submit.values.email, submit.values.password);
 };
 </script>
 
@@ -35,15 +44,29 @@ const login = () => {
           :style="{ width: '25rem' }"
   >
     <div class="content">
-      <FloatLabel class="w-full">
-        <InputText v-model="email" class="w-full" />
-        <label>E-mail</label>
-      </FloatLabel>
-      <FloatLabel class="w-full">
-        <InputText v-model="password" class="w-full" />
-        <label>Password</label>
-      </FloatLabel>
-      <Button label="Login" icon="pi pi-file-import" :disabled="email || password" @click="login()" />
+      <Form v-slot="$form"
+            :initialValues="initialValues"
+            :resolver="resolver"
+            :validateOnValueUpdate="false"
+            :validateOnBlur="true"
+            @submit="onFormSubmit"
+      >
+        <FloatLabel class="w-full">
+          <InputText name="email" type="email" class="w-full" />
+          <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.email.error?.message }}
+          </Message>
+          <label>E-mail</label>
+        </FloatLabel>
+        <FloatLabel class="w-full">
+          <Password name="password" :feedback="false" toggleMask fluid class="w-full" />
+          <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.password.error?.message }}
+          </Message>
+          <label>Password</label>
+        </FloatLabel>
+        <Button type="submit" label="Login" :disabled="!$form.valid" />
+      </Form>
     </div>
   </Dialog>
 </template>

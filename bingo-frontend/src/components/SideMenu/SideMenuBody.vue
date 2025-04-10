@@ -107,6 +107,5 @@ const handleAction = (action: string): void => {
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
-  padding: 12px 0;
 }
 </style>

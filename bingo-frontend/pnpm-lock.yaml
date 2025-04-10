@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@fortawesome/fontawesome-free':
+        specifier: ^6.7.2
+        version: 6.7.2
       '@fortawesome/fontawesome-svg-core':
         specifier: ^6.7.2
         version: 6.7.2
@@ -23,9 +26,15 @@ importers:
       '@fortawesome/vue-fontawesome':
         specifier: ^3.0.8
         version: 3.0.8(@fortawesome/fontawesome-svg-core@6.7.2)(vue@3.5.13(typescript@5.8.3))
+      '@primevue/forms':
+        specifier: ^4.3.3
+        version: 4.3.3(vue@3.5.13(typescript@5.8.3))
       '@primevue/themes':
         specifier: ^4.3.3
         version: 4.3.3
+      '@tailwindcss/postcss':
+        specifier: ^4.1.3
+        version: 4.1.3
       '@tailwindcss/vite':
         specifier: ^4.1.3
         version: 4.1.3(vite@6.2.5(@types/node@22.14.0)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
@@ -38,6 +47,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.3)
+      axios:
+        specifier: ^1.8.4
+        version: 1.8.4
       fuzzysort:
         specifier: ^3.1.0
         version: 3.1.0
@@ -59,6 +71,9 @@ importers:
       primevue:
         specifier: ^4.3.3
         version: 4.3.3(vue@3.5.13(typescript@5.8.3))
+      tailwindcss:
+        specifier: ^4.1.3
+        version: 4.1.3
       tailwindcss-primeui:
         specifier: ^0.6.1
         version: 0.6.1(tailwindcss@4.1.3)
@@ -71,6 +86,9 @@ importers:
       vue-router:
         specifier: ^4.5.0
         version: 4.5.0(vue@3.5.13(typescript@5.8.3))
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
     devDependencies:
       '@playwright/test':
         specifier: ^1.51.1
@@ -132,18 +150,12 @@ importers:
       oxlint:
         specifier: ^0.16.5
         version: 0.16.5
-      postcss:
-        specifier: ^8.4.29
-        version: 8.5.3
       postcss-import:
         specifier: ^16.1.0
         version: 16.1.0(postcss@8.5.3)
       prettier:
         specifier: 3.5.3
         version: 3.5.3
-      tailwindcss:
-        specifier: ^4.1.3
-        version: 4.1.3
       typescript:
         specifier: ~5.8.3
         version: 5.8.3
@@ -164,6 +176,10 @@ importers:
         version: 2.2.8(typescript@5.8.3)
 
 packages:
+
+  '@alloc/quick-lru@5.2.0':
+    resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
+    engines: {node: '>=10'}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -535,6 +551,10 @@ packages:
     resolution: {integrity: sha512-Zs+YeHUC5fkt7Mg1l6XTniei3k4bwG/yo3iFUtZWd/pMx9g3fdvkSK9E0FOC+++phXOka78uJcYb8JaFkW52Xg==}
     engines: {node: '>=6'}
 
+  '@fortawesome/fontawesome-free@6.7.2':
+    resolution: {integrity: sha512-JUOtgFW6k9u4Y+xeIaEiLr3+cjoUPiAuLXoyKOJSia6Duzb7pq+A76P9ZdPDoAoxHdHzq6gE9/jKBGXlZT8FbA==}
+    engines: {node: '>=6'}
+
   '@fortawesome/fontawesome-svg-core@6.7.2':
     resolution: {integrity: sha512-yxtOBWDrdi5DD5o1pmVdq3WMCvnobT0LU6R8RyyVXPvFRd2o79/0NCuQoCjNTeZz9EzA9xS3JxNWfv54RIHFEA==}
     engines: {node: '>=6'}
@@ -682,6 +702,10 @@ packages:
   '@polka/url@1.0.0-next.28':
     resolution: {integrity: sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==}
 
+  '@primeuix/forms@0.0.4':
+    resolution: {integrity: sha512-WKrxZPM9fPAEsM0xcTrOOJn86MbfOEzPwSwpO94Y7RtguWw+1nrvqYNzCcmVqO6zBi0BVMihoWxMKFIRzTOuZg==}
+    engines: {node: '>=12.11.0'}
+
   '@primeuix/styled@0.5.1':
     resolution: {integrity: sha512-5Ftw/KSauDPClQ8F2qCyCUF7cIUEY4yLNikf0rKV7Vsb8zGYNK0dahQe7CChaR6M2Kn+NA2DSBSk76ZXqj6Uog==}
     engines: {node: '>=12.11.0'}
@@ -691,6 +715,10 @@ packages:
 
   '@primeuix/themes@1.0.1':
     resolution: {integrity: sha512-RllttI3oGTZa66UQDCIA2lPnJvO/xqtNpy+0eNql6fIxdS2AUg5n7L81jTZrHNZ+31T5OBzL/SGFCDycmHTz2g==}
+
+  '@primeuix/utils@0.4.1':
+    resolution: {integrity: sha512-5+1NLfyna+gLRPeFTo+xlR0tfPVLuVdidbeahAMLkQga5Rw0LxyUBCyD2/Zv2JkV69o2T+hpEDyddl3VdnYoBw==}
+    engines: {node: '>=12.11.0'}
 
   '@primeuix/utils@0.5.3':
     resolution: {integrity: sha512-7SGh7734wcF1/uK6RzO6Z6CBjGQ97GDHfpyl2F1G/c7R0z9hkT/V72ypDo82AWcCS7Ta07oIjDpOCTkSVZuEGQ==}
@@ -705,6 +733,10 @@ packages:
     engines: {node: '>=12.11.0'}
     peerDependencies:
       vue: ^3.5.0
+
+  '@primevue/forms@4.3.3':
+    resolution: {integrity: sha512-GZYMd8wp+7/4DVMoGGUtRkAHw352peT3pgwgzaFYQqNIjxxGw9eI253XTxrppRCowrGJ2jEe80p9WfHi087B1g==}
+    engines: {node: '>=12.11.0'}
 
   '@primevue/icons@4.3.3':
     resolution: {integrity: sha512-ouQaxHyeFB6MSfEGGbjaK5Qv9efS1xZGetZoU5jcPm090MSYLFtroP1CuK3lZZAQals06TZ6T6qcoNukSHpK5w==}
@@ -906,6 +938,9 @@ packages:
   '@tailwindcss/oxide@4.1.3':
     resolution: {integrity: sha512-t16lpHCU7LBxDe/8dCj9ntyNpXaSTAgxWm1u2XQP5NiIu4KGSyrDJJRlK9hJ4U9yJxx0UKCVI67MJWFNll5mOQ==}
     engines: {node: '>= 10'}
+
+  '@tailwindcss/postcss@4.1.3':
+    resolution: {integrity: sha512-6s5nJODm98F++QT49qn8xJKHQRamhYHfMi3X7/ltxiSQ9dyRsaFSfFkfaMsanWzf+TMYQtbk8mt5f6cCVXJwfg==}
 
   '@tailwindcss/vite@4.1.3':
     resolution: {integrity: sha512-lUI/QaDxLtlV52Lho6pu07CG9pSnRYLOPmKGIQjyHdTBagemc6HmgZxyjGAQ/5HMPrNeWBfTVIpQl0/jLXvWHQ==}
@@ -1220,6 +1255,9 @@ packages:
     hasBin: true
     peerDependencies:
       postcss: ^8.1.0
+
+  axios@1.8.4:
+    resolution: {integrity: sha512-eBSYY4Y68NNlHbHBMdeDmKNtDgXWhQsJcGqzO3iLUM0GraQFSS9cVgPX5I9b3lbdFKyYoAEGAZF1DwhTaljNAw==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -1598,6 +1636,15 @@ packages:
 
   flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
+
+  follow-redirects@1.15.9:
+    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
 
   foreground-child@3.3.1:
     resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
@@ -2233,6 +2280,9 @@ packages:
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
 
+  proxy-from-env@1.1.0:
+    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
+
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
@@ -2739,7 +2789,12 @@ packages:
     resolution: {integrity: sha512-GQHQqAopRhwU8Kt1DDM8NjibDXHC8eoh1erhGAJPEyveY9qqVeXvVikNKrDz69sHowPMorbPUrH/mx8c50eiBQ==}
     engines: {node: '>=18'}
 
+  zod@3.24.2:
+    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
+
 snapshots:
+
+  '@alloc/quick-lru@5.2.0': {}
 
   '@ampproject/remapping@2.3.0':
     dependencies:
@@ -3090,6 +3145,8 @@ snapshots:
 
   '@fortawesome/fontawesome-common-types@6.7.2': {}
 
+  '@fortawesome/fontawesome-free@6.7.2': {}
+
   '@fortawesome/fontawesome-svg-core@6.7.2':
     dependencies:
       '@fortawesome/fontawesome-common-types': 6.7.2
@@ -3211,6 +3268,10 @@ snapshots:
 
   '@polka/url@1.0.0-next.28': {}
 
+  '@primeuix/forms@0.0.4':
+    dependencies:
+      '@primeuix/utils': 0.4.1
+
   '@primeuix/styled@0.5.1':
     dependencies:
       '@primeuix/utils': 0.5.3
@@ -3223,6 +3284,8 @@ snapshots:
     dependencies:
       '@primeuix/styled': 0.5.1
 
+  '@primeuix/utils@0.4.1': {}
+
   '@primeuix/utils@0.5.3': {}
 
   '@primevue/auto-import-resolver@4.3.3':
@@ -3234,6 +3297,14 @@ snapshots:
       '@primeuix/styled': 0.5.1
       '@primeuix/utils': 0.5.3
       vue: 3.5.13(typescript@5.8.3)
+
+  '@primevue/forms@4.3.3(vue@3.5.13(typescript@5.8.3))':
+    dependencies:
+      '@primeuix/forms': 0.0.4
+      '@primeuix/utils': 0.5.3
+      '@primevue/core': 4.3.3(vue@3.5.13(typescript@5.8.3))
+    transitivePeerDependencies:
+      - vue
 
   '@primevue/icons@4.3.3(vue@3.5.13(typescript@5.8.3))':
     dependencies:
@@ -3374,6 +3445,14 @@ snapshots:
       '@tailwindcss/oxide-linux-x64-musl': 4.1.3
       '@tailwindcss/oxide-win32-arm64-msvc': 4.1.3
       '@tailwindcss/oxide-win32-x64-msvc': 4.1.3
+
+  '@tailwindcss/postcss@4.1.3':
+    dependencies:
+      '@alloc/quick-lru': 5.2.0
+      '@tailwindcss/node': 4.1.3
+      '@tailwindcss/oxide': 4.1.3
+      postcss: 8.5.3
+      tailwindcss: 4.1.3
 
   '@tailwindcss/vite@4.1.3(vite@6.2.5(@types/node@22.14.0)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))':
     dependencies:
@@ -3774,6 +3853,14 @@ snapshots:
       picocolors: 1.1.1
       postcss: 8.5.3
       postcss-value-parser: 4.2.0
+
+  axios@1.8.4:
+    dependencies:
+      follow-redirects: 1.15.9
+      form-data: 4.0.2
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
 
   balanced-match@1.0.2: {}
 
@@ -4178,6 +4265,8 @@ snapshots:
       keyv: 4.5.4
 
   flatted@3.3.3: {}
+
+  follow-redirects@1.15.9: {}
 
   foreground-child@3.3.1:
     dependencies:
@@ -4761,6 +4850,8 @@ snapshots:
 
   proto-list@1.2.4: {}
 
+  proxy-from-env@1.1.0: {}
+
   punycode@2.3.1: {}
 
   quansync@0.2.10: {}
@@ -5246,3 +5337,5 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yoctocolors@2.1.1: {}
+
+  zod@3.24.2: {}

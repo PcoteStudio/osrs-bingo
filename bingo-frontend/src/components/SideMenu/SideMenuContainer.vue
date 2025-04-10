@@ -10,10 +10,8 @@ import SideMenuFooter from './SideMenuFooter.vue';
     <div class="custom-drawer">
       <div class="drawer-content">
         <SideMenuHeader />
-        <hr>
         <SideMenuBody />
-        <hr>
-        <SideMenuFooter email="n.signo@hotmail.com" username="Woofi" />
+        <SideMenuFooter />
       </div>
     </div>
   </div>

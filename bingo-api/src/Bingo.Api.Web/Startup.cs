@@ -21,6 +21,17 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ILogger, Logger<Program>>();
+        
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll", policy =>
+            {
+                policy
+                    .AllowAnyOrigin() // Allow requests from ANY origin (more permissive for troubleshooting)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
 
         services.AddMvc().AddJsonOptions(options =>
         {
@@ -66,6 +77,8 @@ public class Startup
             var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             context.Database.Migrate();
         }
+        
+        app.UseCors("AllowAll");
 
         app.UseAuthentication();
         app.UseAuthorization();
@@ -76,6 +89,7 @@ public class Startup
             endpoints.MapOpenApi();
             endpoints.MapScalarApiReference();
         });
+        
 
         app.Run(async context =>
         {
