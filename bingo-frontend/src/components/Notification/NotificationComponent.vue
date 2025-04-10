@@ -9,14 +9,22 @@ const state = useGlobalStore();
 
 watch(() => state.notifications,
   (notifications) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const notification of notifications) {
-      const details = getMessageDetails();
+      let life;
+      if (notification.life === undefined) {
+        life = 1500;
+      }
+      else if (notification.life === -1) {
+        life = undefined;
+      }
+      else {
+        life = notification.life;
+      }
 
       toast.add({
-        severity: details.logLevel,
-        detail: details.message,
-        life: 1500
+        severity: notification.logLevel,
+        detail: notification.message,
+        life: life
       });
     }
     state.clearNotifications();
@@ -36,10 +44,6 @@ state.$onAction(
     });
   }
 );
-
-function getMessageDetails(error?: unknown) {
-  return { message: error, logLevel: 'info' };
-}
 
 function getErrorMessageDetails(error: unknown) {
   const details = { message: '', logLevel: 'error' };

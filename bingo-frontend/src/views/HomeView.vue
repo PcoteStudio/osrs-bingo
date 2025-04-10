@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import NotificationComponent from '@/components/Notification/NotificationComponent.vue'
+import SideMenuContainer from '@/components/SideMenu/SideMenuContainer.vue'
+import GameBoard from '@/components/GameBoard.vue'
+import LoginModal from '@/components/LoginModal.vue';
 </script>
 
 <template>
@@ -8,9 +11,11 @@ import NotificationComponent from '@/components/Notification/NotificationCompone
     <NotificationComponent />
 
     <!--  Modals  -->
-    wololo
+    <LoginModal />
 
     <!--  Regular components  -->
+    <SideMenuContainer />
+    <GameBoard />
   </main>
 </template>
 
