@@ -8,7 +8,7 @@ import {
   faComments,
   faCalendar,
   faCog,
-  faFolder
+  faFolder, faStaffSnake, faChessBoard, faKitMedical, faTrophy, faCircle
 } from '@fortawesome/free-solid-svg-icons'
 
 import type { IconDefinition } from '@fortawesome/free-solid-svg-icons'
@@ -24,8 +24,12 @@ const iconMap: Record<string, IconDefinition> = {
   'faCalendar': faCalendar,
   'faCog': faCog,
   'faFolder': faFolder,
+  'faStaffSnake': faStaffSnake,
+  'faChessBoard': faChessBoard,
+  'faKitMedical': faKitMedical,
+  'faTrophy': faTrophy,
 };
 
 export const getIcon = (iconName: string): IconDefinition => {
-  return iconMap[iconName] || faHome;
+  return iconMap[iconName];
 };

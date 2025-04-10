@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import NotificationComponent from '@/components/Notification/NotificationComponent.vue'
 import SideMenuContainer from '@/components/SideMenu/SideMenuContainer.vue'
+import GameBoard from '@/components/GameBoard.vue'
 </script>
 
 <template>
@@ -9,10 +10,10 @@ import SideMenuContainer from '@/components/SideMenu/SideMenuContainer.vue'
     <NotificationComponent />
 
     <!--  Modals  -->
-    wololo
 
     <!--  Regular components  -->
     <SideMenuContainer />
+    <GameBoard />
   </main>
 </template>
 

@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { getIcon } from '@/utils/iconUtils';
+import type { MenuItemType } from '@/types/MenuTypes.ts'
 
 const props = defineProps<{
-  item: {
-    id: string;
-    label: string;
-    icon: string;
-    action: string;
-  };
+  item: MenuItemType;
 }>();
 
 const emit = defineEmits<{
@@ -22,8 +18,8 @@ const handleClick = () => {
 
 <template>
   <button @click="handleClick" class="menu-button">
-    <FontAwesomeIcon :icon="getIcon(props.item.icon)" class="menu-icon" />
-    <span class="menu-text">{{ props.item.label }}</span>
+    <FontAwesomeIcon v-if="props.item.icon" :icon="getIcon(props.item.icon)" class="menu-icon" />
+    <span class="menu-text" :class="[props.item.active ? 'highlight' : '']">{{ props.item.label }}</span>
   </button>
 </template>
 

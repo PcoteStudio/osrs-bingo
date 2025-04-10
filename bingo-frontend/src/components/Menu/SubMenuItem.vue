@@ -2,21 +2,10 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@/utils/iconUtils';
+import type { MenuItemType } from '@/types/MenuTypes.ts'
 
 const props = defineProps<{
-  item: {
-    id: string;
-    label: string;
-    icon: string;
-    action: string;
-    expanded?: boolean;
-    items?: Array<{
-      id: string;
-      label: string;
-      icon: string;
-      action: string;
-    }>;
-  };
+  item: MenuItemType;
 }>();
 
 const emit = defineEmits<{
@@ -39,8 +28,8 @@ const handleAction = (action: string) => {
       class="menu-button submenu-button"
       @click="handleToggle"
     >
-      <FontAwesomeIcon :icon="getIcon(props.item.icon)" class="menu-icon" />
-      <span class="menu-text">{{ props.item.label }}</span>
+      <FontAwesomeIcon v-if="props.item.icon" :icon="getIcon(props.item.icon)" class="menu-icon" />
+      <span class="menu-text" :class="[props.item.active ? 'highlight' : '']">{{ props.item.label }}</span>
       <FontAwesomeIcon
         :icon="props.item.expanded ? faChevronDown : faChevronRight"
         class="submenu-indicator"

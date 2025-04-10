@@ -21,14 +21,12 @@ import SideMenuFooter from './SideMenuFooter.vue';
 
 <style scoped>
 .custom-drawer-wrapper {
+  width: min-content;
   position: relative;
   height: 100%;
 }
 
 .custom-drawer {
-  position: fixed;
-  top: 0;
-  left: 0;
   height: 100%;
   width: 250px;
   max-width: 250px;

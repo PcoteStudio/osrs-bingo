@@ -2,96 +2,72 @@
 import { ref } from 'vue';
 import type { MenuSectionType } from '@/types/MenuTypes.ts'
 import MenuSection from '@/components/Menu/MenuSection.vue'
+import { faCog } from '@fortawesome/free-solid-svg-icons'
 
 const menuSections = ref<MenuSectionType[]>([
   {
-    id: 'favorites',
-    title: 'FAVORITES',
+    id: 'events',
+    title: 'Events',
     expanded: true,
     items: [
       {
-        id: 'dashboard',
-        label: 'Dashboard',
-        icon: 'faHome',
-        action: 'openDashboard'
-      },
-      {
-        id: 'bookmarks',
-        label: 'Bookmarks',
-        icon: 'faBookmark',
-        action: 'openBookmarks'
-      },
-      {
-        id: 'reports',
-        label: 'Reports',
-        icon: 'faChartLine',
-        action: 'toggleReports',
+        id: 'bingo',
+        label: 'Bingo',
+        action: 'openBingo',
+        active: true,
         isSubmenu: true,
-        expanded: false,
+        expanded: true,
         items: [
           {
-            id: 'revenue',
-            label: 'Revenue',
-            icon: 'faChartPie',
-            action: 'openRevenue'
+            id: 'bingo-board',
+            label: 'Board',
+            icon: 'faChessBoard',
+            action: 'openBingoBoard'
           },
           {
-            id: 'expenses',
-            label: 'Expenses',
-            icon: 'faChartBar',
-            action: 'openExpenses'
+            id: 'bingo-leaderboard',
+            label: 'Leaderboard',
+            icon: 'faTrophy',
+            action: 'openBingoLeaderboard'
+          },
+          {
+            id: 'bingo-teams',
+            label: 'Teams',
+            icon: 'faUsers',
+            action: 'openBingoTeams'
           }
         ]
       },
       {
-        id: 'team',
-        label: 'Team',
+        id: 'dashboard',
+        label: 'Snake and Ladder',
+        action: 'openSnake'
+      },
+      {
+        id: 'game-of-life',
+        label: 'Game of Life',
+        action: 'openGOL'
+      },
+    ]
+  },
+  {
+    id: 'more',
+    title: 'More',
+    hideSection: true,
+    bottom: true,
+    items: [
+      {
+        id: 'players',
+        label: 'Players',
         icon: 'faUsers',
-        action: 'openTeam'
-      },
-      {
-        id: 'messages',
-        label: 'Messages',
-        icon: 'faComments',
-        action: 'openMessages'
-      },
-      {
-        id: 'calendar',
-        label: 'Calendar',
-        icon: 'faCalendar',
-        action: 'openCalendar'
+        action: 'openPlayers'
       },
       {
         id: 'settings',
         label: 'Settings',
         icon: 'faCog',
         action: 'openSettings'
-      }
-    ]
-  },
-  {
-    id: 'application',
-    title: 'APPLICATION',
-    expanded: true,
-    items: [
-      {
-        id: 'projects',
-        label: 'Projects',
-        icon: 'faFolder',
-        action: 'openProjects'
       },
-      {
-        id: 'performance',
-        label: 'Performance',
-        icon: 'faChartBar',
-        action: 'openPerformance'
-      },
-      {
-        id: 'appSettings',
-        label: 'Settings',
-        icon: 'faCog',
-        action: 'openAppSettings'
-      }
     ]
   }
 ]);
@@ -128,6 +104,8 @@ const handleAction = (action: string): void => {
 
 <style scoped>
 .drawer-body {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   overflow-y: auto;
   padding: 12px 0;
