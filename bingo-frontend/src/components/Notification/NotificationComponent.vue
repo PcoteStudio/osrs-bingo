@@ -12,7 +12,7 @@ watch(() => state.notifications,
     for (const notification of notifications) {
       let life;
       if (notification.life === undefined) {
-        life = 1500;
+        life = 4000;
       }
       else if (notification.life === -1) {
         life = undefined;

@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia';
-import axios from 'axios'
-import type { Notification } from '@/types/NotificationType.ts'
-import type { User } from '@/types/UserType.ts'
-import { Role } from '@/types/UserType.ts'
+import axios from 'axios';
+import type { Notification } from '@/types/NotificationType.ts';
+import type { User } from '@/types/UserType.ts';
 
 export const useGlobalStore = defineStore('globalStore', {
   state: () => {
@@ -12,21 +11,28 @@ export const useGlobalStore = defineStore('globalStore', {
       showModal: false,
     };
 
+    const signupModalState = {
+      showModal: true,
+    };
+
     const user: User = {
       isAuthenticated: false,
       authToken: null,
-      refreshToken: null,
     };
 
     return {
       notifications: notifications,
       loginModalState: loginModalState,
+      signupModalState: signupModalState,
       user: user,
     };
   },
   getters: {
     getLoginModalState: (state) => {
       return state.loginModalState;
+    },
+    getSignupModalState: (state) => {
+      return state.signupModalState;
     },
     getCurrentUser: (state) => {
       return state.user;
@@ -53,10 +59,8 @@ export const useGlobalStore = defineStore('globalStore', {
             }
           });
 
-        const { accessToken, refreshToken } = response.data;
+        const { accessToken } = response.data;
         this.user.authToken = accessToken;
-        this.user.refreshToken = refreshToken;
-        localStorage.setItem('authToken', accessToken);
 
         await this.fetchCurrentUserInformation();
 
@@ -71,7 +75,6 @@ export const useGlobalStore = defineStore('globalStore', {
       } catch (error) {
         this.user.isAuthenticated = false;
         this.user.authToken = null;
-        this.user.refreshToken = null;
 
         let message = "";
         if (axios.isAxiosError(error)) {
@@ -100,12 +103,9 @@ export const useGlobalStore = defineStore('globalStore', {
         this.user = {
           isAuthenticated: false,
           authToken: null,
-          refreshToken: null,
           name: undefined,
           email: undefined,
         };
-
-        localStorage.removeItem('authToken');
 
         this.addNotification({
           message: 'Disconnected',
@@ -135,7 +135,6 @@ export const useGlobalStore = defineStore('globalStore', {
               'Authorization':  `Bearer ${this.user.authToken}`
             }
           });
-
         const { name, email } = response.data;
 
         this.user.email = email;
@@ -160,6 +159,46 @@ export const useGlobalStore = defineStore('globalStore', {
         return;
       }
       this.loginModalState.showModal = !this.loginModalState.showModal;
+    },
+    toggleSignupModal() {
+      this.signupModalState.showModal = !this.signupModalState.showModal;
+    },
+    async createUser(email: string, password: string, username: string) {
+      try {
+        const response = await axios.post("http://localhost:5257/api/auth/signup",
+          {
+            name: username,
+            email: email,
+            password: password,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+        const newEmail = response.data.email;
+
+        this.addNotification({
+          message: 'Account created with email : ' + newEmail,
+          logLevel: 'success'
+        });
+
+        this.toggleSignupModal();
+        return true;
+      } catch (error) {
+        let message = "";
+        if (axios.isAxiosError(error)) {
+          message = error.response?.data?.message || 'Creating user failed';
+        } else {
+          message = 'An unexpected error occurred';
+        }
+        this.addNotification({
+          message: message,
+          logLevel: 'error',
+          life: -1
+        });
+      }
     },
   }
 });
