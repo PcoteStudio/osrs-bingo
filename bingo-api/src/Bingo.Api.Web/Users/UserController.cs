@@ -14,7 +14,7 @@ public class AuthController(
     ILogger<AuthController> logger) : ControllerBase
 {
     [Authorize]
-    [HttpPost("me")]
+    [HttpGet("me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<UserResponse>> GetMeAsync()

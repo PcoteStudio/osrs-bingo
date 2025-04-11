@@ -38,7 +38,7 @@ public class AuthenticationFeatureTest
     public void BeforeEach()
     {
         _dbContext = TestSetupUtil.GetDbContext(BingoProjects.Web);
-        _testDataSetup = TestSetupUtil.GetTestDataSetup(BingoProjects.Web, _dbContext);
+        _testDataSetup = TestSetupUtil.GetTestDataSetup(BingoProjects.Web);
         _client = new HttpClient();
     }
 
@@ -85,7 +85,7 @@ public class AuthenticationFeatureTest
             new AuthenticationHeaderValue("Bearer", returnedTokens.AccessToken);
 
         // Act
-        var meResponse = await _client.PostAsync(new Uri(_baseUrl, "/api/users/me"), stringContent);
+        var meResponse = await _client.GetAsync(new Uri(_baseUrl, "/api/users/me"));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.OK, meResponse);

@@ -13,7 +13,6 @@ public class PlayerRepositoryIntegrationTest
     [SetUp]
     public void BeforeEach()
     {
-        var host = TestSetupUtil.BuildWebHost();
         _dbContext = TestSetupUtil.GetDbContext(BingoProjects.Core);
         _testDataSetup = TestSetupUtil.GetTestDataSetup(BingoProjects.Core);
         _playerRepository = new PlayerRepository(TestSetupUtil.GetDbContext(BingoProjects.Core));

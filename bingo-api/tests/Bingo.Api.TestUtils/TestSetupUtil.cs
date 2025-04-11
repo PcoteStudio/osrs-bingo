@@ -22,12 +22,12 @@ public enum BingoProjects
 
 public static class TestSetupUtil
 {
-    public static string GetDatabaseFileName(BingoProjects project)
+    private static string GetDatabaseFileName(BingoProjects project)
     {
         return project.ToString().ToLower() + "testdb.db";
     }
 
-    public static string GetDatabaseConnectionString(BingoProjects project)
+    private static string GetDatabaseConnectionString(BingoProjects project)
     {
         var databaseFile = Path.Combine("data", GetDatabaseFileName(project));
         var databasePath = Path.Combine(FileSystemHelper.FindDirectoryContaining("data"), databaseFile);
@@ -50,31 +50,41 @@ public static class TestSetupUtil
         await dbContext.Database.MigrateAsync();
     }
 
+    private static Dictionary<string, string?> GetConfigurationValues(BingoProjects project)
+    {
+        return new Dictionary<string, string?>
+        {
+            ["Sqlite:ConnectionString"] = $"DataSource={{pathToData}}\\{GetDatabaseFileName(project)}"
+        };
+    }
+
     public static IWebHost BuildWebHost(BingoProjects project = BingoProjects.Web)
     {
         return WebHost.CreateDefaultBuilder([])
             .ConfigureAppConfiguration(config =>
-                {
-                    config.AddInMemoryCollection(new Dictionary<string, string?>
-                    {
-                        ["Sqlite:ConnectionString"] =
-                            $"DataSource={{pathToData}}\\{GetDatabaseFileName(project)}"
-                    });
-                    config.AddUserSecrets<Program>();
-                }
-            )
+            {
+                config.AddInMemoryCollection(GetConfigurationValues(project));
+                config.AddUserSecrets<Program>();
+            })
             .UseStartup<Startup>()
             .UseUrls("http://127.0.0.1:0")
             .Build();
     }
 
-    public static TestDataSetup GetTestDataSetup(BingoProjects project, ApplicationDbContext? dbContext = null)
+    public static TestDataSetup GetTestDataSetup(BingoProjects project)
     {
-        var host = BuildWebHost(project);
+        var builder = new ConfigurationBuilder()
+            .AddUserSecrets<Program>()
+            .AddInMemoryCollection(GetConfigurationValues(project));
+        var services = new ServiceCollection();
+        services.AddScoped<IConfiguration>(_ => builder.Build());
+        new Startup().ConfigureServices(services);
+        var sp = services.BuildServiceProvider();
+
         return new TestDataSetup(
-            dbContext ?? host.Services.GetRequiredService<ApplicationDbContext>(),
-            host.Services.GetRequiredService<UserManager<UserEntity>>(),
-            host.Services.GetRequiredService<RoleManager<IdentityRole>>()
+            sp.GetRequiredService<ApplicationDbContext>(),
+            sp.GetRequiredService<UserManager<UserEntity>>(),
+            sp.GetRequiredService<RoleManager<IdentityRole>>()
         );
     }
 
