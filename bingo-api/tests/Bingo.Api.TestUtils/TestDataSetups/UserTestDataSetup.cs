@@ -10,7 +10,7 @@ public partial class TestDataSetup
     public TestDataSetup AddRole(Roles role)
     {
         roleManager.Should().NotBeNull();
-        if (roleManager.RoleExistsAsync(role.ToString()).Result)
+        if (!roleManager.RoleExistsAsync(role.ToString()).Result)
         {
             var createRoleResult = roleManager.CreateAsync(new IdentityRole(role.ToString())).Result;
             createRoleResult.Succeeded.Should().BeTrue();
@@ -22,6 +22,7 @@ public partial class TestDataSetup
     private void AddRoleToUser(UserEntity user, Roles role)
     {
         userManager.Should().NotBeNull();
+        AddRole(role);
         var addRoleToUserResult = userManager.AddToRoleAsync(user, role.ToString()).Result;
         addRoleToUserResult.Succeeded.Should().BeTrue();
     }
@@ -41,6 +42,7 @@ public partial class TestDataSetup
         createUserResult.Succeeded.Should().BeTrue();
         foreach (var role in args.Roles)
             AddRoleToUser(user, role);
+        _allEntities.Add(user);
         dbContext.SaveChanges();
         return this;
     }

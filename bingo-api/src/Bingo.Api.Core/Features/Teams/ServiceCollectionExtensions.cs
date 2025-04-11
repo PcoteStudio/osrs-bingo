@@ -1,5 +1,5 @@
-using Bingo.Api.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Bingo.Api.Core.Features.Teams;
 
@@ -7,10 +7,9 @@ public static class ServiceCollectionExtensions
 {
     public static void AddTeamService(this IServiceCollection services)
     {
-        if (services.IsRegistered<TeamService>()) return;
-        services.AddScoped<ITeamService, TeamService>();
-        services.AddScoped<ITeamRepository, TeamRepository>();
-        services.AddSingleton<ITeamFactory, TeamFactory>();
-        services.AddSingleton<ITeamUtil, TeamUtil>();
+        services.TryAddScoped<ITeamService, TeamService>();
+        services.TryAddScoped<ITeamRepository, TeamRepository>();
+        services.TryAddSingleton<ITeamFactory, TeamFactory>();
+        services.TryAddSingleton<ITeamUtil, TeamUtil>();
     }
 }

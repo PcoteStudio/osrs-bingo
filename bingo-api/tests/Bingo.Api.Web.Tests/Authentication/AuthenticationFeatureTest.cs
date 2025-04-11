@@ -3,14 +3,12 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.Data;
-using Bingo.Api.Data.Entities;
 using Bingo.Api.TestUtils;
+using Bingo.Api.TestUtils.TestDataGenerators;
 using Bingo.Api.TestUtils.TestDataSetups;
 using Bingo.Api.Web.Authentication;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Bingo.Api.Web.Tests.Authentication;
 
@@ -40,11 +38,7 @@ public class AuthenticationFeatureTest
     public void BeforeEach()
     {
         _dbContext = TestSetupUtil.GetDbContext(BingoProjects.Web);
-        _testDataSetup = new TestDataSetup(
-            _dbContext,
-            _host.Services.GetRequiredService<UserManager<UserEntity>>(),
-            _host.Services.GetRequiredService<RoleManager<IdentityRole>>()
-        );
+        _testDataSetup = TestSetupUtil.GetTestDataSetup(BingoProjects.Web, _dbContext);
         _client = new HttpClient();
     }
 
@@ -61,12 +55,12 @@ public class AuthenticationFeatureTest
         // Arrange
         var loginArgs = new AuthLoginArguments
         {
-            Username = "user@local.host",
+            Username = TestDataGenerator.GeneratePlayerName() + "@local.host",
             Password = "Password1!"
         };
         _testDataSetup.AddUser(new TestDataSetup.AddUserArguments
         {
-            Name = "user",
+            Name = TestDataGenerator.GeneratePlayerName(),
             Email = loginArgs.Username,
             Password = loginArgs.Password
         });

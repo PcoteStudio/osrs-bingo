@@ -16,9 +16,14 @@
         <PackageReference Include="AutoMapper" Version="14.0.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3"/>
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.13.61">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Features\Permissions\"/>
         <Folder Include="Features\Users\Arguments\"/>
     </ItemGroup>
 </Project>

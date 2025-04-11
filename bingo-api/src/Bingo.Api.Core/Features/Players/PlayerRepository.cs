@@ -11,25 +11,25 @@ public interface IPlayerRepository : IGenericRepository<PlayerEntity>
     Task<List<PlayerEntity>> GetByNamesAsync(IEnumerable<string> playerNames);
 }
 
-public class PlayerRepository(ApplicationDbContext context)
-    : GenericRepository<PlayerEntity>(context), IPlayerRepository
+public class PlayerRepository(ApplicationDbContext dbContext)
+    : GenericRepository<PlayerEntity>(dbContext), IPlayerRepository
 {
     public Task<PlayerEntity?> GetByNameAsync(string name)
     {
-        return Context.Players
+        return DbContext.Players
             .FirstOrDefaultAsync(p => p.Name == name);
     }
 
     public Task<List<PlayerEntity>> GetByNamesAsync(IEnumerable<string> playerNames)
     {
-        return Context.Players
+        return DbContext.Players
             .Where(p => playerNames.Contains(p.Name))
             .ToListAsync();
     }
 
-    public Task<PlayerEntity?> GetCompletePlayerById(int playerId)
+    public Task<PlayerEntity?> GetCompletePlayerByIdAsync(int playerId)
     {
-        return Context.Players
+        return DbContext.Players
             .Include(p => p.Teams)
             .FirstOrDefaultAsync(p => p.Id == playerId);
     }

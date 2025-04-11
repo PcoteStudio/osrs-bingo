@@ -11,11 +11,11 @@ public interface ITeamRepository : IGenericRepository<TeamEntity>
     Task<List<TeamEntity>> GetAllByEventIdAsync(int eventId);
 }
 
-public class TeamRepository(ApplicationDbContext context) : GenericRepository<TeamEntity>(context), ITeamRepository
+public class TeamRepository(ApplicationDbContext dbContext) : GenericRepository<TeamEntity>(dbContext), ITeamRepository
 {
     public Task<TeamEntity?> GetCompleteByIdAsync(int id)
     {
-        return Context.Teams
+        return DbContext.Teams
             .Include(t => t.Event)
             .Include(t => t.Players)
             .FirstOrDefaultAsync(t => t.Id == id);
@@ -23,7 +23,7 @@ public class TeamRepository(ApplicationDbContext context) : GenericRepository<Te
 
     public Task<List<TeamEntity>> GetAllByEventIdAsync(int eventId)
     {
-        return Context.Teams
+        return DbContext.Teams
             .Where(t => t.EventId == eventId)
             .ToListAsync();
     }

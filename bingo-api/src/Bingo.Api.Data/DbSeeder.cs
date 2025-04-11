@@ -31,7 +31,7 @@ public class DbSeeder(
                 addRoleToUserResult.Errors.Select(e => e.Description))}");
     }
 
-    private async Task<UserEntity?> CreateDevelopmentUser(string role, string email, string name, string password)
+    private async Task<UserEntity?> CreateDevelopmentUserAsync(string role, string email, string name, string password)
     {
         if (!environment.IsDevelopment()) return null;
         var user = new UserEntity
@@ -51,20 +51,20 @@ public class DbSeeder(
         return user;
     }
 
-    private async Task CreateRoles()
+    private async Task CreateRolesAsync()
     {
         await CreateRoleIfNotExistsAsync(Roles.Admin.ToString());
         await CreateRoleIfNotExistsAsync(Roles.User.ToString());
     }
 
-    public async Task Seed()
+    public async Task SeedAsync()
     {
-        await CreateRoles();
+        await CreateRolesAsync();
 
         if (!userManager.Users.Any())
         {
-            await CreateDevelopmentUser(Roles.Admin.ToString(), "admin@local.host", "Admin", "Password1!");
-            await CreateDevelopmentUser(Roles.User.ToString(), "user@local.host", "User", "Password1!");
+            await CreateDevelopmentUserAsync(Roles.Admin.ToString(), "admin@local.host", "Admin", "Password1!");
+            await CreateDevelopmentUserAsync(Roles.User.ToString(), "user@local.host", "User", "Password1!");
         }
     }
 }

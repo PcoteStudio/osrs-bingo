@@ -1,10 +1,13 @@
 using Bingo.Api.Data;
+using Bingo.Api.Data.Entities;
 using Bingo.Api.Shared;
+using Bingo.Api.TestUtils.TestDataSetups;
 using Bingo.Api.Web;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +30,7 @@ public static class TestSetupUtil
     public static string GetDatabaseConnectionString(BingoProjects project)
     {
         var databaseFile = Path.Combine("data", GetDatabaseFileName(project));
-        var databasePath = Path.Combine(FileSystemHelper.FindDirectoryContaining( "data"), databaseFile);
+        var databasePath = Path.Combine(FileSystemHelper.FindDirectoryContaining("data"), databaseFile);
         var connectionString = $"Data Source={databasePath};";
         return connectionString;
     }
@@ -47,7 +50,7 @@ public static class TestSetupUtil
         await dbContext.Database.MigrateAsync();
     }
 
-    public static IWebHost BuildWebHost()
+    public static IWebHost BuildWebHost(BingoProjects project = BingoProjects.Web)
     {
         return WebHost.CreateDefaultBuilder([])
             .ConfigureAppConfiguration(config =>
@@ -55,7 +58,7 @@ public static class TestSetupUtil
                     config.AddInMemoryCollection(new Dictionary<string, string?>
                     {
                         ["Sqlite:ConnectionString"] =
-                            $"DataSource={{pathToData}}\\{GetDatabaseFileName(BingoProjects.Web)}"
+                            $"DataSource={{pathToData}}\\{GetDatabaseFileName(project)}"
                     });
                     config.AddUserSecrets<Program>();
                 }
@@ -63,6 +66,16 @@ public static class TestSetupUtil
             .UseStartup<Startup>()
             .UseUrls("http://127.0.0.1:0")
             .Build();
+    }
+
+    public static TestDataSetup GetTestDataSetup(BingoProjects project, ApplicationDbContext? dbContext = null)
+    {
+        var host = BuildWebHost(project);
+        return new TestDataSetup(
+            dbContext ?? host.Services.GetRequiredService<ApplicationDbContext>(),
+            host.Services.GetRequiredService<UserManager<UserEntity>>(),
+            host.Services.GetRequiredService<RoleManager<IdentityRole>>()
+        );
     }
 
     public static Uri GetRequiredHostUri(IWebHost webHost)

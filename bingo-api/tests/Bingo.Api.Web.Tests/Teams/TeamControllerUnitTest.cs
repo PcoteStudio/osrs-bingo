@@ -1,7 +1,6 @@
 using AutoMapper;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Exceptions;
-using Bingo.Api.Data.Entities.Events;
 using Bingo.Api.TestUtils.TestDataGenerators;
 using Bingo.Api.Web.Teams;
 using FluentAssertions;
@@ -31,66 +30,13 @@ public class TeamControllerUnitTest
     private Mock<ILogger<TeamController>> _loggerMock;
 
     [Test]
-    public async Task GetEventTeamsAsync_ShouldReturnAllTeams()
-    {
-        // Arrange
-        var eventId = Random.Shared.Next();
-        var teams = TestDataGenerator.GenerateTeamEntities(3);
-        var teamResponses = teams.Select(_ => new TeamResponse()).ToList();
-        _teamServiceMock.Setup(x => x.GetEventTeamsAsync(eventId))
-            .ReturnsAsync(teams).Verifiable(Times.Once());
-        _mapperMock.Setup(x => x.Map<List<TeamResponse>>(teams))
-            .Returns(teamResponses).Verifiable(Times.Once());
-
-        // Act
-        var result = await _teamController.GetEventTeamsAsync(eventId);
-
-        // Assert status code
-        result.Result.Should().BeOfType<ObjectResult>();
-        var objResult = (result.Result as ObjectResult)!;
-        objResult.StatusCode.Should().Be(StatusCodes.Status200OK);
-
-        // Assert response content
-        objResult.Value.Should().BeOfType<List<TeamResponse>>();
-        var actualTeamResponses = objResult.Value as List<TeamResponse>;
-        actualTeamResponses.Should().BeSameAs(teamResponses);
-    }
-
-    [Test]
-    public async Task GetEventTeamsAsync_ShouldReturnAnEmptyTeamList()
-    {
-        // Arrange
-        var eventId = Random.Shared.Next();
-        var teams = new List<TeamEntity>();
-        var teamResponses = new List<TeamResponse>();
-
-        _teamServiceMock.Setup(x => x.GetEventTeamsAsync(eventId))
-            .ReturnsAsync(teams).Verifiable(Times.Once());
-        _mapperMock.Setup(x => x.Map<List<TeamResponse>>(teams))
-            .Returns(teamResponses).Verifiable(Times.Once());
-
-        // Act
-        var result = await _teamController.GetEventTeamsAsync(eventId);
-
-        // Assert status code
-        result.Result.Should().BeOfType<ObjectResult>();
-        var objResult = (result.Result as ObjectResult)!;
-        objResult.StatusCode.Should().Be(StatusCodes.Status200OK);
-
-        // Assert response content
-        objResult.Value.Should().BeOfType<List<TeamResponse>>();
-        var actualTeamResponses = objResult.Value as List<TeamResponse>;
-        actualTeamResponses.Should().BeSameAs(teamResponses);
-    }
-
-    [Test]
-    public async Task GetEventTeamAsync_ShouldReturnTheSpecifiedTeam()
+    public async Task GetRequiredTeamAsync_ShouldReturnTheSpecifiedTeam()
     {
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
         var teamResponse = new TeamResponse();
 
-        _teamServiceMock.Setup(x => x.GetTeamAsync(team.Id))
+        _teamServiceMock.Setup(x => x.GetRequiredTeamAsync(team.Id))
             .ReturnsAsync(team).Verifiable(Times.Once());
         _mapperMock.Setup(x => x.Map<TeamResponse>(team))
             .Returns(teamResponse).Verifiable(Times.Once());
@@ -111,11 +57,11 @@ public class TeamControllerUnitTest
 
     [Test]
     [TestCaseSource(nameof(GetCommonTeamExceptionsAndExpectedStatusCode))]
-    public async Task GetEventTeamAsync_ShouldReturnExpectedHttpStatusCodeOnKnownErrors(Exception exception,
+    public async Task GetRequiredTeamAsync_ShouldReturnExpectedHttpStatusCodeOnKnownErrors(Exception exception,
         int expectedStatusCode)
     {
         var teamId = Random.Shared.Next();
-        _teamServiceMock.Setup(x => x.GetTeamAsync(teamId))
+        _teamServiceMock.Setup(x => x.GetRequiredTeamAsync(teamId))
             .ThrowsAsync(exception).Verifiable(Times.Once());
 
         // Act

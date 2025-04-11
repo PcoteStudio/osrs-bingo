@@ -6,17 +6,18 @@ namespace Bingo.Api.TestUtils.TestDataSetups;
 
 public partial class TestDataSetup(
     ApplicationDbContext dbContext,
-    UserManager<UserEntity>? userManager = null,
-    RoleManager<IdentityRole>? roleManager = null)
+    UserManager<UserEntity> userManager,
+    RoleManager<IdentityRole> roleManager)
 {
     private readonly List<object> _allEntities = [];
 
-    public T GetRequiredLast<T>()
+    public T GetRequiredLast<T>() where T : class
     {
         var last = _allEntities.OfType<T>().LastOrDefault();
         if (last == null)
             throw new Exception($"Unable to find an element of type {typeof(T).Name}. " +
-                                $"Did you call Add{typeof(T).Name}() first?");
+                                $"Did you call Add{typeof(T).Name.Replace("Entity", "")}() first?");
+        // dbContext.Set<T>().Attach(last);
         return last;
     }
 

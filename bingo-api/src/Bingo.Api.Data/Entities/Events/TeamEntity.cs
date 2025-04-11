@@ -8,6 +8,7 @@ namespace Bingo.Api.Data.Entities.Events;
 public class TeamEntity
 {
     private EventEntity? _event;
+
     [Key] public int Id { get; set; }
 
     public required int EventId { get; set; }

@@ -4,6 +4,7 @@ using Bingo.Api.Data.Constants;
 
 namespace Bingo.Api.Data.Entities.Events;
 
+[Serializable]
 [Table("Grinds")]
 public class GrindEntity
 {

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bingo.Api.Data.Entities.Events;
 
+[Serializable]
 [Table("MultiLayerBoards")]
 public class MultiLayerBoardEntity : BoardEntity
 {

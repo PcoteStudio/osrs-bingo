@@ -6,18 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bingo.Api.Web.Teams;
 
-[Route("/api/events/{eventId:min(0)}/teams")]
+[Route("/api/teams")]
 [ApiController]
 public class TeamController(ITeamService teamService, IMapper mapper, ILogger<TeamController> logger) : ControllerBase
 {
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<TeamResponse>>> GetEventTeamsAsync([FromRoute] int eventId)
-    {
-        var teams = await teamService.GetEventTeamsAsync(eventId);
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<TeamResponse>>(teams));
-    }
-
     [HttpGet("{teamId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -25,7 +17,7 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
     {
         try
         {
-            var team = await teamService.GetTeamAsync(teamId);
+            var team = await teamService.GetRequiredTeamAsync(teamId);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
         catch (TeamNotFoundException ex)
@@ -33,16 +25,6 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
             logger.LogWarning(ex.Message, ex);
             return NotFound();
         }
-    }
-
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<TeamResponse>> CreateTeamAsync([FromRoute] int eventId,
-        [FromBody] TeamCreateArguments args)
-    {
-        // EnsureIsAdmin();
-        var team = await teamService.CreateTeamAsync(eventId, args);
-        return StatusCode(StatusCodes.Status201Created, mapper.Map<TeamResponse>(team));
     }
 
     [HttpPut("{teamId:min(0)}")]
@@ -67,7 +49,7 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
     [HttpPut("{teamId:min(0)}/players")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<TeamResponse> UpdateTeamPlayersAsync(
+    public Task<ActionResult<TeamResponse>> UpdateTeamPlayersAsync(
         [FromRoute] int eventId, [FromRoute] int teamId,
         [FromBody] TeamPlayersArguments args)
     {
@@ -85,7 +67,7 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
         try
         {
             // EnsureIsAdmin();
-            var team = await teamService.AddTeamPlayers(teamId, args);
+            var team = await teamService.AddTeamPlayersAsync(teamId, args);
 
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }

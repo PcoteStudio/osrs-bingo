@@ -5,10 +5,10 @@ namespace Bingo.Api.Core.Features.Players;
 
 public interface IPlayerService
 {
-    ValueTask<PlayerEntity?> GetPlayer(int playerId);
-    Task<PlayerEntity> GetOrCreatePlayerByName(string name);
-    Task<List<PlayerEntity>> GetOrCreatePlayersByNames(ICollection<string> names);
-    Task<List<PlayerEntity>> GetPlayers();
+    ValueTask<PlayerEntity?> GetPlayerAsync(int playerId);
+    Task<PlayerEntity> GetOrCreatePlayerByNameAsync(string name);
+    Task<List<PlayerEntity>> GetOrCreatePlayersByNamesAsync(ICollection<string> names);
+    Task<List<PlayerEntity>> GetPlayersAsync();
 }
 
 public class PlayerService(
@@ -17,17 +17,17 @@ public class PlayerService(
     ApplicationDbContext dbContext
 ) : IPlayerService
 {
-    public ValueTask<PlayerEntity?> GetPlayer(int playerId)
+    public ValueTask<PlayerEntity?> GetPlayerAsync(int playerId)
     {
         return playerRepository.GetByIdAsync(playerId);
     }
 
-    public async Task<List<PlayerEntity>> GetPlayers()
+    public async Task<List<PlayerEntity>> GetPlayersAsync()
     {
         return await playerRepository.GetAllAsync();
     }
 
-    public async Task<PlayerEntity> GetOrCreatePlayerByName(string name)
+    public async Task<PlayerEntity> GetOrCreatePlayerByNameAsync(string name)
     {
         var playerEntity = await playerRepository.GetByNameAsync(name);
         if (playerEntity is null)
@@ -40,7 +40,7 @@ public class PlayerService(
         return playerEntity;
     }
 
-    public async Task<List<PlayerEntity>> GetOrCreatePlayersByNames(ICollection<string> names)
+    public async Task<List<PlayerEntity>> GetOrCreatePlayersByNamesAsync(ICollection<string> names)
     {
         var foundPlayers = await playerRepository.GetByNamesAsync(names);
         var namesNotFound = names.Except(foundPlayers.Select(x => x.Name));

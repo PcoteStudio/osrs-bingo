@@ -76,7 +76,7 @@ public class TeamServiceUnitTest
     }
 
     [Test]
-    public async Task GetTeam_ShouldReturnTheSpecifiedTeam()
+    public async Task GetRequiredTeamAsync_ShouldReturnTheSpecifiedTeam()
     {
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
@@ -85,7 +85,7 @@ public class TeamServiceUnitTest
             .ReturnsAsync(team).Verifiable(Times.Once);
 
         // Act
-        var actualTeam = await _service.GetTeamAsync(team.Id);
+        var actualTeam = await _service.GetRequiredTeamAsync(team.Id);
 
         // Assert
         Assert.That(actualTeam, Is.EqualTo(team));

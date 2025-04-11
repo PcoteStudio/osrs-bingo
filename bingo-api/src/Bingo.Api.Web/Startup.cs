@@ -1,11 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Bingo.Api.Data;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Database;
+using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Users;
+using Bingo.Api.Data;
 using Bingo.Api.Web.Authentication;
 using Bingo.Api.Web.Players;
 using Bingo.Api.Web.Teams;
@@ -21,7 +22,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ILogger, Logger<Program>>();
-        
+
         services.AddCors(options =>
         {
             options.AddPolicy("AllowAll", policy =>
@@ -39,7 +40,7 @@ public class Startup
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         });
-        
+
         // Swagger
         services.AddOpenApi();
 
@@ -52,6 +53,7 @@ public class Startup
         services.AddPlayerWebService();
         services.AddTeamService();
         services.AddTeamWebService();
+        services.AddEventService();
     }
 
     public void Configure(IApplicationBuilder app, ILogger<Startup> logger, IServer server)
@@ -77,7 +79,7 @@ public class Startup
             var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             context.Database.Migrate();
         }
-        
+
         app.UseCors("AllowAll");
 
         app.UseAuthentication();
@@ -89,7 +91,7 @@ public class Startup
             endpoints.MapOpenApi();
             endpoints.MapScalarApiReference();
         });
-        
+
 
         app.Run(async context =>
         {
@@ -99,7 +101,8 @@ public class Startup
                 new { Message = "Invalid route: " + context.Request.Method + " " + context.Request.Path }
             );
         });
-        
-        logger.LogInformation($"API URL: {new Uri(new Uri(server.Features.Get<IServerAddressesFeature>()?.Addresses.First()!), "scalar/v1") }");
+
+        logger.LogInformation(
+            $"API URL: {new Uri(new Uri(server.Features.Get<IServerAddressesFeature>()?.Addresses.First()!), "scalar/v1")}");
     }
 }

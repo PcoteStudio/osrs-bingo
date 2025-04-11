@@ -14,12 +14,12 @@ namespace Bingo.Api.Core.Features.Authentication;
 
 public interface IAuthService
 {
-    Task<AuthRefreshArguments> Login(AuthLoginArguments args);
+    Task<AuthRefreshArguments> LoginAsync(AuthLoginArguments args);
     string GenerateAccessToken(IEnumerable<Claim> claims);
     string GenerateRefreshToken();
     ClaimsPrincipal GetPrincipalFromExpiredToken(string accessToken);
-    Task<AuthRefreshArguments> RefreshToken(AuthRefreshArguments args);
-    Task RevokeToken(ClaimsPrincipal principal);
+    Task<AuthRefreshArguments> RefreshTokenAsync(AuthRefreshArguments args);
+    Task RevokeTokenAsync(ClaimsPrincipal principal);
 }
 
 public class AuthService(
@@ -28,7 +28,7 @@ public class AuthService(
     ITokenRepository tokenRepository,
     ApplicationDbContext dbContext) : IAuthService
 {
-    public async Task<AuthRefreshArguments> Login(AuthLoginArguments args)
+    public async Task<AuthRefreshArguments> LoginAsync(AuthLoginArguments args)
     {
         var user = await userManager.FindByNameAsync(args.Username);
         if (user is null) throw new UserNotFoundException(args.Username);
@@ -122,7 +122,7 @@ public class AuthService(
         return principal;
     }
 
-    public async Task<AuthRefreshArguments> RefreshToken(AuthRefreshArguments args)
+    public async Task<AuthRefreshArguments> RefreshTokenAsync(AuthRefreshArguments args)
     {
         var principal = GetPrincipalFromExpiredToken(args.AccessToken);
         if (principal.Identity?.Name is null) throw new InvalidAccessTokenException();
@@ -146,7 +146,7 @@ public class AuthService(
         };
     }
 
-    public async Task RevokeToken(ClaimsPrincipal principal)
+    public async Task RevokeTokenAsync(ClaimsPrincipal principal)
     {
         if (principal.Identity?.Name is null) throw new InvalidAccessTokenException();
         var username = principal.Identity.Name;

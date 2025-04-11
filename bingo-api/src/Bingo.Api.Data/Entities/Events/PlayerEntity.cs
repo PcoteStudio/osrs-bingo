@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bingo.Api.Data.Entities.Events;
 
+[Serializable]
 [Table("Players")]
 [Index(nameof(Name), IsUnique = true)]
 public class PlayerEntity

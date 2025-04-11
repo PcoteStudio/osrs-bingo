@@ -19,11 +19,11 @@ public class AuthController(
     ILogger<AuthController> logger) : ControllerBase
 {
     [HttpPost("signup")]
-    public async Task<ActionResult<UserResponse>> Signup(AuthSignupArguments args)
+    public async Task<ActionResult<UserResponse>> SignupAsync(AuthSignupArguments args)
     {
         try
         {
-            var user = await userService.SignupUser(args);
+            var user = await userService.SignupUserAsync(args);
             var userResponse = mapper.Map<UserResponse>(user);
             return StatusCode(StatusCodes.Status201Created, userResponse);
         }
@@ -34,11 +34,11 @@ public class AuthController(
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<TokenResponse>> Login(AuthLoginArguments args)
+    public async Task<ActionResult<TokenResponse>> LoginAsync(AuthLoginArguments args)
     {
         try
         {
-            var tokenModel = await authService.Login(args);
+            var tokenModel = await authService.LoginAsync(args);
             var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
             return StatusCode(StatusCodes.Status200OK, tokenResponse);
         }
@@ -50,44 +50,44 @@ public class AuthController(
         catch (InvalidCredentialsException ex)
         {
             logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status403Forbidden);
+            return StatusCode(StatusCodes.Status401Unauthorized);
         }
     }
 
     [Authorize]
     [HttpPost("refresh")]
-    public async Task<ActionResult<TokenResponse>> RefreshToken(AuthRefreshArguments args)
+    public async Task<ActionResult<TokenResponse>> RefreshTokenAsync(AuthRefreshArguments args)
     {
         try
         {
-            var tokenModel = await authService.RefreshToken(args);
+            var tokenModel = await authService.RefreshTokenAsync(args);
             var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
             return StatusCode(StatusCodes.Status200OK, tokenResponse);
         }
         catch (InvalidAccessTokenException ex)
         {
             logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status403Forbidden);
+            return StatusCode(StatusCodes.Status401Unauthorized);
         }
         catch (InvalidRefreshTokenException ex)
         {
             logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status403Forbidden);
+            return StatusCode(StatusCodes.Status401Unauthorized);
         }
         catch (SecurityTokenException ex)
         {
             logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status403Forbidden);
+            return StatusCode(StatusCodes.Status401Unauthorized);
         }
     }
 
     [Authorize]
     [HttpPost("revoke")]
-    public async Task<IActionResult> Revoke()
+    public async Task<IActionResult> RevokeAsync()
     {
         try
         {
-            await authService.RevokeToken(User);
+            await authService.RevokeTokenAsync(User);
             return StatusCode(StatusCodes.Status200OK);
         }
         catch (UserNotFoundException ex)
@@ -98,7 +98,7 @@ public class AuthController(
         catch (InvalidAccessTokenException ex)
         {
             logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status403Forbidden);
+            return StatusCode(StatusCodes.Status401Unauthorized);
         }
     }
 }

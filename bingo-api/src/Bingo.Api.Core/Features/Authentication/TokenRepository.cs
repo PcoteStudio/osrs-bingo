@@ -10,11 +10,11 @@ public interface ITokenRepository : IGenericRepository<TokenEntity>
     Task<TokenEntity?> GetByUsernameAsync(string name);
 }
 
-public class TokenRepository(ApplicationDbContext context)
-    : GenericRepository<TokenEntity>(context), ITokenRepository
+public class TokenRepository(ApplicationDbContext dbContext)
+    : GenericRepository<TokenEntity>(dbContext), ITokenRepository
 {
     public Task<TokenEntity?> GetByUsernameAsync(string username)
     {
-        return Context.Tokens.FirstOrDefaultAsync(t => t.Username == username);
+        return DbContext.Tokens.FirstOrDefaultAsync(t => t.Username == username);
     }
 }

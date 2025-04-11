@@ -15,22 +15,24 @@ public class AuthController(
 {
     [Authorize]
     [HttpPost("me")]
-    public async Task<IActionResult> GetMe()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<UserResponse>> GetMeAsync()
     {
         try
         {
-            var user = await userService.GetMe(User);
+            var user = await userService.GetRequiredMeAsync(User);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<UserResponse>(user));
         }
         catch (UserNotFoundException ex)
         {
             logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            return StatusCode(StatusCodes.Status401Unauthorized);
         }
         catch (InvalidAccessTokenException ex)
         {
             logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status403Forbidden);
+            return StatusCode(StatusCodes.Status401Unauthorized);
         }
     }
 }

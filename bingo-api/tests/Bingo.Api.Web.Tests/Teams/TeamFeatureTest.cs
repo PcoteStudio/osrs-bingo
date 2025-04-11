@@ -37,7 +37,7 @@ public class TeamFeatureTest
     public void BeforeEach()
     {
         _dbContext = TestSetupUtil.GetDbContext(BingoProjects.Web);
-        _testDataSetup = new TestDataSetup(_dbContext);
+        _testDataSetup = TestSetupUtil.GetTestDataSetup(BingoProjects.Web);
         _client = new HttpClient();
     }
 
@@ -49,10 +49,13 @@ public class TeamFeatureTest
     }
 
     [Test]
+    [Ignore("Implement a login test util first")]
     public async Task CreateTeam_ShouldReturnTheCreatedTeam()
     {
         // Arrange
-        _testDataSetup.AddEvent(out var eventEntity);
+        _testDataSetup
+            .AddUser()
+            .AddEvent(out var eventEntity);
         var teamArgs = TestDataGenerator.GenerateTeamCreateArguments();
         var postContent = JsonSerializer.Serialize(teamArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
@@ -78,6 +81,7 @@ public class TeamFeatureTest
     {
         // Arrange
         _testDataSetup
+            .AddUser()
             .AddEvent(out var eventEntity)
             .AddTeams(3, out var teams);
 
@@ -100,11 +104,12 @@ public class TeamFeatureTest
     {
         // Arrange
         _testDataSetup
+            .AddUser()
             .AddEvent(out var eventEntity)
             .AddTeam(out var teamEntity);
 
         // Act
-        var response = await _client.GetAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams/{teamEntity.Id}"));
+        var response = await _client.GetAsync(new Uri(_baseUrl, $"/api/teams/{teamEntity.Id}"));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
@@ -120,14 +125,16 @@ public class TeamFeatureTest
     }
 
     [Test]
-    public async Task GetEventTeamsAsync_ShouldReturnNotFoundIfTeamDoesNotExist()
+    public async Task GetTeamAsync_ShouldReturnNotFoundIfTeamDoesNotExist()
     {
         // Arrange
-        _testDataSetup.AddEvent(out var eventEntity);
+        _testDataSetup
+            .AddUser()
+            .AddEvent();
         const int teamId = 1_000_000;
 
         // Act
-        var response = await _client.GetAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams/{teamId}"));
+        var response = await _client.GetAsync(new Uri(_baseUrl, $"/api/teams/{teamId}"));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.NotFound, response);
@@ -143,6 +150,7 @@ public class TeamFeatureTest
     {
         // Arrange
         _testDataSetup
+            .AddUser()
             .AddEvent(out var eventEntity)
             .AddTeam(out var teamEntity);
         var teamArgs = TestDataGenerator.GenerateTeamUpdateArguments();
@@ -150,7 +158,7 @@ public class TeamFeatureTest
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
-        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams/{teamEntity.Id}"),
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{teamEntity.Id}"),
             stringContent);
 
         // Assert response status
@@ -170,14 +178,16 @@ public class TeamFeatureTest
     public async Task UpdateTeam_ShouldReturnNotFoundIfTeamDoesNotExist()
     {
         // Arrange
-        _testDataSetup.AddEvent(out var eventEntity);
+        _testDataSetup
+            .AddUser()
+            .AddEvent();
         const int teamId = 1_000_000;
         var teamArgs = TestDataGenerator.GenerateTeamUpdateArguments();
         var postContent = JsonSerializer.Serialize(teamArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
-        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams/{teamId}"),
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{teamId}"),
             stringContent);
 
         // Assert response status
@@ -194,7 +204,8 @@ public class TeamFeatureTest
     {
         // Arrange
         _testDataSetup
-            .AddEvent(out var eventEntity)
+            .AddUser()
+            .AddEvent()
             .AddTeam(out var teamEntity);
         var args = TestDataGenerator.GenerateTeamPlayersArguments(5);
         var postContent = JsonSerializer.Serialize(args);
@@ -202,7 +213,7 @@ public class TeamFeatureTest
 
         // Act
         var response = await _client.PostAsync(
-            new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams/{teamEntity.Id}/players"),
+            new Uri(_baseUrl, $"/api/teams/{teamEntity.Id}/players"),
             stringContent);
 
         // Assert response status
@@ -220,7 +231,9 @@ public class TeamFeatureTest
     public async Task AddTeamPlayers_ShouldReturnNotFoundIfTeamDoesNotExist()
     {
         // Arrange
-        _testDataSetup.AddEvent(out var eventEntity);
+        _testDataSetup
+            .AddUser()
+            .AddEvent();
         const int teamId = 1_000_000;
         var args = TestDataGenerator.GenerateTeamPlayersArguments(5);
         var postContent = JsonSerializer.Serialize(args);
@@ -228,7 +241,7 @@ public class TeamFeatureTest
 
         // Act
         var response = await _client.PostAsync(
-            new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams/{teamId}/players"),
+            new Uri(_baseUrl, $"/api/teams/{teamId}/players"),
             stringContent);
 
         // Assert response status

@@ -5,13 +5,13 @@ namespace Bingo.Api.Core.Features.Teams;
 
 public interface ITeamUtil
 {
-    void UpdateTeam(TeamEntity team, TeamUpdateArguments arguments);
+    void UpdateTeam(TeamEntity team, TeamUpdateArguments args);
 }
 
 public class TeamUtil : ITeamUtil
 {
-    public void UpdateTeam(TeamEntity team, TeamUpdateArguments arguments)
+    public void UpdateTeam(TeamEntity team, TeamUpdateArguments args)
     {
-        team.Name = arguments.Name;
+        team.Name = args.Name;
     }
 }

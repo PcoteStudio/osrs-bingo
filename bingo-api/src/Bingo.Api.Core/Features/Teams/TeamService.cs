@@ -10,9 +10,9 @@ public interface ITeamService
 {
     Task<TeamEntity> CreateTeamAsync(int eventId, TeamCreateArguments args);
     Task<List<TeamEntity>> GetEventTeamsAsync(int eventId);
-    Task<TeamEntity> GetTeamAsync(int teamId);
+    Task<TeamEntity> GetRequiredTeamAsync(int teamId);
     Task<TeamEntity> UpdateTeamAsync(int teamId, TeamUpdateArguments args);
-    Task<TeamEntity> AddTeamPlayers(int teamId, TeamPlayersArguments args);
+    Task<TeamEntity> AddTeamPlayersAsync(int teamId, TeamPlayersArguments args);
     Task<TeamEntity> RemoveTeamPlayerAsync(int teamId, string playerName);
 }
 
@@ -32,14 +32,16 @@ public class TeamService(
         return team;
     }
 
+    public async Task<TeamEntity> GetRequiredTeamAsync(int teamId)
+    {
+        var team = await teamRepository.GetCompleteByIdAsync(teamId);
+        if (team == null) throw new TeamNotFoundException(teamId);
+        return team;
+    }
+
     public Task<List<TeamEntity>> GetEventTeamsAsync(int eventId)
     {
         return teamRepository.GetAllByEventIdAsync(eventId);
-    }
-
-    public async Task<TeamEntity> GetTeamAsync(int teamId)
-    {
-        return await GetRequiredTeamAsync(teamId);
     }
 
     public async Task<TeamEntity> UpdateTeamAsync(int teamId, TeamUpdateArguments args)
@@ -51,10 +53,10 @@ public class TeamService(
         return team;
     }
 
-    public async Task<TeamEntity> AddTeamPlayers(int teamId, TeamPlayersArguments args)
+    public async Task<TeamEntity> AddTeamPlayersAsync(int teamId, TeamPlayersArguments args)
     {
         var team = await GetRequiredTeamAsync(teamId);
-        var players = await playerService.GetOrCreatePlayersByNames(args.PlayerNames);
+        var players = await playerService.GetOrCreatePlayersByNamesAsync(args.PlayerNames);
         var newPlayers = players
             .Where(newPlayer => team.Players
                 .All(teamPlayer => newPlayer.Id != teamPlayer.Id));
@@ -67,7 +69,7 @@ public class TeamService(
     public async Task<TeamEntity> RemoveTeamPlayerAsync(int teamId, string playerName)
     {
         var team = await GetRequiredTeamAsync(teamId);
-        var player = await playerService.GetOrCreatePlayerByName(playerName);
+        var player = await playerService.GetOrCreatePlayerByNameAsync(playerName);
         if (team.Players.All(p => p.Id != player.Id))
         {
             team.Players.Add(player);
@@ -75,13 +77,6 @@ public class TeamService(
             await dbContext.SaveChangesAsync();
         }
 
-        return team;
-    }
-
-    private async Task<TeamEntity> GetRequiredTeamAsync(int teamId)
-    {
-        var team = await teamRepository.GetCompleteByIdAsync(teamId);
-        if (team == null) throw new TeamNotFoundException(teamId);
         return team;
     }
 }

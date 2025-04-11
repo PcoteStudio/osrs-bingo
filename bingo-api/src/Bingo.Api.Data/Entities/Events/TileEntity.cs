@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bingo.Api.Data.Entities.Events;
 
+[Serializable]
 [Table("Tiles")]
 public class TileEntity
 {

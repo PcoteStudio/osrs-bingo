@@ -8,3 +8,5 @@ riderModule.iml
 # Sqlite db
 data/*.db
 data/.open
+data/*.db-shm
+data/*.db-wal

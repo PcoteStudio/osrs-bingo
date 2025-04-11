@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bingo.Api.Data.Entities.Events;
 
+[Serializable]
 [Table("GrindProgressions")]
 public class GrindProgressionEntity
 {

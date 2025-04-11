@@ -14,44 +14,44 @@ public interface IGenericRepository<T> where T : class
     void Remove(IEnumerable<T> entities);
 }
 
-public class GenericRepository<T>(ApplicationDbContext context) : IGenericRepository<T>
+public class GenericRepository<T>(ApplicationDbContext dbContext) : IGenericRepository<T>
     where T : class
 {
-    protected readonly ApplicationDbContext Context = context;
+    protected readonly ApplicationDbContext DbContext = dbContext;
 
     public void Add(T entity)
     {
-        Context.Set<T>().Add(entity);
+        DbContext.Set<T>().Add(entity);
     }
 
     public void Add(IEnumerable<T> entities)
     {
-        Context.Set<T>().AddRange(entities);
+        DbContext.Set<T>().AddRange(entities);
     }
 
     public Task<List<T>> GetAllAsync()
     {
-        return Context.Set<T>().ToListAsync();
+        return DbContext.Set<T>().ToListAsync();
     }
 
     public ValueTask<T?> GetByIdAsync(int id)
     {
-        return Context.Set<T>().FindAsync(id);
+        return DbContext.Set<T>().FindAsync(id);
     }
 
     public async Task<T> GetRequiredByIdAsync(int id)
     {
-        return await Context.Set<T>().FindAsync(id) ??
+        return await DbContext.Set<T>().FindAsync(id) ??
                throw new Exception($"Required entity of type {typeof(T)} not found for id {id}");
     }
 
     public void Remove(T entity)
     {
-        Context.Set<T>().Remove(entity);
+        DbContext.Set<T>().Remove(entity);
     }
 
     public void Remove(IEnumerable<T> entities)
     {
-        Context.Set<T>().RemoveRange(entities);
+        DbContext.Set<T>().RemoveRange(entities);
     }
 }

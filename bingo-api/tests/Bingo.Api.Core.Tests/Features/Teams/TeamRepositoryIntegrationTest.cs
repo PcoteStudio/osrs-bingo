@@ -14,7 +14,7 @@ public class TeamRepositoryIntegrationTest
     public void BeforeEach()
     {
         _dbContext = TestSetupUtil.GetDbContext(BingoProjects.Core);
-        _testDataSetup = new TestDataSetup(_dbContext);
+        _testDataSetup = TestSetupUtil.GetTestDataSetup(BingoProjects.Core);
         _teamRepository = new TeamRepository(TestSetupUtil.GetDbContext(BingoProjects.Core));
     }
 
@@ -33,6 +33,7 @@ public class TeamRepositoryIntegrationTest
     {
         // Arrange
         _testDataSetup
+            .AddUser()
             .AddEvent()
             .AddTeam(out var team)
             .AddPlayers(2)

@@ -7,7 +7,7 @@ namespace Bingo.Api.Web;
 
 public class Program
 {
-    private static async Task CreateAndSeedDatabase(IHost host)
+    private static async Task CreateAndSeedDatabaseAsync(IHost host)
     {
         var scope = host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -17,13 +17,13 @@ public class Program
             scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
             scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>(),
             scope.ServiceProvider.GetRequiredService<ILogger>()
-        ).Seed();
+        ).SeedAsync();
     }
 
     internal static async Task Main(string[] args)
     {
         var host = CreateHostBuilder(args).Build();
-        await CreateAndSeedDatabase(host);
+        await CreateAndSeedDatabaseAsync(host);
         await host.RunAsync();
     }
 
