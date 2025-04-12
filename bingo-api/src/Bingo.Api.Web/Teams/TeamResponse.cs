@@ -2,6 +2,7 @@ using Bingo.Api.Web.Players;
 
 namespace Bingo.Api.Web.Teams;
 
+[Serializable]
 public class TeamResponse
 {
     public int Id { get; set; }

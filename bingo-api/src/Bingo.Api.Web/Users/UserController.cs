@@ -1,6 +1,7 @@
 using AutoMapper;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Core.Features.Users.Exceptions;
+using Bingo.Api.Web.Generic.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,15 +25,15 @@ public class AuthController(
             var user = await userService.GetRequiredMeAsync(User);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<UserResponse>(user));
         }
-        catch (UserNotFoundException ex)
+        catch (Exception ex)
         {
-            logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status401Unauthorized);
-        }
-        catch (InvalidAccessTokenException ex)
-        {
-            logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status401Unauthorized);
+            switch (ex)
+            {
+                case UserNotFoundException or InvalidAccessTokenException:
+                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
+                default:
+                    throw;
+            }
         }
     }
 }

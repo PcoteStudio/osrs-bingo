@@ -5,14 +5,14 @@ using Bingo.Api.Web.Teams;
 namespace Bingo.Api.Web.Tests.Teams;
 
 [TestFixture]
-[TestOf(typeof(TeamsMappingProfile))]
+[TestOf(typeof(TeamMappingProfile))]
 public class PlayersMappingProfileUnitTest
 {
     [OneTimeSetUp]
     public void BeforeAll()
     {
         _mapper = new MapperConfiguration(
-            c => c.AddMaps(typeof(TeamsMappingProfile).Assembly)
+            c => c.AddMaps(typeof(TeamMappingProfile).Assembly)
         ).CreateMapper();
     }
 

@@ -1,7 +1,9 @@
 using AutoMapper;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Exceptions;
+using Bingo.Api.Core.Features.Users.Exceptions;
 using Bingo.Api.TestUtils.TestDataGenerators;
+using Bingo.Api.Web.Generic.Exceptions;
 using Bingo.Api.Web.Teams;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +32,7 @@ public class TeamControllerUnitTest
     private Mock<ILogger<TeamController>> _loggerMock;
 
     [Test]
-    public async Task GetRequiredTeamAsync_ShouldReturnTheSpecifiedTeam()
+    public async Task GetTeamAsync_ShouldReturnTheSpecifiedTeam()
     {
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
@@ -56,26 +58,43 @@ public class TeamControllerUnitTest
     }
 
     [Test]
-    [TestCaseSource(nameof(GetCommonTeamExceptionsAndExpectedStatusCode))]
-    public async Task GetRequiredTeamAsync_ShouldReturnExpectedHttpStatusCodeOnKnownErrors(Exception exception,
+    [TestCaseSource(nameof(GetGetTeamAsyncExceptionsAndExpectedStatusCode))]
+    public async Task GetTeamAsync_ShouldReturnExpectedHttpStatusCodeOnKnownErrors(Exception exception,
         int expectedStatusCode)
     {
+        // Arrange
         var teamId = Random.Shared.Next();
         _teamServiceMock.Setup(x => x.GetRequiredTeamAsync(teamId))
             .ThrowsAsync(exception).Verifiable(Times.Once());
 
         // Act
-        var result = await _teamController.GetTeamAsync(teamId);
+        var act = async () => await _teamController.GetTeamAsync(teamId);
 
         // Assert status code
-        result.Result.Should().BeAssignableTo<StatusCodeResult>();
-        var statusCodeResult = (result.Result as StatusCodeResult)!;
-        statusCodeResult.StatusCode.Should().Be(expectedStatusCode);
+        (await act.Should().ThrowAsync<HttpException>()).Which.StatusCode.Should().Be(expectedStatusCode);
     }
 
     private static IEnumerable<TestCaseData> GetCommonTeamExceptionsAndExpectedStatusCode()
     {
-        // TODO Add forbidden access
+        yield return new TestCaseData(new TeamNotFoundException(Random.Shared.Next()), StatusCodes.Status404NotFound);
+    }
+
+    private static IEnumerable<TestCaseData> GetCommonAuthorizedTeamExceptionsAndExpectedStatusCode()
+    {
+        foreach (var testCaseData in GetCommonTeamExceptionsAndExpectedStatusCode())
+            yield return testCaseData;
+        yield return new TestCaseData(new UserNotFoundException(TestDataGenerator.GenerateUserName()),
+            StatusCodes.Status401Unauthorized);
+        yield return new TestCaseData(new InvalidAccessTokenException(), StatusCodes.Status401Unauthorized);
+        yield return new TestCaseData(
+            new UserIsNotATeamAdminException(Random.Shared.Next(), TestDataGenerator.GenerateUserName()),
+            StatusCodes.Status403Forbidden);
+    }
+
+    private static IEnumerable<TestCaseData> GetGetTeamAsyncExceptionsAndExpectedStatusCode()
+    {
+        foreach (var testCaseData in GetCommonTeamExceptionsAndExpectedStatusCode())
+            yield return testCaseData;
         yield return new TestCaseData(new TeamNotFoundException(Random.Shared.Next()), StatusCodes.Status404NotFound);
     }
 }

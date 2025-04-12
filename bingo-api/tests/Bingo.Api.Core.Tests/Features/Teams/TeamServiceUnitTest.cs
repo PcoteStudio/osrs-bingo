@@ -1,5 +1,6 @@
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams;
+using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data;
 using Bingo.Api.TestUtils.TestDataGenerators;
 using Moq;
@@ -16,12 +17,14 @@ public class TeamServiceUnitTest
         _teamRepositoryMock = new Mock<ITeamRepository>(MockBehavior.Strict);
         _teamFactoryMock = new Mock<ITeamFactory>(MockBehavior.Strict);
         _teamUtilMock = new Mock<ITeamUtil>(MockBehavior.Strict);
+        _userService = new Mock<IUserService>(MockBehavior.Strict);
         _playerServiceMock = new Mock<IPlayerService>(MockBehavior.Strict);
         _dbContextMock = new Mock<ApplicationDbContext>(MockBehavior.Loose);
         _service = new TeamService(
             _teamFactoryMock.Object,
             _teamRepositoryMock.Object,
             _teamUtilMock.Object,
+            _userService.Object,
             _playerServiceMock.Object,
             _dbContextMock.Object
         );
@@ -31,6 +34,7 @@ public class TeamServiceUnitTest
     private Mock<ITeamRepository> _teamRepositoryMock;
     private Mock<ITeamFactory> _teamFactoryMock;
     private Mock<ITeamUtil> _teamUtilMock;
+    private Mock<IUserService> _userService;
     private Mock<IPlayerService> _playerServiceMock;
     private Mock<ApplicationDbContext> _dbContextMock;
 
@@ -55,24 +59,6 @@ public class TeamServiceUnitTest
         // Assert
         Assert.That(actualTeam, Is.EqualTo(team));
         Mock.VerifyAll(_teamFactoryMock, _teamRepositoryMock, _dbContextMock);
-    }
-
-    [Test]
-    public async Task GetEventTeamsAsync_ShouldReturnAllTeams()
-    {
-        // Arrange
-        var eventId = Random.Shared.Next();
-        var teams = TestDataGenerator.GenerateTeamEntities(3);
-
-        _teamRepositoryMock.Setup(x => x.GetAllByEventIdAsync(eventId))
-            .ReturnsAsync(teams).Verifiable(Times.Once);
-
-        // Act
-        var actualTeams = await _service.GetEventTeamsAsync(eventId);
-
-        // Assert
-        Assert.That(actualTeams, Is.EquivalentTo(teams));
-        Mock.VerifyAll(_teamRepositoryMock);
     }
 
     [Test]

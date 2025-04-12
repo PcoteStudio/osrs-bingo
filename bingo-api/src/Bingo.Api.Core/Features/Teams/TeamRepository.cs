@@ -17,6 +17,7 @@ public class TeamRepository(ApplicationDbContext dbContext) : GenericRepository<
     {
         return DbContext.Teams
             .Include(t => t.Event)
+            .ThenInclude(e => e.Administrators)
             .Include(t => t.Players)
             .FirstOrDefaultAsync(t => t.Id == id);
     }

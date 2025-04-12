@@ -3,6 +3,7 @@ using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Core.Features.Users.Exceptions;
+using Bingo.Api.Web.Generic.Exceptions;
 using Bingo.Api.Web.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,9 +28,15 @@ public class AuthController(
             var userResponse = mapper.Map<UserResponse>(user);
             return StatusCode(StatusCodes.Status201Created, userResponse);
         }
-        catch (EmailAlreadyInUseException ex)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            switch (ex)
+            {
+                case EmailAlreadyInUseException:
+                    throw new HttpException(StatusCodes.Status400BadRequest, ex);
+                default:
+                    throw;
+            }
         }
     }
 
@@ -42,15 +49,17 @@ public class AuthController(
             var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
             return StatusCode(StatusCodes.Status200OK, tokenResponse);
         }
-        catch (UserNotFoundException ex)
+        catch (Exception ex)
         {
-            logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
-        }
-        catch (InvalidCredentialsException ex)
-        {
-            logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status401Unauthorized);
+            switch (ex)
+            {
+                case InvalidCredentialsException:
+                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
+                case UserNotFoundException:
+                    throw new HttpException(StatusCodes.Status404NotFound, ex);
+                default:
+                    throw;
+            }
         }
     }
 
@@ -64,20 +73,15 @@ public class AuthController(
             var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
             return StatusCode(StatusCodes.Status200OK, tokenResponse);
         }
-        catch (InvalidAccessTokenException ex)
+        catch (Exception ex)
         {
-            logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status401Unauthorized);
-        }
-        catch (InvalidRefreshTokenException ex)
-        {
-            logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status401Unauthorized);
-        }
-        catch (SecurityTokenException ex)
-        {
-            logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status401Unauthorized);
+            switch (ex)
+            {
+                case InvalidAccessTokenException or InvalidRefreshTokenException or SecurityTokenException:
+                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
+                default:
+                    throw;
+            }
         }
     }
 

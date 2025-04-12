@@ -30,7 +30,7 @@ public class EventService(
         var user = await userService.GetRequiredMeAsync(principal);
         var eventEntity = await GetRequiredEventAsync(eventId);
         if (!eventEntity.Administrators.Contains(user))
-            throw new UserIsNotAnEventAdminException(eventEntity.Id, principal.Identity!.Name!);
+            throw new UserIsNotAnEventAdminException(eventId, principal.Identity!.Name!);
         return user;
     }
 

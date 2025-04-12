@@ -1,7 +1,9 @@
 using Bingo.Api.Web.Teams;
+using Bingo.Api.Web.Users;
 
 namespace Bingo.Api.Web.Events;
 
+[Serializable]
 public class EventResponse
 {
     public int Id { get; set; }
@@ -9,4 +11,5 @@ public class EventResponse
     public DateTimeOffset StartTime { get; set; }
     public DateTimeOffset EndTime { get; set; }
     public List<TeamResponse> Teams { get; set; } = [];
+    public List<PublicUserResponse> Administrators { get; set; } = [];
 }

@@ -6,6 +6,7 @@ using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Core.Features.Users.Exceptions;
+using Bingo.Api.Web.Generic.Exceptions;
 using Bingo.Api.Web.Teams;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,16 +27,8 @@ public class EventController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<EventResponse>>> GetEventsAsync()
     {
-        try
-        {
-            var events = await eventService.GetEventsAsync();
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<List<EventResponse>>(events));
-        }
-        catch (Exception ex)
-        {
-            logger.LogDebug(ex.Message, ex);
-            throw;
-        }
+        var events = await eventService.GetEventsAsync();
+        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<EventResponse>>(events));
     }
 
     [HttpGet("{eventId:min(0)}")]
@@ -50,11 +43,10 @@ public class EventController(
         }
         catch (Exception ex)
         {
-            logger.LogDebug(ex.Message, ex);
             switch (ex)
             {
                 case EventNotFoundException:
-                    return NotFound(ex.Message);
+                    throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;
             }
@@ -75,11 +67,10 @@ public class EventController(
         }
         catch (Exception ex)
         {
-            logger.LogDebug(ex.Message, ex);
             switch (ex)
             {
                 case UserNotFoundException or InvalidAccessTokenException:
-                    return Unauthorized();
+                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
                 default:
                     throw;
             }
@@ -103,27 +94,18 @@ public class EventController(
         }
         catch (Exception ex)
         {
-            logger.LogDebug(ex.Message, ex);
             switch (ex)
             {
-                case UserIsNotAnEventAdminException:
-                    return Forbid();
                 case UserNotFoundException or InvalidAccessTokenException:
-                    return Unauthorized();
+                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
+                case UserIsNotAnEventAdminException:
+                    throw new HttpException(StatusCodes.Status403Forbidden, ex);
                 case EventNotFoundException:
-                    return NotFound(ex.Message);
+                    throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;
             }
         }
-    }
-
-    [HttpGet("{eventId:min(0)}/teams")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<TeamResponse>>> GetEventTeamsAsync([FromRoute] int eventId)
-    {
-        var teams = await teamService.GetEventTeamsAsync(eventId);
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<TeamResponse>>(teams));
     }
 
     [HttpPut("{eventId:min(0)}")]
@@ -142,15 +124,14 @@ public class EventController(
         }
         catch (Exception ex)
         {
-            logger.LogDebug(ex.Message, ex);
             switch (ex)
             {
-                case UserIsNotAnEventAdminException:
-                    return Forbid();
                 case UserNotFoundException or InvalidAccessTokenException:
-                    return Unauthorized();
+                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
+                case UserIsNotAnEventAdminException:
+                    throw new HttpException(StatusCodes.Status403Forbidden, ex);
                 case EventNotFoundException:
-                    return NotFound(ex.Message);
+                    throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;
             }

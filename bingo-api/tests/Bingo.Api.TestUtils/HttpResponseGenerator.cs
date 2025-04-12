@@ -6,25 +6,16 @@ public static class HttpResponseGenerator
 {
     public static string GetExpectedJsonResponse(HttpStatusCode statusCode)
     {
-        switch (statusCode)
-        {
-            case HttpStatusCode.NotFound:
-                return BuildJsonResponse((int)HttpStatusCode.NotFound, "Not Found",
-                    "https://tools.ietf.org/html/rfc9110#section-15.5.5");
-            default:
-                throw new NotImplementedException("No implemented response for status code: " + statusCode);
-        }
+        return BuildJsonResponse((int)statusCode, "The requested resource was not found");
     }
 
-    private static string BuildJsonResponse(int code, string title, string type)
+    private static string BuildJsonResponse(int code, string message)
     {
         return /* language=json */
             $$"""
               {
                 "status": {{code}},
-                "title": "{{title}}",
-                "traceId": { "__match": {  "type": "string"  } },
-                "type": "{{type}}"
+                "message": "{{message}}"
               }
               """;
     }

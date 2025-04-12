@@ -8,6 +8,8 @@ using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data;
 using Bingo.Api.Web.Authentication;
+using Bingo.Api.Web.Events;
+using Bingo.Api.Web.Middlewares;
 using Bingo.Api.Web.Players;
 using Bingo.Api.Web.Teams;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -41,10 +43,8 @@ public class Startup
             options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         });
 
-        // Swagger
-        services.AddOpenApi();
-
         // Features
+        services.AddOpenApi();
         services.AddSqliteDatabase();
         services.AddAuthenticationService();
         services.AddAuthenticationWebService();
@@ -54,25 +54,15 @@ public class Startup
         services.AddTeamService();
         services.AddTeamWebService();
         services.AddEventService();
+        services.AddEventWebService();
     }
 
-    public void Configure(IApplicationBuilder app, ILogger<Startup> logger, IServer server)
+    public void Configure(IApplicationBuilder app, ILogger<Startup> logger, IServer server, IWebHostEnvironment env)
     {
         app.UseRouting();
-        app.Use(async (context, next) =>
-        {
-            try
-            {
-                await next.Invoke();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "An unhandled exception occured.");
-                context.Response.StatusCode = 500;
-                context.Response.ContentType = "text/plain";
-                await context.Response.WriteAsync(ex.ToString());
-            }
-        });
+
+        app.UseMiddleware<HttpExceptionMiddleware>();
+        if (env.IsDevelopment()) app.UseMiddleware<DevExceptionMiddleware>();
 
         using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()!.CreateScope())
         {

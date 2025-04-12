@@ -78,29 +78,6 @@ public class TeamFeatureTest
     }
 
     [Test]
-    public async Task GetEventTeamsAsync_ShouldReturnAllTeams()
-    {
-        // Arrange
-        _testDataSetup
-            .AddUser()
-            .AddEvent(out var eventEntity)
-            .AddTeams(3, out var teams);
-
-        // Act
-        var response = await _client.GetAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"));
-
-        // Assert response status
-        await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
-
-        // Assert response content
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var returnedTeams = JsonSerializer.Deserialize<List<TeamResponse>>(responseContent, JsonSerializerOptions.Web);
-        returnedTeams.Should().NotBeNull();
-        returnedTeams.Count.Should().Be(teams.Count);
-        returnedTeams.Select(x => x.Id).Should().BeEquivalentTo(teams.Select(x => x.Id));
-    }
-
-    [Test]
     public async Task GetEventTeamsAsync_ShouldReturnTheSpecifiedTeam()
     {
         // Arrange
@@ -151,12 +128,14 @@ public class TeamFeatureTest
     {
         // Arrange
         _testDataSetup
-            .AddUser()
+            .AddUser(out var userWithSecrets)
             .AddEvent(out var eventEntity)
             .AddTeam(out var teamEntity);
         var teamArgs = TestDataGenerator.GenerateTeamUpdateArguments();
         var postContent = JsonSerializer.Serialize(teamArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", userWithSecrets.AccessToken);
 
         // Act
         var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{teamEntity.Id}"),
@@ -180,12 +159,14 @@ public class TeamFeatureTest
     {
         // Arrange
         _testDataSetup
-            .AddUser()
+            .AddUser(out var userWithSecrets)
             .AddEvent();
         const int teamId = 1_000_000;
         var teamArgs = TestDataGenerator.GenerateTeamUpdateArguments();
         var postContent = JsonSerializer.Serialize(teamArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", userWithSecrets.AccessToken);
 
         // Act
         var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{teamId}"),
@@ -205,12 +186,14 @@ public class TeamFeatureTest
     {
         // Arrange
         _testDataSetup
-            .AddUser()
+            .AddUser(out var userWithSecrets)
             .AddEvent()
             .AddTeam(out var teamEntity);
         var args = TestDataGenerator.GenerateTeamPlayersArguments(5);
         var postContent = JsonSerializer.Serialize(args);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", userWithSecrets.AccessToken);
 
         // Act
         var response = await _client.PostAsync(
@@ -233,12 +216,14 @@ public class TeamFeatureTest
     {
         // Arrange
         _testDataSetup
-            .AddUser()
+            .AddUser(out var userWithSecrets)
             .AddEvent();
         const int teamId = 1_000_000;
         var args = TestDataGenerator.GenerateTeamPlayersArguments(5);
         var postContent = JsonSerializer.Serialize(args);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", userWithSecrets.AccessToken);
 
         // Act
         var response = await _client.PostAsync(
