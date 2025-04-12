@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Bingo.Api.Core.Features.Events.Exceptions;
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Teams.Exceptions;
@@ -17,6 +16,7 @@ public interface ITeamService
     Task<TeamEntity> GetRequiredTeamAsync(int teamId);
     Task<TeamEntity> UpdateTeamAsync(int teamId, TeamUpdateArguments args);
     Task<TeamEntity> AddTeamPlayersAsync(int teamId, TeamPlayersArguments args);
+    Task<TeamEntity> UpdateTeamPlayersAsync(int teamId, TeamPlayersArguments args);
     Task<TeamEntity> RemoveTeamPlayerAsync(int teamId, string playerName);
 }
 
@@ -70,6 +70,16 @@ public class TeamService(
             .Where(newPlayer => team.Players
                 .All(teamPlayer => newPlayer.Id != teamPlayer.Id));
         team.Players.AddRange(newPlayers);
+        dbContext.Update(team);
+        await dbContext.SaveChangesAsync();
+        return team;
+    }
+
+    public async Task<TeamEntity> UpdateTeamPlayersAsync(int teamId, TeamPlayersArguments args)
+    {
+        var team = await GetRequiredTeamAsync(teamId);
+        var players = await playerService.GetOrCreatePlayersByNamesAsync(args.PlayerNames);
+        team.Players = players;
         dbContext.Update(team);
         await dbContext.SaveChangesAsync();
         return team;

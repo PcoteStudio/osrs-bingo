@@ -2,15 +2,15 @@ using AutoMapper;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Teams.Exceptions;
-using Bingo.Api.Core.Features.Users.Exceptions;
 using Bingo.Api.Web.Generic.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bingo.Api.Web.Teams;
 
 [Route("/api/teams")]
 [ApiController]
-public class TeamController(ITeamService teamService, IMapper mapper, ILogger<TeamController> logger) : ControllerBase
+public class TeamController(ITeamService teamService, IMapper mapper) : ControllerBase
 {
     [HttpGet("{teamId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -34,6 +34,7 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
         }
     }
 
+    [Authorize]
     [HttpPut("{teamId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -52,8 +53,6 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
         {
             switch (ex)
             {
-                case UserNotFoundException or InvalidAccessTokenException:
-                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
                 case UserIsNotATeamAdminException:
                     throw new HttpException(StatusCodes.Status403Forbidden, ex);
                 case TeamNotFoundException:
@@ -64,6 +63,7 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
         }
     }
 
+    [Authorize]
     [HttpPut("{teamId:min(0)}/players")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -76,6 +76,7 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
         throw new NotImplementedException();
     }
 
+    [Authorize]
     [HttpPost("{teamId:min(0)}/players")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -95,8 +96,6 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
         {
             switch (ex)
             {
-                case UserNotFoundException or InvalidAccessTokenException:
-                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
                 case UserIsNotATeamAdminException:
                     throw new HttpException(StatusCodes.Status403Forbidden, ex);
                 case TeamNotFoundException:
@@ -107,6 +106,7 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
         }
     }
 
+    [Authorize]
     [HttpDelete("{teamId:min(0)}/players/{playerName:minlength(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -123,8 +123,6 @@ public class TeamController(ITeamService teamService, IMapper mapper, ILogger<Te
         {
             switch (ex)
             {
-                case UserNotFoundException or InvalidAccessTokenException:
-                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
                 case UserIsNotATeamAdminException:
                     throw new HttpException(StatusCodes.Status403Forbidden, ex);
                 case TeamNotFoundException:

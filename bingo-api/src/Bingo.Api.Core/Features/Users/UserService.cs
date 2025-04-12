@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.Core.Features.Users.Exceptions;
+using Bingo.Api.Data;
 using Bingo.Api.Data.Constants;
 using Bingo.Api.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -33,10 +34,7 @@ public class UserService(
 
     public async Task<UserEntity> GetRequiredMeAsync(ClaimsPrincipal principal)
     {
-        if (principal.Identity?.Name is null) throw new InvalidAccessTokenException();
-        var user = await userManager.FindByNameAsync(principal.Identity.Name);
-        if (user is null) throw new UserNotFoundException(principal.Identity.Name);
-        return user;
+        return (await userManager.FindByNameAsync(principal.Identity.NotNull().Name.NotNull())).NotNull();
     }
 
     private async Task<UserEntity> CreateUserAsync(UserEntity user, string password)

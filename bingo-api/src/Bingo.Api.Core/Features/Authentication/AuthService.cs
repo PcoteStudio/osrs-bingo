@@ -7,6 +7,7 @@ using Bingo.Api.Core.Features.Users.Exceptions;
 using Bingo.Api.Data;
 using Bingo.Api.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -125,8 +126,7 @@ public class AuthService(
     public async Task<AuthRefreshArguments> RefreshTokenAsync(AuthRefreshArguments args)
     {
         var principal = GetPrincipalFromExpiredToken(args.AccessToken);
-        if (principal.Identity?.Name is null) throw new InvalidAccessTokenException();
-        var username = principal.Identity.Name;
+        var username = principal.Identity.NotNull().Name.NotNull();
 
         var tokenInfo = dbContext.Tokens.SingleOrDefault(u => u.Username == username);
         if (tokenInfo == null
@@ -148,13 +148,12 @@ public class AuthService(
 
     public async Task RevokeTokenAsync(ClaimsPrincipal principal)
     {
-        if (principal.Identity?.Name is null) throw new InvalidAccessTokenException();
-        var username = principal.Identity.Name;
-
-        var user = dbContext.Tokens.SingleOrDefault(u => u.Username == username);
-        if (user == null) throw new UserNotFoundException(username);
-
-        user.RefreshToken = string.Empty;
-        await dbContext.SaveChangesAsync();
+        var username = principal.Identity.NotNull().Name.NotNull();
+        var tokens = await dbContext.Tokens.SingleOrDefaultAsync(u => u.Username == username);
+        if (tokens is not null)
+        {
+            tokens.RefreshToken = string.Empty;
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

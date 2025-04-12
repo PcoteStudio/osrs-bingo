@@ -1,4 +1,5 @@
 using System.Reflection;
+using Bingo.Api.Web.Generic.Exceptions;
 
 namespace Bingo.Api.Web.Middlewares;
 
@@ -12,6 +13,10 @@ public class DevExceptionMiddleware(RequestDelegate next, ILogger<DevExceptionMi
         try
         {
             await next(context);
+        }
+        catch (HttpException)
+        {
+            throw;
         }
         catch (Exception ex)
         {

@@ -16,8 +16,7 @@ namespace Bingo.Api.Web.Authentication;
 public class AuthController(
     IUserService userService,
     IAuthService authService,
-    IMapper mapper,
-    ILogger<AuthController> logger) : ControllerBase
+    IMapper mapper) : ControllerBase
 {
     [HttpPost("signup")]
     public async Task<ActionResult<UserResponse>> SignupAsync(AuthSignupArguments args)
@@ -43,24 +42,9 @@ public class AuthController(
     [HttpPost("login")]
     public async Task<ActionResult<TokenResponse>> LoginAsync(AuthLoginArguments args)
     {
-        try
-        {
-            var tokenModel = await authService.LoginAsync(args);
-            var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
-            return StatusCode(StatusCodes.Status200OK, tokenResponse);
-        }
-        catch (Exception ex)
-        {
-            switch (ex)
-            {
-                case InvalidCredentialsException:
-                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
-                case UserNotFoundException:
-                    throw new HttpException(StatusCodes.Status404NotFound, ex);
-                default:
-                    throw;
-            }
-        }
+        var tokenModel = await authService.LoginAsync(args);
+        var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
+        return StatusCode(StatusCodes.Status200OK, tokenResponse);
     }
 
     [Authorize]
@@ -77,8 +61,8 @@ public class AuthController(
         {
             switch (ex)
             {
-                case InvalidAccessTokenException or InvalidRefreshTokenException or SecurityTokenException:
-                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
+                case InvalidRefreshTokenException or SecurityTokenException:
+                    throw new HttpException(StatusCodes.Status400BadRequest, ex);
                 default:
                     throw;
             }
@@ -89,20 +73,7 @@ public class AuthController(
     [HttpPost("revoke")]
     public async Task<IActionResult> RevokeAsync()
     {
-        try
-        {
-            await authService.RevokeTokenAsync(User);
-            return StatusCode(StatusCodes.Status200OK);
-        }
-        catch (UserNotFoundException ex)
-        {
-            logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
-        }
-        catch (InvalidAccessTokenException ex)
-        {
-            logger.LogWarning(ex.Message, ex);
-            return StatusCode(StatusCodes.Status401Unauthorized);
-        }
+        await authService.RevokeTokenAsync(User);
+        return StatusCode(StatusCodes.Status200OK);
     }
 }

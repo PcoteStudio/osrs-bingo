@@ -12,6 +12,7 @@ public static class EntityExtensions
         return new CancelSkip();
     }
 
+
     public static T ThrowIfNotLoaded<T>(this T? entity, [CallerArgumentExpression("entity")] string? expression = null)
     {
         if (entity != null)

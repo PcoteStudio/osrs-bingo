@@ -5,7 +5,6 @@ using Bingo.Api.Core.Features.Events.Exceptions;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Users;
-using Bingo.Api.Core.Features.Users.Exceptions;
 using Bingo.Api.Web.Generic.Exceptions;
 using Bingo.Api.Web.Teams;
 using Microsoft.AspNetCore.Authorization;
@@ -19,8 +18,7 @@ public class EventController(
     IEventService eventService,
     ITeamService teamService,
     IUserService userService,
-    IMapper mapper,
-    ILogger<EventController> logger)
+    IMapper mapper)
     : ControllerBase
 {
     [HttpGet]
@@ -59,22 +57,9 @@ public class EventController(
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<TeamResponse>> CreateEventAsync([FromBody] EventCreateArguments args)
     {
-        try
-        {
-            var user = await userService.GetRequiredMeAsync(User);
-            var eventEntity = await eventService.CreateEventAsync(user, args);
-            return StatusCode(StatusCodes.Status201Created, mapper.Map<EventResponse>(eventEntity));
-        }
-        catch (Exception ex)
-        {
-            switch (ex)
-            {
-                case UserNotFoundException or InvalidAccessTokenException:
-                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
-                default:
-                    throw;
-            }
-        }
+        var user = await userService.GetRequiredMeAsync(User);
+        var eventEntity = await eventService.CreateEventAsync(user, args);
+        return StatusCode(StatusCodes.Status201Created, mapper.Map<EventResponse>(eventEntity));
     }
 
     [Authorize]
@@ -96,8 +81,6 @@ public class EventController(
         {
             switch (ex)
             {
-                case UserNotFoundException or InvalidAccessTokenException:
-                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
                 case UserIsNotAnEventAdminException:
                     throw new HttpException(StatusCodes.Status403Forbidden, ex);
                 case EventNotFoundException:
@@ -126,8 +109,6 @@ public class EventController(
         {
             switch (ex)
             {
-                case UserNotFoundException or InvalidAccessTokenException:
-                    throw new HttpException(StatusCodes.Status401Unauthorized, ex);
                 case UserIsNotAnEventAdminException:
                     throw new HttpException(StatusCodes.Status403Forbidden, ex);
                 case EventNotFoundException:
