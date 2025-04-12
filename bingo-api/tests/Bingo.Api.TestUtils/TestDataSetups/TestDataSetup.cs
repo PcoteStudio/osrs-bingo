@@ -1,3 +1,4 @@
+using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Data;
 using Bingo.Api.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +8,8 @@ namespace Bingo.Api.TestUtils.TestDataSetups;
 public partial class TestDataSetup(
     ApplicationDbContext dbContext,
     UserManager<UserEntity> userManager,
-    RoleManager<IdentityRole> roleManager)
+    RoleManager<IdentityRole> roleManager,
+    IAuthService authService)
 {
     private readonly List<object> _allEntities = [];
 
@@ -17,7 +19,6 @@ public partial class TestDataSetup(
         if (last == null)
             throw new Exception($"Unable to find an element of type {typeof(T).Name}. " +
                                 $"Did you call Add{typeof(T).Name.Replace("Entity", "")}() first?");
-        // dbContext.Set<T>().Attach(last);
         return last;
     }
 

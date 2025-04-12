@@ -49,16 +49,17 @@ public class TeamFeatureTest
     }
 
     [Test]
-    [Ignore("Implement a login test util first")]
     public async Task CreateTeam_ShouldReturnTheCreatedTeam()
     {
         // Arrange
         _testDataSetup
-            .AddUser()
+            .AddUser(out var userWithSecrets)
             .AddEvent(out var eventEntity);
         var teamArgs = TestDataGenerator.GenerateTeamCreateArguments();
         var postContent = JsonSerializer.Serialize(teamArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", userWithSecrets.AccessToken);
 
         // Act
         var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"), stringContent);

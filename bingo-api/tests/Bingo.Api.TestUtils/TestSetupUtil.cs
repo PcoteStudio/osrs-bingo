@@ -1,3 +1,4 @@
+using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Data;
 using Bingo.Api.Data.Entities;
 using Bingo.Api.Shared;
@@ -61,6 +62,11 @@ public static class TestSetupUtil
     public static IWebHost BuildWebHost(BingoProjects project = BingoProjects.Web)
     {
         return WebHost.CreateDefaultBuilder([])
+            .ConfigureServices(services =>
+            {
+                // Reduce the iteration count when hashing passwords to speed up user login in tests
+                services.Configure<PasswordHasherOptions>(config => config.IterationCount = 1);
+            })
             .ConfigureAppConfiguration(config =>
             {
                 config.AddInMemoryCollection(GetConfigurationValues(project));
@@ -73,18 +79,12 @@ public static class TestSetupUtil
 
     public static TestDataSetup GetTestDataSetup(BingoProjects project)
     {
-        var builder = new ConfigurationBuilder()
-            .AddUserSecrets<Program>()
-            .AddInMemoryCollection(GetConfigurationValues(project));
-        var services = new ServiceCollection();
-        services.AddScoped<IConfiguration>(_ => builder.Build());
-        new Startup().ConfigureServices(services);
-        var sp = services.BuildServiceProvider();
-
+        var sp = BuildWebHost(project).Services;
         return new TestDataSetup(
             sp.GetRequiredService<ApplicationDbContext>(),
             sp.GetRequiredService<UserManager<UserEntity>>(),
-            sp.GetRequiredService<RoleManager<IdentityRole>>()
+            sp.GetRequiredService<RoleManager<IdentityRole>>(),
+            sp.GetRequiredService<IAuthService>()
         );
     }
 

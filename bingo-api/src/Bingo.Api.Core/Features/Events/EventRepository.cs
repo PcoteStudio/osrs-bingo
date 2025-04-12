@@ -16,7 +16,8 @@ public class EventRepository(ApplicationDbContext dbContext)
     public Task<EventEntity?> GetCompleteByIdAsync(int eventId)
     {
         return DbContext.Events
-            .Include(p => p.Teams)
-            .FirstOrDefaultAsync(p => p.Id == eventId);
+            .Include(e => e.Administrators)
+            .Include(e => e.Teams)
+            .FirstOrDefaultAsync(e => e.Id == eventId);
     }
 }

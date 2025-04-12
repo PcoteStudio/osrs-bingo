@@ -4,7 +4,6 @@ using System.Text.Json;
 using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.Data;
 using Bingo.Api.TestUtils;
-using Bingo.Api.TestUtils.TestDataGenerators;
 using Bingo.Api.TestUtils.TestDataSetups;
 using Bingo.Api.Web.Authentication;
 using FluentAssertions;
@@ -53,17 +52,12 @@ public class AuthenticationFeatureTest
     public async Task Login_ShouldReturnNewTokens()
     {
         // Arrange
+        _testDataSetup.AddUser(out var userWithPassword);
         var loginArgs = new AuthLoginArguments
         {
-            Username = TestDataGenerator.GeneratePlayerName() + "@local.host",
-            Password = "Password1!"
+            Username = userWithPassword.User.UserName!,
+            Password = userWithPassword.Password
         };
-        _testDataSetup.AddUser(new TestDataSetup.AddUserArguments
-        {
-            Name = TestDataGenerator.GeneratePlayerName(),
-            Email = loginArgs.Username,
-            Password = loginArgs.Password
-        });
         var postContent = JsonSerializer.Serialize(loginArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 

@@ -1,5 +1,7 @@
+using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.Data.Constants;
 using Bingo.Api.Data.Entities;
+using Bingo.Api.TestUtils.TestDataGenerators;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 
@@ -7,7 +9,7 @@ namespace Bingo.Api.TestUtils.TestDataSetups;
 
 public partial class TestDataSetup
 {
-    public TestDataSetup AddRole(Roles role)
+    public TestDataSetup CreateRole(Roles role)
     {
         roleManager.Should().NotBeNull();
         if (!roleManager.RoleExistsAsync(role.ToString()).Result)
@@ -21,80 +23,59 @@ public partial class TestDataSetup
 
     private void AddRoleToUser(UserEntity user, Roles role)
     {
-        userManager.Should().NotBeNull();
-        AddRole(role);
+        CreateRole(role);
         var addRoleToUserResult = userManager.AddToRoleAsync(user, role.ToString()).Result;
         addRoleToUserResult.Succeeded.Should().BeTrue();
     }
 
-    public TestDataSetup AddUser(out UserEntity user, AddUserArguments args)
+    public void AddRole(Roles role = Roles.User)
     {
-        userManager.Should().NotBeNull();
-        user = new UserEntity
-        {
-            Name = args.Name,
-            UserName = args.Email,
-            Email = args.Email,
-            EmailConfirmed = true,
-            SecurityStamp = Guid.NewGuid().ToString()
-        };
-        var createUserResult = userManager.CreateAsync(user, args.Password).Result;
-        createUserResult.Succeeded.Should().BeTrue();
-        foreach (var role in args.Roles)
-            AddRoleToUser(user, role);
-        _allEntities.Add(user);
+        var user = GetRequiredLast<UserEntity>();
+        AddRoleToUser(user, role);
         dbContext.SaveChanges();
+    }
+
+    public TestDataSetup AddUser(out UserWithSecrets userWithSecrets)
+    {
+        userWithSecrets = new UserWithSecrets
+        {
+            User = new UserEntity
+            {
+                Name = TestDataGenerator.GenerateUserName(),
+                UserName = TestDataGenerator.GenerateUserEmail(),
+                Email = TestDataGenerator.GenerateUserName(),
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString()
+            },
+            Password = TestDataGenerator.GenerateUserPassword()
+        };
+        var createUserResult = userManager.CreateAsync(userWithSecrets.User, userWithSecrets.Password).Result;
+        createUserResult.Succeeded.Should().BeTrue();
+        _allEntities.Add(userWithSecrets.User);
+        dbContext.SaveChanges();
+
+        // Login user (with low iteration count configured)
+        var tokens = authService.LoginAsync(new AuthLoginArguments
+        {
+            Username = userWithSecrets.User.UserName,
+            Password = userWithSecrets.Password
+        }).Result;
+        userWithSecrets.AccessToken = tokens.AccessToken;
+        userWithSecrets.RefreshToken = tokens.RefreshToken;
+
         return this;
     }
-
-    public TestDataSetup AddUser(AddUserArguments args)
-    {
-        return AddUser(out _, args);
-    }
-
 
     public TestDataSetup AddUser()
     {
         return AddUser(out _);
     }
+}
 
-    public TestDataSetup AddUser(out UserEntity user)
-    {
-        var args = GenerateAddUserArguments();
-        args.Roles.Add(Roles.User);
-        return AddUser(out user, args);
-    }
-
-    public static AddUserArguments GenerateAddUserArguments()
-    {
-        return new AddUserArguments
-        {
-            Name = GenerateUserName(),
-            Email = GenerateUserEmail(),
-            Password = GenerateUserPassword()
-        };
-    }
-
-    private static string GenerateUserPassword()
-    {
-        return RandomUtil.GetPrefixedRandomHexString("!Passw0rd", Random.Shared.Next(20, 30));
-    }
-
-    private static string GenerateUserName()
-    {
-        return RandomUtil.GetPrefixedRandomHexString("UName_", Random.Shared.Next(5, 25));
-    }
-
-    private static string GenerateUserEmail()
-    {
-        return RandomUtil.GetPrefixedRandomHexString("UMail_", Random.Shared.Next(5, 25)) + "@local.host";
-    }
-
-    public class AddUserArguments
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public List<Roles> Roles { get; set; } = [];
-    }
+public class UserWithSecrets
+{
+    public required UserEntity User { get; set; }
+    public string AccessToken { get; set; } = string.Empty;
+    public string RefreshToken { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 }

@@ -35,7 +35,7 @@ public partial class TestDataSetup
     {
         return new EventEntity
         {
-            Administrators = { GetRequiredLast<UserEntity>() },
+            Administrators = [GetRequiredLast<UserEntity>()],
             Name = RandomUtil.GetPrefixedRandomHexString("EName_", Random.Shared.Next(5, 25))
         };
     }
