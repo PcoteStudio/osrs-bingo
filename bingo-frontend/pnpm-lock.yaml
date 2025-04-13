@@ -26,6 +26,12 @@ importers:
       '@fortawesome/vue-fontawesome':
         specifier: ^3.0.8
         version: 3.0.8(@fortawesome/fontawesome-svg-core@6.7.2)(vue@3.5.13(typescript@5.8.3))
+      '@mediaclip/http-pipeline':
+        specifier: ^1.0.7
+        version: 1.0.7
+      '@pinia/colada':
+        specifier: ^0.14.2
+        version: 0.14.2(pinia@3.0.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))
       '@primevue/forms':
         specifier: ^4.3.3
         version: 4.3.3(vue@3.5.13(typescript@5.8.3))
@@ -631,6 +637,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
+  '@mediaclip/http-pipeline@1.0.7':
+    resolution: {integrity: sha512-mNoS/nyyk8k9Qh+ys/ZLBhpXPiK1Bpbx/xEY17hhI0/ZOyU5tq7n3DeKwgAhpW48hVpWPqTapZ7KPxJyOOO4Zw==}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -685,6 +694,11 @@ packages:
     resolution: {integrity: sha512-cHJJRyVA2XlsGjIVKqw2DC5dkzWGOH6gxQwf6StTHn8F4i5P8gksV70VoNW5mwEXefF2USDX7H43YVIDG5E/Yw==}
     cpu: [x64]
     os: [win32]
+
+  '@pinia/colada@0.14.2':
+    resolution: {integrity: sha512-nixr1cqkk5RHrafXfJPk7J/F1srCFZTvhrdNfUEx3/N2lRamcYlayniYDwqlRPOw8PHmsRKyRAGgwDiV76sGJA==}
+    peerDependencies:
+      pinia: ^2.2.6 || ^3.0.0
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -3219,6 +3233,8 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  '@mediaclip/http-pipeline@1.0.7': {}
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -3256,6 +3272,11 @@ snapshots:
 
   '@oxlint/win32-x64@0.16.5':
     optional: true
+
+  '@pinia/colada@0.14.2(pinia@3.0.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))':
+    dependencies:
+      '@vue/devtools-api': 7.7.2
+      pinia: 3.0.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   '@pkgjs/parseargs@0.11.0':
     optional: true

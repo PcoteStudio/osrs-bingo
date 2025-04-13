@@ -1,44 +1,48 @@
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores/globalStore';
 import { ref } from 'vue';
-import  * as zResolver from '@primevue/forms/resolvers/zod';
+import * as zResolver from '@primevue/forms/resolvers/zod';
 import { z } from 'zod';
 import type { FormSubmitEvent } from '@primevue/forms';
+import { useAuthenticationStore } from '@/stores/authenticationStore.ts';
+import { useNotificationStore } from '@/stores/notificationStore.ts';
 
-const store = useGlobalStore();
+const globalStore = useGlobalStore();
+const notificationStore = useNotificationStore();
+const authenticationStore = useAuthenticationStore();
 
 const initialValues = ref({
-  email: '',
+  username: '',
   password: ''
 });
 
-
 const formSchema = z.object({
-  email: z.string()
-    .min(1, { message: 'Email is required' })
-    .email({ message: 'Please enter a valid email address' }),
+  username: z.string()
+    .min(1, { message: 'Username is required' }),
   password: z.string()
     .min(1, { message: 'Password is required' })
 });
 const resolver = ref(zResolver.zodResolver(formSchema));
 
-const onFormSubmit = (submit: FormSubmitEvent) => {
+const onFormSubmit = async (submit: FormSubmitEvent) => {
   if (!submit.valid) {
-    store.addNotification({
+    notificationStore.addNotification({
       logLevel: 'warn',
       message: 'Form is not valid',
       life: 5000
-    })
+    });
     return;
   }
 
-  store.authenticate(submit.values.email, submit.values.password);
+  if (await authenticationStore.authenticate(submit.values.username, submit.values.password)) {
+    globalStore.toggleLoginModal();
+  }
 };
 </script>
 
 <template>
   <Dialog modal
-          v-model:visible="store.loginModalState.showModal"
+          v-model:visible="globalStore.loginModalState.showModal"
           header="Login"
           :style="{ width: '25rem' }"
   >
@@ -57,11 +61,11 @@ const onFormSubmit = (submit: FormSubmitEvent) => {
             @submit="onFormSubmit"
       >
         <FloatLabel class="w-full">
-          <InputText name="email" type="email" class="w-full" />
-          <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
-            {{ $form.email.error?.message }}
+          <InputText name="username" type="text" class="w-full" />
+          <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.username.error?.message }}
           </Message>
-          <label>E-mail</label>
+          <label>Username</label>
         </FloatLabel>
         <FloatLabel class="w-full">
           <Password name="password" :feedback="false" toggleMask fluid class="w-full" />

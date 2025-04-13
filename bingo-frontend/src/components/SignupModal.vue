@@ -4,8 +4,12 @@ import { ref } from 'vue'
 import  * as zResolver from '@primevue/forms/resolvers/zod';
 import { z } from 'zod';
 import type { FormSubmitEvent } from '@primevue/forms'
+import { useNotificationStore } from '@/stores/notificationStore.ts';
+import { useAuthenticationStore } from '@/stores/authenticationStore.ts';
 
-const store = useGlobalStore();
+const globalStore = useGlobalStore();
+const notificationStore = useNotificationStore();
+const authenticationStore = useAuthenticationStore();
 
 const initialValues = ref({
   email: '',
@@ -32,9 +36,9 @@ const formSchema = z.object({
 });
 const resolver = ref(zResolver.zodResolver(formSchema));
 
-const onFormSubmit = (submit: FormSubmitEvent) => {
+const onFormSubmit = async (submit: FormSubmitEvent) => {
   if (!submit.valid) {
-    store.addNotification({
+    notificationStore.addNotification({
       logLevel: 'warn',
       message: 'Form is not valid',
       life: 5000
@@ -42,13 +46,13 @@ const onFormSubmit = (submit: FormSubmitEvent) => {
     return;
   }
 
-  store.createUser(submit.values.email, submit.values.password, submit.values.username);
+  await authenticationStore.createUser(submit.values.email, submit.values.password, submit.values.username);
 };
 </script>
 
 <template>
   <Dialog modal
-          v-model:visible="store.getSignupModalState.showModal"
+          v-model:visible="globalStore.getSignupModalState.showModal"
           header="Sign up"
           :style="{ width: '25rem' }"
   >

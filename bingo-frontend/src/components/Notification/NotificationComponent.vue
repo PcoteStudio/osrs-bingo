@@ -1,13 +1,13 @@
 <script setup lang="ts">
 
-import { watch } from 'vue'
-import { useToast } from 'primevue/usetoast'
-import { useGlobalStore } from '@/stores/globalStore'
+import { watch } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import { useNotificationStore } from '@/stores/notificationStore.ts';
 
 const toast = useToast();
-const state = useGlobalStore();
+const notificationStore = useNotificationStore();
 
-watch(() => state.notifications,
+watch(() => notificationStore.notifications,
   (notifications) => {
     for (const notification of notifications) {
       let life;
@@ -23,15 +23,15 @@ watch(() => state.notifications,
 
       toast.add({
         severity: notification.logLevel,
-        detail: notification.message,
+        summary: notification.message,
         life: life
       });
     }
-    state.clearNotifications();
+    notificationStore.clearNotifications();
   }, { deep: true }
 );
 
-state.$onAction(
+notificationStore.$onAction(
   ({ onError }) => {
     onError((error) => {
       console.error(error);
