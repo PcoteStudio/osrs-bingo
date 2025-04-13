@@ -1,26 +1,38 @@
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores/globalStore';
-import { ref } from 'vue';
-import * as zResolver from '@primevue/forms/resolvers/zod';
+import { ref } from 'vue'
+import  * as zResolver from '@primevue/forms/resolvers/zod';
 import { z } from 'zod';
-import type { FormSubmitEvent } from '@primevue/forms';
-import { useAuthenticationStore } from '@/stores/authenticationStore.ts';
+import type { FormSubmitEvent } from '@primevue/forms'
 import { useNotificationStore } from '@/stores/notificationStore.ts';
+import { useAuthenticationStore } from '@/stores/authenticationStore.ts';
 
 const globalStore = useGlobalStore();
 const notificationStore = useNotificationStore();
 const authenticationStore = useAuthenticationStore();
 
 const initialValues = ref({
+  email: '',
+  password: '',
   username: '',
-  password: ''
 });
 
+
 const formSchema = z.object({
-  username: z.string()
-    .min(1, { message: 'Username is required' }),
+  email: z.string()
+    .min(1, { message: 'Email is required' })
+    .email({ message: 'Please enter a valid email address' }),
   password: z.string()
     .min(1, { message: 'Password is required' })
+    .min(6, { message: 'Password must be at least 8 characters long' })
+    .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter' })
+    .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter' })
+    .regex(/[0-9]/, { message: 'Password must contain at least one number' })
+    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, {
+      message: 'Password must contain at least one special character'
+    }),
+  username: z.string()
+    .min(3, { message: 'Username is required' }),
 });
 const resolver = ref(zResolver.zodResolver(formSchema));
 
@@ -30,29 +42,21 @@ const onFormSubmit = async (submit: FormSubmitEvent) => {
       logLevel: 'warn',
       message: 'Form is not valid',
       life: 5000
-    });
+    })
     return;
   }
 
-  if (await authenticationStore.authenticate(submit.values.username, submit.values.password)) {
-    globalStore.toggleLoginModal();
-  }
+  await authenticationStore.createUser(submit.values.email, submit.values.password, submit.values.username);
 };
 </script>
 
 <template>
   <Dialog modal
-          v-model:visible="globalStore.loginModalState.showModal"
-          header="Login"
+          v-model:visible="globalStore.getSignupModalState.showModal"
+          header="Sign up"
           :style="{ width: '25rem' }"
   >
     <div class="content">
-      <div class="signup">
-        <span>
-          No account yet? 😢
-        </span>
-        <Button>Sign up</Button>
-      </div>
       <Form v-slot="$form"
             :initialValues="initialValues"
             :resolver="resolver"
@@ -68,13 +72,20 @@ const onFormSubmit = async (submit: FormSubmitEvent) => {
           <label>Username</label>
         </FloatLabel>
         <FloatLabel class="w-full">
+          <InputText name="email" type="email" class="w-full" />
+          <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.email.error?.message }}
+          </Message>
+          <label>E-mail</label>
+        </FloatLabel>
+        <FloatLabel class="w-full">
           <Password name="password" :feedback="false" toggleMask fluid class="w-full" />
           <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">
             {{ $form.password.error?.message }}
           </Message>
           <label>Password</label>
         </FloatLabel>
-        <Button type="submit" label="Login" :disabled="!$form.valid" />
+        <Button type="submit" label="Sign up" :disabled="!$form.valid" />
       </Form>
     </div>
   </Dialog>

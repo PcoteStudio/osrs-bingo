@@ -11,4 +11,7 @@
     <Project Path="tests\Bingo.Api.TestUtils\Bingo.Api.TestUtils.csproj" Type="Classic C#" />
     <Project Path="tests\Bingo.Api.Web.Tests\Bingo.Api.Web.Tests.csproj" Type="Classic C#" />
   </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools\GenerateCretificat\GenerateCretificat.csproj" Type="Classic C#" />
+  </Folder>
 </Solution>

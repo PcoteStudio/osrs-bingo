@@ -1,11 +1,39 @@
 <script setup lang="ts">
+import { useNotificationStore } from '@/stores/notificationStore.ts';
+import { ref } from 'vue';
+
+const notificationStore = useNotificationStore();
+
+const counter = ref(0);
+const add = () => {
+  notificationStore.addNotification({
+    key: 'test',
+    logLevel: 'info',
+    message: 'Test notification' + counter.value++,
+    life: -1
+  });
+};
 
 </script>
 
 <template>
- <img src="https://media.discordapp.net/attachments/1356383638698328065/1359015142318145661/H8lCf7D.png?ex=67f7eb3b&is=67f699bb&hm=cc961b817811377e769ba576c9aa078023e751d4ea90aa28660991c593cb64a7&=&format=webp&quality=lossless&width=619&height=856" />
+  <div class="board">
+    <Button @click="add">Add notification {{ counter }}</Button>
+<!--    <img src="https://cdn.discordapp.com/attachments/1356383638698328065/1359015142318145661/H8lCf7D.png?ex=67f93cbb&is=67f7eb3b&hm=faa938adbc4030ad57f7d3c9ce9ae59286b318d5c10da727b4246d81017f1b2a" />-->
+  </div>
 </template>
 
 <style scoped>
+.board {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 
+  img {
+    width: 100%;
+    height: auto;
+    image-rendering: optimizeQuality;
+  }
+}
 </style>

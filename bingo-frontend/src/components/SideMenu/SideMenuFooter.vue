@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useGlobalStore } from '@/stores/globalStore.ts'
+import { useAuthenticationStore } from '@/stores/authenticationStore.ts';
+import { useGlobalStore } from '@/stores/globalStore.ts';
 
-const store = useGlobalStore();
+const authenticationStore = useAuthenticationStore();
+const globalStore = useGlobalStore();
 
-const currentUser = computed(() => store.getCurrentUser);
+const currentUser = computed(() => authenticationStore.getCurrentUser);
 
 const initials = computed(() => {
-  if (!currentUser?.value.name) return '?';
+  if (!currentUser.value?.username) return '?';
 
-  const nameParts = currentUser?.value.name.trim().split(' ').filter(Boolean);
+  const nameParts = currentUser.value?.username.trim().split(' ').filter(Boolean);
   if (nameParts.length === 0) return '?';
 
   if (nameParts.length === 1) {
@@ -23,13 +25,13 @@ const initials = computed(() => {
 
 <template>
   <div class="drawer-footer">
-    <div v-if="currentUser.isAuthenticated" class="user-profile">
+    <div v-if="currentUser" class="user-profile">
       <div class="avatar">
         <span class="initials">{{ initials }}</span>
       </div>
-      <span class="user-name">{{ currentUser.name }}</span>
+      <span class="user-name">{{ currentUser.username }}</span>
       <Button
-        @click="store.disconnect"
+        @click="authenticationStore.disconnect"
         icon="fa-solid fa-right-from-bracket"
         type="button"
         variant="outlined"
@@ -40,7 +42,7 @@ const initials = computed(() => {
     </div>
     <div v-else>
       <Button
-        @click="store.toggleLoginModal"
+        @click="globalStore.toggleLoginModal"
         icon="fa-solid fa-right-to-bracket"
         type="button"
         variant="outlined"

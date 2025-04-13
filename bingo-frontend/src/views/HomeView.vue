@@ -3,6 +3,7 @@ import NotificationComponent from '@/components/Notification/NotificationCompone
 import SideMenuContainer from '@/components/SideMenu/SideMenuContainer.vue'
 import GameBoard from '@/components/GameBoard.vue'
 import LoginModal from '@/components/LoginModal.vue';
+import SignupModal from '@/components/SignupModal.vue'
 </script>
 
 <template>
@@ -12,6 +13,7 @@ import LoginModal from '@/components/LoginModal.vue';
 
     <!--  Modals  -->
     <LoginModal />
+    <SignupModal />
 
     <!--  Regular components  -->
     <SideMenuContainer />
