@@ -72,8 +72,24 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     public async Task<ActionResult<TeamResponse>> UpdateTeamPlayersAsync([FromRoute] int teamId,
         [FromBody] TeamPlayersArguments args)
     {
-        await teamService.EnsureIsTeamAdminAsync(User, teamId);
-        throw new NotImplementedException();
+        try
+        {
+            await teamService.EnsureIsTeamAdminAsync(User, teamId);
+            var team = await teamService.UpdateTeamPlayersAsync(teamId, args);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
+        }
+        catch (Exception ex)
+        {
+            switch (ex)
+            {
+                case UserIsNotATeamAdminException:
+                    throw new HttpException(StatusCodes.Status403Forbidden, ex);
+                case TeamNotFoundException:
+                    throw new HttpException(StatusCodes.Status404NotFound, ex);
+                default:
+                    throw;
+            }
+        }
     }
 
     [Authorize]
@@ -89,7 +105,6 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
         {
             await teamService.EnsureIsTeamAdminAsync(User, teamId);
             var team = await teamService.AddTeamPlayersAsync(teamId, args);
-
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
         catch (Exception ex)

@@ -11,7 +11,7 @@ namespace Bingo.Api.Core.Features.Teams;
 
 public interface ITeamService
 {
-    Task<UserEntity> EnsureIsTeamAdminAsync(ClaimsPrincipal principal, int eventId);
+    Task<UserEntity> EnsureIsTeamAdminAsync(ClaimsPrincipal principal, int teamId);
     Task<TeamEntity> CreateTeamAsync(int eventId, TeamCreateArguments args);
     Task<TeamEntity> GetRequiredTeamAsync(int teamId);
     Task<TeamEntity> UpdateTeamAsync(int teamId, TeamUpdateArguments args);

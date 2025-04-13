@@ -4,12 +4,9 @@ namespace Bingo.Api.Core.Features.Authentication.Arguments;
 
 public class AuthSignupArguments
 {
-    [Required] [MaxLength(30)] public string Name { get; set; } = string.Empty;
+    [MaxLength(30)] public required string Username { get; set; }
 
-    [Required]
-    [MaxLength(255)]
-    [EmailAddress]
-    public string Email { get; set; } = string.Empty;
+    [MaxLength(255)] [EmailAddress] public required string Email { get; set; }
 
-    [Required] [MaxLength(255)] public string Password { get; set; } = string.Empty;
+    [MaxLength(255)] public required string Password { get; set; }
 }

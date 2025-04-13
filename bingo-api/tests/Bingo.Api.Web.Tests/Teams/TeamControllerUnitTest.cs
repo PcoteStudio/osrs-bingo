@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using AutoMapper;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Teams.Exceptions;
+using Bingo.Api.Data.Entities;
 using Bingo.Api.TestUtils.TestDataGenerators;
 using Bingo.Api.Web.Generic.Exceptions;
 using Bingo.Api.Web.Teams;
@@ -76,7 +78,7 @@ public class TeamControllerUnitTest
     }
 
     [Test]
-    [TestCaseSource(nameof(GetCommonAuthorizedTeamExceptionsAndExpectedStatusCode))]
+    [TestCaseSource(nameof(GetCommonAccessTeamExceptionsAndExpectedStatusCode))]
     public async Task UpdateTeamAsync_ShouldReturnExpectedHttpStatusCodeOnKnownErrors(Exception exception,
         int expectedStatusCode)
     {
@@ -95,12 +97,34 @@ public class TeamControllerUnitTest
         Mock.VerifyAll(_teamServiceMock);
     }
 
+    [Test]
+    [TestCaseSource(nameof(GetCommonAccessTeamExceptionsAndExpectedStatusCode))]
+    public async Task UpdateTeamPlayersAsync_ShouldReturnExpectedHttpStatusCodeOnKnownErrors(Exception exception,
+        int expectedStatusCode)
+    {
+        // Arrange
+        var teamId = Random.Shared.Next();
+        var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(3));
+        _teamServiceMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), teamId))
+            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceMock.Setup(x => x.UpdateTeamPlayersAsync(teamId, args))
+            .ThrowsAsync(exception).Verifiable(Times.Once());
+
+        // Act
+        var act = async () => await _teamController.UpdateTeamPlayersAsync(teamId, args);
+
+        // Assert thrown error
+        (await act.Should().ThrowAsync<HttpException>()).Which.StatusCode.Should().Be(expectedStatusCode);
+
+        Mock.VerifyAll(_teamServiceMock);
+    }
+
     private static IEnumerable<TestCaseData> GetCommonTeamExceptionsAndExpectedStatusCode()
     {
         yield return new TestCaseData(new TeamNotFoundException(Random.Shared.Next()), StatusCodes.Status404NotFound);
     }
 
-    private static IEnumerable<TestCaseData> GetCommonAuthorizedTeamExceptionsAndExpectedStatusCode()
+    private static IEnumerable<TestCaseData> GetCommonAccessTeamExceptionsAndExpectedStatusCode()
     {
         foreach (var testCaseData in GetCommonTeamExceptionsAndExpectedStatusCode())
             yield return testCaseData;

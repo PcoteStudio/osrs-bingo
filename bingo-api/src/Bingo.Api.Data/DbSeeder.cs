@@ -31,23 +31,23 @@ public class DbSeeder(
                 addRoleToUserResult.Errors.Select(e => e.Description))}");
     }
 
-    private async Task<UserEntity?> CreateDevelopmentUserAsync(string role, string email, string name, string password)
+    private async Task<UserEntity?> CreateDevelopmentUserAsync(string role, string email, string username,
+        string password)
     {
         if (!environment.IsDevelopment()) return null;
         var user = new UserEntity
         {
-            Name = name,
-            UserName = email,
+            UserName = username,
             Email = email,
             EmailConfirmed = true,
             SecurityStamp = Guid.NewGuid().ToString()
         };
         var createUserResult = await userManager.CreateAsync(user, password);
         if (!createUserResult.Succeeded)
-            throw new Exception($"Failed to create {name} user. Errors: {string.Join(",",
+            throw new Exception($"Failed to create {username} user. Errors: {string.Join(",",
                 createUserResult.Errors.Select(e => e.Description))}");
         await AddRoleToUserAsync(user, role);
-        logger.LogInformation("Created {name} user with {role} role.", name, role);
+        logger.LogInformation("Created {name} user with {role} role.", username, role);
         return user;
     }
 

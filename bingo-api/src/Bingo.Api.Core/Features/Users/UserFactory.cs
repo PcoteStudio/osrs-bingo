@@ -16,8 +16,7 @@ public class UserFactory : IUserFactory
         {
             Email = args.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = args.Email,
-            Name = args.Name,
+            UserName = args.Username,
             EmailConfirmed = true
         };
     }

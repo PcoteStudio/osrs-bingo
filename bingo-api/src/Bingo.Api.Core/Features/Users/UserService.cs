@@ -22,8 +22,8 @@ public class UserService(
     {
         var existingUser = await userManager.FindByEmailAsync(args.Email);
         if (existingUser is not null) throw new EmailAlreadyInUseException(args.Email);
-        existingUser = await userManager.FindByNameAsync(args.Email);
-        if (existingUser is not null) throw new UsernameAlreadyInUseException(args.Email);
+        existingUser = await userManager.FindByNameAsync(args.Username);
+        if (existingUser is not null) throw new UsernameAlreadyInUseException(args.Username);
 
         var user = userFactory.Create(args);
 

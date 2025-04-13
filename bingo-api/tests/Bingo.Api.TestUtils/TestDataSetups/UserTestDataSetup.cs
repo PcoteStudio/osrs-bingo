@@ -41,8 +41,7 @@ public partial class TestDataSetup
         {
             User = new UserEntity
             {
-                Name = TestDataGenerator.GenerateUserName(),
-                UserName = TestDataGenerator.GenerateUserEmail(),
+                UserName = TestDataGenerator.GenerateUserName(),
                 Email = TestDataGenerator.GenerateUserName(),
                 EmailConfirmed = true,
                 SecurityStamp = Guid.NewGuid().ToString()
