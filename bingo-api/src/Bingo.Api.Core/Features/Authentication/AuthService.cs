@@ -55,14 +55,14 @@ public class AuthService(
             {
                 Username = user.UserName!,
                 RefreshToken = refreshToken,
-                ExpiredAt = DateTime.UtcNow.AddDays(7)
+                ExpiredAt = DateTime.UtcNow.AddHours(jwtOptions.Value.ExpiryInHours)
             };
             tokenRepository.Add(token);
         }
         else
         {
             tokenEntity.RefreshToken = refreshToken;
-            tokenEntity.ExpiredAt = DateTime.UtcNow.AddDays(7);
+            tokenEntity.ExpiredAt = DateTime.UtcNow.AddHours(jwtOptions.Value.ExpiryInHours);
         }
 
         await dbContext.SaveChangesAsync();
@@ -84,7 +84,7 @@ public class AuthService(
             Issuer = jwtOptions.Value.ValidIssuer,
             Audience = jwtOptions.Value.ValidAudience,
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(60),
+            Expires = DateTime.UtcNow.AddHours(jwtOptions.Value.ExpiryInHours),
             SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         };
 
@@ -108,7 +108,7 @@ public class AuthService(
             ValidateAudience = true,
             ValidAudience = jwtOptions.Value.ValidAudience,
             ValidIssuer = jwtOptions.Value.ValidIssuer,
-            ValidateLifetime = true,
+            ValidateLifetime = false,
             ClockSkew = TimeSpan.Zero,
             IssuerSigningKey = new SymmetricSecurityKey(Convert.FromHexString(jwtOptions.Value.Secret))
         };

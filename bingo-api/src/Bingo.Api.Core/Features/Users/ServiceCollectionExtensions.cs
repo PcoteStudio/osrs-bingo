@@ -3,11 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Bingo.Api.Core.Features.Users;
 
+[Serializable]
 public class JwtOptions
 {
-    public string ValidAudience { get; set; } = string.Empty;
-    public string ValidIssuer { get; set; } = string.Empty;
-    public string Secret { get; set; } = string.Empty;
+    public required string ValidAudience { get; set; } = string.Empty;
+    public required string ValidIssuer { get; set; } = string.Empty;
+    public required string Secret { get; set; } = string.Empty;
+    public required int ExpiryInHours { get; set; }
 }
 
 public static class ServiceCollectionExtensions
