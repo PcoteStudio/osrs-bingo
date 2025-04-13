@@ -65,6 +65,7 @@ public class TeamControllerUnitTest
     {
         // Arrange
         var teamId = Random.Shared.Next();
+
         _teamServiceMock.Setup(x => x.GetRequiredTeamAsync(teamId))
             .ThrowsAsync(exception).Verifiable(Times.Once());
 
@@ -78,6 +79,37 @@ public class TeamControllerUnitTest
     }
 
     [Test]
+    public async Task UpdateTeamAsync_ShouldReturnTheUpdatedTeam()
+    {
+        // Arrange
+        var team = TestDataGenerator.GenerateTeamEntity();
+        var teamResponse = TestDataGenerator.GenerateTeamResponse();
+        var args = new TeamUpdateArguments();
+
+        _teamServiceMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), team.Id))
+            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceMock.Setup(x => x.UpdateTeamAsync(team.Id, args))
+            .ReturnsAsync(team).Verifiable(Times.Once());
+        _mapperMock.Setup(x => x.Map<TeamResponse>(team))
+            .Returns(teamResponse).Verifiable(Times.Once());
+
+        // Act
+        var result = await _teamController.UpdateTeamAsync(team.Id, args);
+
+        // Assert status code
+        result.Result.Should().BeOfType<ObjectResult>();
+        var objResult = (result.Result as ObjectResult)!;
+        objResult.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+        // Assert response content
+        objResult.Value.Should().BeOfType<TeamResponse>();
+        var actualTeamResponse = objResult.Value as TeamResponse;
+        actualTeamResponse.Should().BeSameAs(teamResponse);
+
+        Mock.VerifyAll(_teamServiceMock, _mapperMock);
+    }
+
+    [Test]
     [TestCaseSource(nameof(GetCommonAccessTeamExceptionsAndExpectedStatusCode))]
     public async Task UpdateTeamAsync_ShouldReturnExpectedHttpStatusCodeOnKnownErrors(Exception exception,
         int expectedStatusCode)
@@ -85,6 +117,8 @@ public class TeamControllerUnitTest
         // Arrange
         var teamId = Random.Shared.Next();
         var args = new TeamUpdateArguments();
+        _teamServiceMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), teamId))
+            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.UpdateTeamAsync(teamId, args))
             .ThrowsAsync(exception).Verifiable(Times.Once());
 
@@ -95,6 +129,37 @@ public class TeamControllerUnitTest
         (await act.Should().ThrowAsync<HttpException>()).Which.StatusCode.Should().Be(expectedStatusCode);
 
         Mock.VerifyAll(_teamServiceMock);
+    }
+
+    [Test]
+    public async Task UpdateTeamPlayersAsync_ShouldReturnTheUpdatedTeam()
+    {
+        // Arrange
+        var team = TestDataGenerator.GenerateTeamEntity();
+        var teamResponse = TestDataGenerator.GenerateTeamResponse();
+        var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(0, 5));
+
+        _teamServiceMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), team.Id))
+            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceMock.Setup(x => x.UpdateTeamPlayersAsync(team.Id, args))
+            .ReturnsAsync(team).Verifiable(Times.Once());
+        _mapperMock.Setup(x => x.Map<TeamResponse>(team))
+            .Returns(teamResponse).Verifiable(Times.Once());
+
+        // Act
+        var result = await _teamController.UpdateTeamPlayersAsync(team.Id, args);
+
+        // Assert status code
+        result.Result.Should().BeOfType<ObjectResult>();
+        var objResult = (result.Result as ObjectResult)!;
+        objResult.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+        // Assert response content
+        objResult.Value.Should().BeOfType<TeamResponse>();
+        var actualTeamResponse = objResult.Value as TeamResponse;
+        actualTeamResponse.Should().BeSameAs(teamResponse);
+
+        Mock.VerifyAll(_teamServiceMock, _mapperMock);
     }
 
     [Test]
@@ -112,6 +177,112 @@ public class TeamControllerUnitTest
 
         // Act
         var act = async () => await _teamController.UpdateTeamPlayersAsync(teamId, args);
+
+        // Assert thrown error
+        (await act.Should().ThrowAsync<HttpException>()).Which.StatusCode.Should().Be(expectedStatusCode);
+
+        Mock.VerifyAll(_teamServiceMock);
+    }
+
+    [Test]
+    public async Task AddTeamPlayersAsync_ShouldReturnTheUpdatedTeam()
+    {
+        // Arrange
+        var team = TestDataGenerator.GenerateTeamEntity();
+        var teamResponse = TestDataGenerator.GenerateTeamResponse();
+        var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(0, 5));
+
+        _teamServiceMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), team.Id))
+            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceMock.Setup(x => x.AddTeamPlayersAsync(team.Id, args))
+            .ReturnsAsync(team).Verifiable(Times.Once());
+        _mapperMock.Setup(x => x.Map<TeamResponse>(team))
+            .Returns(teamResponse).Verifiable(Times.Once());
+
+        // Act
+        var result = await _teamController.AddTeamPlayersAsync(team.Id, args);
+
+        // Assert status code
+        result.Result.Should().BeOfType<ObjectResult>();
+        var objResult = (result.Result as ObjectResult)!;
+        objResult.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+        // Assert response content
+        objResult.Value.Should().BeOfType<TeamResponse>();
+        var actualTeamResponse = objResult.Value as TeamResponse;
+        actualTeamResponse.Should().BeSameAs(teamResponse);
+
+        Mock.VerifyAll(_teamServiceMock, _mapperMock);
+    }
+
+    [Test]
+    [TestCaseSource(nameof(GetCommonAccessTeamExceptionsAndExpectedStatusCode))]
+    public async Task AddTeamPlayersAsync_ShouldReturnExpectedHttpStatusCodeOnKnownErrors(Exception exception,
+        int expectedStatusCode)
+    {
+        // Arrange
+        var teamId = Random.Shared.Next();
+        var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(3));
+        _teamServiceMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), teamId))
+            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceMock.Setup(x => x.AddTeamPlayersAsync(teamId, args))
+            .ThrowsAsync(exception).Verifiable(Times.Once());
+
+        // Act
+        var act = async () => await _teamController.AddTeamPlayersAsync(teamId, args);
+
+        // Assert thrown error
+        (await act.Should().ThrowAsync<HttpException>()).Which.StatusCode.Should().Be(expectedStatusCode);
+
+        Mock.VerifyAll(_teamServiceMock);
+    }
+
+    [Test]
+    public async Task RemoveTeamPlayerAsync_ShouldReturnTheUpdatedTeam()
+    {
+        // Arrange
+        var team = TestDataGenerator.GenerateTeamEntity();
+        var teamResponse = TestDataGenerator.GenerateTeamResponse();
+        var args = TestDataGenerator.GeneratePlayerName();
+
+        _teamServiceMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), team.Id))
+            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceMock.Setup(x => x.RemoveTeamPlayerAsync(team.Id, args))
+            .ReturnsAsync(team).Verifiable(Times.Once());
+        _mapperMock.Setup(x => x.Map<TeamResponse>(team))
+            .Returns(teamResponse).Verifiable(Times.Once());
+
+        // Act
+        var result = await _teamController.RemoveTeamPlayerAsync(team.Id, args);
+
+        // Assert status code
+        result.Result.Should().BeOfType<ObjectResult>();
+        var objResult = (result.Result as ObjectResult)!;
+        objResult.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+        // Assert response content
+        objResult.Value.Should().BeOfType<TeamResponse>();
+        var actualTeamResponse = objResult.Value as TeamResponse;
+        actualTeamResponse.Should().BeSameAs(teamResponse);
+
+        Mock.VerifyAll(_teamServiceMock, _mapperMock);
+    }
+
+    [Test]
+    [TestCaseSource(nameof(GetCommonAccessTeamExceptionsAndExpectedStatusCode))]
+    public async Task RemoveTeamPlayerAsync_ShouldReturnExpectedHttpStatusCodeOnKnownErrors(Exception exception,
+        int expectedStatusCode)
+    {
+        // Arrange
+        var teamId = Random.Shared.Next();
+        var playerName = TestDataGenerator.GeneratePlayerName();
+        _teamServiceMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), teamId))
+            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceMock.Setup(x => x.RemoveTeamPlayerAsync(teamId, playerName))
+            .ThrowsAsync(exception).Verifiable(Times.Once());
+
+        // Act
+        var act = async () => await _teamController.RemoveTeamPlayerAsync(teamId, playerName);
 
         // Assert thrown error
         (await act.Should().ThrowAsync<HttpException>()).Which.StatusCode.Should().Be(expectedStatusCode);
