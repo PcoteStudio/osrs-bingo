@@ -89,9 +89,9 @@ public class TeamService(
     {
         var team = await GetRequiredCompleteTeamAsync(teamId);
         var player = await playerService.GetOrCreatePlayerByNameAsync(playerName);
-        if (team.Players.All(p => p.Id != player.Id))
+        if (team.Players.Contains(player))
         {
-            team.Players.Add(player);
+            team.Players.Remove(player);
             dbContext.Update(team);
             await dbContext.SaveChangesAsync();
         }

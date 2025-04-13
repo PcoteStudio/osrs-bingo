@@ -49,6 +49,77 @@ public class TeamFeatureTest
         _client.Dispose();
     }
 
+    #region RemoveTeamPlayerAsync
+
+    [Test]
+    public async Task RemoveTeamPlayerAsync_ShouldReturnTheUpdatedTeam()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddEvent()
+            .AddTeam(out var originalTeam)
+            .AddPlayers(Random.Shared.Next(3, 10), out var originalPlayers);
+
+        var player = originalPlayers[Random.Shared.Next(originalPlayers.Count)];
+
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", userWithSecrets.AccessToken);
+
+        // Act
+        var response = await _client.DeleteAsync(
+            new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players/{player.Name}"));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
+
+        // Assert response content
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
+        returnedTeam.Should().NotBeNull();
+        returnedTeam.Players.Count.Should().Be(originalPlayers.Count - 1);
+        returnedTeam.Players.Select(p => p.Name).Should()
+            .BeEquivalentTo(originalPlayers.Select(p => p.Name).Except([player.Name]));
+
+        // Assert db content
+        var updatedTeam = await _dbContext.Teams
+            .Include(x => x.Players)
+            .FirstAsync(x => x.Id == originalTeam.Id);
+        updatedTeam.Should().NotBeNull();
+        updatedTeam.Name.Should().Be(returnedTeam.Name);
+        updatedTeam.Id.Should().Be(returnedTeam.Id);
+        updatedTeam.EventId.Should().Be(returnedTeam.EventId);
+        updatedTeam.Players.Select(p => p.Name).Should().BeEquivalentTo(returnedTeam.Players.Select(p => p.Name));
+    }
+
+    [Test]
+    public async Task RemoveTeamPlayerAsync_ShouldReturnNotFoundIfTeamDoesNotExist()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddEvent();
+        const int teamId = 1_000_000;
+        var playerName = TestDataGenerator.GeneratePlayerName();
+        var postContent = JsonSerializer.Serialize(playerName);
+        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", userWithSecrets.AccessToken);
+
+        // Act
+        var response = await _client.DeleteAsync(new Uri(_baseUrl, $"/api/teams/{teamId}/players/{playerName}"));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.NotFound, response);
+
+        // Assert response content
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var expectedContent = HttpResponseGenerator.GetExpectedJsonResponse(HttpStatusCode.NotFound);
+        Expect.EquivalentJsonWithPrettyOutput(responseContent, expectedContent);
+    }
+
+    #endregion
+
     #region UpdateTeamPlayersAsync
 
     [Test]
@@ -196,10 +267,10 @@ public class TeamFeatureTest
 
     #endregion
 
-    #region UpdateTeam
+    #region UpdateTeamAsync
 
     [Test]
-    public async Task UpdateTeam_ShouldReturnTheUpdatedTeam()
+    public async Task UpdateTeamAsync_ShouldReturnTheUpdatedTeam()
     {
         // Arrange
         _testDataSetup
@@ -236,7 +307,7 @@ public class TeamFeatureTest
     }
 
     [Test]
-    public async Task UpdateTeam_ShouldReturnNotFoundIfTeamDoesNotExist()
+    public async Task UpdateTeamAsync_ShouldReturnNotFoundIfTeamDoesNotExist()
     {
         // Arrange
         _testDataSetup
@@ -264,10 +335,10 @@ public class TeamFeatureTest
 
     #endregion
 
-    #region GetEventTeamsAsync
+    #region GetTeamAsync
 
     [Test]
-    public async Task GetEventTeamsAsync_ShouldReturnTheSpecifiedTeam()
+    public async Task GetTeamAsync_ShouldReturnTheSpecifiedTeam()
     {
         // Arrange
         _testDataSetup
