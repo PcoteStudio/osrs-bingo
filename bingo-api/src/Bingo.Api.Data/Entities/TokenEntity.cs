@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bingo.Api.Data.Entities;
 
+[Serializable]
 [Table("Tokens")]
 public class TokenEntity
 {

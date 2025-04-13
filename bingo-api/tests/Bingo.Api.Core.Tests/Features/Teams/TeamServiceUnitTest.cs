@@ -1,9 +1,11 @@
 using System.Security.Claims;
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams;
+using Bingo.Api.Core.Features.Teams.Exceptions;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data;
 using Bingo.Api.TestUtils.TestDataGenerators;
+using FluentAssertions;
 using Moq;
 
 namespace Bingo.Api.Core.Tests.Features.Teams;
@@ -18,14 +20,14 @@ public class TeamServiceUnitTest
         _teamRepositoryMock = new Mock<ITeamRepository>(MockBehavior.Strict);
         _teamFactoryMock = new Mock<ITeamFactory>(MockBehavior.Strict);
         _teamUtilMock = new Mock<ITeamUtil>(MockBehavior.Strict);
-        _userService = new Mock<IUserService>(MockBehavior.Strict);
+        _userServiceMock = new Mock<IUserService>(MockBehavior.Strict);
         _playerServiceMock = new Mock<IPlayerService>(MockBehavior.Strict);
         _dbContextMock = new Mock<ApplicationDbContext>(MockBehavior.Loose);
         _teamServiceMock = new Mock<TeamService>(
             _teamFactoryMock.Object,
             _teamRepositoryMock.Object,
             _teamUtilMock.Object,
-            _userService.Object,
+            _userServiceMock.Object,
             _playerServiceMock.Object,
             _dbContextMock.Object
         ) { CallBase = true };
@@ -37,35 +39,11 @@ public class TeamServiceUnitTest
     private Mock<ITeamRepository> _teamRepositoryMock;
     private Mock<ITeamFactory> _teamFactoryMock;
     private Mock<ITeamUtil> _teamUtilMock;
-    private Mock<IUserService> _userService;
+    private Mock<IUserService> _userServiceMock;
     private Mock<IPlayerService> _playerServiceMock;
     private Mock<ApplicationDbContext> _dbContextMock;
 
-    [Test]
-    public async Task EnsureIsTeamAdminAsync_ShouldNotThrowIfTheUserIsATeamAdmin()
-    {
-        // Arrange
-        var principalMock = new Mock<ClaimsPrincipal>();
-        var user = TestDataGenerator.GenerateUserEntity();
-        var eventEntity = TestDataGenerator.GenerateEventEntity();
-        var team = TestDataGenerator.GenerateTeamEntity();
-
-        eventEntity.Administrators.Add(user);
-        team.Event = eventEntity;
-
-        _userService.Setup(x => x.GetRequiredMeAsync(principalMock.Object))
-            .ReturnsAsync(user).Verifiable(Times.Once);
-        // _teamServiceMock.Setup(x => x.GetRequiredTeamAsync(team.Id))
-        //     .ReturnsAsync(team).Verifiable(Times.Once);
-
-        // TODO
-        // Act
-        // var actualUser = await _teamService.EnsureIsTeamAdminAsync(principalMock.Object, team.Id);
-
-        // Assert
-        // actualUser.Should().Be(user);
-        // Mock.VerifyAll(_userService, _teamServiceMock);
-    }
+    #region CreateTeam
 
     [Test]
     public async Task CreateTeam_ShouldCreateATeamWithTheSpecifiedArgumentsAndReturnIt()
@@ -90,6 +68,10 @@ public class TeamServiceUnitTest
         Mock.VerifyAll(_teamFactoryMock, _teamRepositoryMock, _dbContextMock);
     }
 
+    #endregion
+
+    #region GetRequiredTeamAsync
+
     [Test]
     public async Task GetRequiredTeamAsync_ShouldReturnTheSpecifiedTeam()
     {
@@ -100,10 +82,68 @@ public class TeamServiceUnitTest
             .ReturnsAsync(team).Verifiable(Times.Once);
 
         // Act
-        var actualTeam = await _teamService.GetRequiredTeamAsync(team.Id);
+        var actualTeam = await _teamService.GetRequiredCompleteTeamAsync(team.Id);
 
         // Assert
         Assert.That(actualTeam, Is.EqualTo(team));
         Mock.VerifyAll(_teamRepositoryMock);
     }
+
+    #endregion
+
+    #region EnsureIsTeamAdminAsync
+
+    [Test]
+    public async Task EnsureIsTeamAdminAsync_ShouldNotThrowIfTheUserIsATeamAdmin()
+    {
+        // Arrange
+        var principalMock = new Mock<ClaimsPrincipal>();
+        var user = TestDataGenerator.GenerateUserEntity();
+        var eventEntity = TestDataGenerator.GenerateEventEntity();
+        var team = TestDataGenerator.GenerateTeamEntity();
+
+        eventEntity.Administrators.Add(user);
+        team.Event = eventEntity;
+
+        _userServiceMock.Setup(x => x.GetRequiredMeAsync(principalMock.Object))
+            .ReturnsAsync(user).Verifiable(Times.Once);
+        _teamServiceMock.Setup(x => x.GetRequiredCompleteTeamAsync(team.Id))
+            .ReturnsAsync(team).Verifiable(Times.Once);
+
+        // Act
+        var actualUser = await _teamService.EnsureIsTeamAdminAsync(principalMock.Object, team.Id);
+
+        // Assert
+        actualUser.Should().Be(user);
+        Mock.VerifyAll(_userServiceMock, _teamServiceMock);
+    }
+
+    [Test]
+    public async Task EnsureIsTeamAdminAsync_ShouldThrowIfTheUserIsANotTeamAdmin()
+    {
+        // Arrange
+        var principalMock = new Mock<ClaimsPrincipal>();
+        var user = TestDataGenerator.GenerateUserEntity();
+        var eventEntity = TestDataGenerator.GenerateEventEntity();
+        var team = TestDataGenerator.GenerateTeamEntity();
+
+        team.Event = eventEntity;
+
+        _userServiceMock.Setup(x => x.GetRequiredMeAsync(principalMock.Object))
+            .ReturnsAsync(user).Verifiable(Times.Once);
+        _teamServiceMock.Setup(x => x.GetRequiredCompleteTeamAsync(team.Id))
+            .ReturnsAsync(team).Verifiable(Times.Once);
+        principalMock.Setup(x => x.Identity)
+            .Returns(new ClaimsIdentity()).Verifiable(Times.Once);
+
+        // Act
+        var act = async () => await _teamService.EnsureIsTeamAdminAsync(principalMock.Object, team.Id);
+
+        // Assert thrown error
+        await act.Should().ThrowAsync<UserIsNotATeamAdminException>();
+
+        Mock.VerifyAll(_userServiceMock, _teamServiceMock);
+    }
+
+    #endregion
 }

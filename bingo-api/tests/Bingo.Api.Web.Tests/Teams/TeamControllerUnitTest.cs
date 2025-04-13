@@ -37,7 +37,7 @@ public class TeamControllerUnitTest
         var team = TestDataGenerator.GenerateTeamEntity();
         var teamResponse = TestDataGenerator.GenerateTeamResponse();
 
-        _teamServiceMock.Setup(x => x.GetRequiredTeamAsync(team.Id))
+        _teamServiceMock.Setup(x => x.GetRequiredCompleteTeamAsync(team.Id))
             .ReturnsAsync(team).Verifiable(Times.Once());
         _mapperMock.Setup(x => x.Map<TeamResponse>(team))
             .Returns(teamResponse).Verifiable(Times.Once());
@@ -66,7 +66,7 @@ public class TeamControllerUnitTest
         // Arrange
         var teamId = Random.Shared.Next();
 
-        _teamServiceMock.Setup(x => x.GetRequiredTeamAsync(teamId))
+        _teamServiceMock.Setup(x => x.GetRequiredCompleteTeamAsync(teamId))
             .ThrowsAsync(exception).Verifiable(Times.Once());
 
         // Act

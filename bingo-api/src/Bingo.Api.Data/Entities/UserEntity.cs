@@ -4,8 +4,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Bingo.Api.Data.Entities;
 
+[Serializable]
 [Table("Users")]
 public class UserEntity : IdentityUser
 {
-    [ForeignKey("UserId")] public List<EventEntity> EventsAdministrated { get; set; } = [];
+    private List<EventEntity>? _eventsAdministrated;
+
+    [ForeignKey("UserId")]
+    public List<EventEntity> EventsAdministrated
+    {
+        get => _eventsAdministrated.ThrowIfNotLoaded();
+        set => _eventsAdministrated = value;
+    }
 }

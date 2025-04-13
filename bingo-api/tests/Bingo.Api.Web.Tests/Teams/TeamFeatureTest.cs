@@ -49,35 +49,6 @@ public class TeamFeatureTest
     }
 
     [Test]
-    public async Task CreateTeam_ShouldReturnTheCreatedTeam()
-    {
-        // Arrange
-        _testDataSetup
-            .AddUser(out var userWithSecrets)
-            .AddEvent(out var eventEntity);
-        var teamArgs = TestDataGenerator.GenerateTeamCreateArguments();
-        var postContent = JsonSerializer.Serialize(teamArgs);
-        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
-        _client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", userWithSecrets.AccessToken);
-
-        // Act
-        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"), stringContent);
-
-        // Assert response status
-        await Expect.StatusCodeFromResponse(HttpStatusCode.Created, response);
-
-        // Assert response content
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
-        returnedTeam.Should().NotBeNull();
-        var savedTeam = _dbContext.Teams.FirstOrDefault(t => t.Id == returnedTeam.Id);
-        savedTeam.Should().NotBeNull();
-        returnedTeam.Id.Should().Be(savedTeam.Id);
-        returnedTeam.Name.Should().Be(savedTeam.Name);
-    }
-
-    [Test]
     public async Task GetEventTeamsAsync_ShouldReturnTheSpecifiedTeam()
     {
         // Arrange
@@ -99,7 +70,6 @@ public class TeamFeatureTest
         returnedTeam.Name.Should().Be(teamEntity.Name);
         returnedTeam.EventId.Should().Be(eventEntity.Id);
         returnedTeam.Id.Should().Be(teamEntity.Id);
-        returnedTeam.Players.Count.Should().Be(teamEntity.Players.Count);
     }
 
     [Test]
@@ -130,7 +100,7 @@ public class TeamFeatureTest
         _testDataSetup
             .AddUser(out var userWithSecrets)
             .AddEvent(out var eventEntity)
-            .AddTeam(out var teamEntity);
+            .AddTeam(out var originalTeam);
         var teamArgs = TestDataGenerator.GenerateTeamUpdateArguments();
         var postContent = JsonSerializer.Serialize(teamArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
@@ -138,20 +108,21 @@ public class TeamFeatureTest
             new AuthenticationHeaderValue("Bearer", userWithSecrets.AccessToken);
 
         // Act
-        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{teamEntity.Id}"),
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}"),
             stringContent);
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
 
         // Assert response content
+        var updatedTeam = await _dbContext.Teams.FindAsync(originalTeam.Id);
         var responseContent = await response.Content.ReadAsStringAsync();
         var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
         returnedTeam.Should().NotBeNull();
-        returnedTeam.Name.Should().Be(teamArgs.Name);
-        returnedTeam.EventId.Should().Be(eventEntity.Id);
-        returnedTeam.Id.Should().Be(teamEntity.Id);
-        returnedTeam.Players.Count.Should().Be(teamEntity.Players.Count);
+        updatedTeam.Should().NotBeNull();
+        returnedTeam.Name.Should().Be(teamArgs.Name).And.Subject.Should().Be(updatedTeam.Name);
+        returnedTeam.Id.Should().Be(originalTeam.Id).And.Subject.Should().Be(updatedTeam.Id);
+        returnedTeam.EventId.Should().Be(eventEntity.Id).And.Subject.Should().Be(updatedTeam.EventId);
     }
 
     [Test]

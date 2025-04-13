@@ -8,6 +8,7 @@ namespace Bingo.Api.Data.Entities.Events;
 public class TeamEntity
 {
     private EventEntity? _event;
+    private List<PlayerEntity>? _players;
 
     [Key] public int Id { get; set; }
 
@@ -21,5 +22,10 @@ public class TeamEntity
 
     [MaxLength(255)] public string Name { get; set; } = string.Empty;
 
-    [ForeignKey("TeamId")] public List<PlayerEntity> Players { get; set; } = [];
+    [ForeignKey("TeamId")]
+    public List<PlayerEntity> Players
+    {
+        get => _players.ThrowIfNotLoaded();
+        set => _players = value;
+    }
 }

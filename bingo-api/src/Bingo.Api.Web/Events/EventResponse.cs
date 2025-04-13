@@ -11,5 +11,5 @@ public class EventResponse
     public DateTimeOffset StartTime { get; set; }
     public DateTimeOffset EndTime { get; set; }
     public List<TeamResponse> Teams { get; set; } = [];
-    public List<PublicUserResponse> Administrators { get; set; } = [];
+    public List<UserPublicResponse> Administrators { get; set; } = [];
 }

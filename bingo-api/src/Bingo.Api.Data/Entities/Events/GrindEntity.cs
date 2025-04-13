@@ -8,6 +8,7 @@ namespace Bingo.Api.Data.Entities.Events;
 [Table("Grinds")]
 public class GrindEntity
 {
+    private List<ItemEntity>? _drops;
     public int Id { get; set; }
 
     public GrindTypes Type { get; set; }
@@ -18,5 +19,9 @@ public class GrindEntity
     [MaxLength(255)] public string Metric { get; set; } = string.Empty;
 
     // Drop grind
-    public List<ItemEntity> Drops { get; set; } = [];
+    public List<ItemEntity> Drops
+    {
+        get => _drops.ThrowIfNotLoaded();
+        set => _drops = value;
+    }
 }

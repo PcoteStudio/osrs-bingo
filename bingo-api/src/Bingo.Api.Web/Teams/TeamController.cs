@@ -19,7 +19,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     {
         try
         {
-            var team = await teamService.GetRequiredTeamAsync(teamId);
+            var team = await teamService.GetRequiredCompleteTeamAsync(teamId);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
         catch (Exception ex)

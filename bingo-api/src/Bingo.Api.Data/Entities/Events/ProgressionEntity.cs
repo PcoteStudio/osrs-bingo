@@ -6,13 +6,25 @@ namespace Bingo.Api.Data.Entities.Events;
 [Table("Progressions")]
 public class ProgressionEntity
 {
+    private GrindProgressionEntity? _grindProgression;
+    private PlayerEntity? _player;
     public int Id { get; set; }
 
     public required int PlayerId { get; set; }
-    public required PlayerEntity Player { get; set; }
+
+    public PlayerEntity Player
+    {
+        get => _player.ThrowIfNotLoaded();
+        set => _player = value;
+    }
 
     public required int GrindProgressionId { get; set; }
-    public required GrindProgressionEntity GrindProgression { get; set; }
+
+    public GrindProgressionEntity GrindProgression
+    {
+        get => _grindProgression.ThrowIfNotLoaded();
+        set => _grindProgression = value;
+    }
 
     public decimal? MetricsProgress { get; set; }
     public ItemEntity? Drop { get; set; }

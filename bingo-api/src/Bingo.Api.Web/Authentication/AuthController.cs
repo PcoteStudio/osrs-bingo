@@ -23,6 +23,8 @@ public class AuthController(
     private const string RefreshTokenKey = "refresh_token";
 
     [HttpPost("signup")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<UserResponse>> SignupAsync(AuthSignupArguments args)
     {
         try
@@ -44,6 +46,7 @@ public class AuthController(
     }
 
     [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<TokenResponse>> LoginAsync(AuthLoginArguments args)
     {
         var tokenModel = await authService.LoginAsync(args);
@@ -54,6 +57,9 @@ public class AuthController(
 
     [Authorize]
     [HttpPost("refresh")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<TokenResponse>> RefreshTokenAsync(AuthRefreshArguments args)
     {
         try
@@ -77,6 +83,8 @@ public class AuthController(
 
     [Authorize]
     [HttpPost("revoke")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RevokeAsync()
     {
         await authService.RevokeTokenAsync(User);
