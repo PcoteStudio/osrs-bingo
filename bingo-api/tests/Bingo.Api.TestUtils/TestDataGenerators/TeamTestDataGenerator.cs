@@ -17,7 +17,8 @@ public static partial class TestDataGenerator
         {
             Id = Random.Shared.Next(),
             EventId = Random.Shared.Next(),
-            Name = GenerateTeamName()
+            Name = GenerateTeamName(),
+            Players = []
         };
     }
 

@@ -38,7 +38,8 @@ public partial class TestDataSetup
         {
             EventId = eventEntity.Id,
             Event = eventEntity,
-            Name = TestDataGenerator.GenerateTeamName()
+            Name = TestDataGenerator.GenerateTeamName(),
+            Players = []
         };
         return team;
     }

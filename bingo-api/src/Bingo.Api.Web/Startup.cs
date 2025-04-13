@@ -62,7 +62,7 @@ public class Startup
         app.UseRouting();
 
         app.UseMiddleware<HttpExceptionMiddleware>();
-        if (env.IsDevelopment()) app.UseMiddleware<DevExceptionMiddleware>();
+        if (env.IsDevelopment() || env.IsEnvironment("Test")) app.UseMiddleware<DevExceptionMiddleware>();
 
         using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()!.CreateScope())
         {

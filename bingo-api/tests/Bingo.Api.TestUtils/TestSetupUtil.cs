@@ -62,6 +62,7 @@ public static class TestSetupUtil
     public static IWebHost BuildWebHost(BingoProjects project = BingoProjects.Web)
     {
         return WebHost.CreateDefaultBuilder([])
+            .UseEnvironment("Test")
             .ConfigureServices(services =>
             {
                 // Reduce the iteration count when hashing passwords to speed up user login in tests

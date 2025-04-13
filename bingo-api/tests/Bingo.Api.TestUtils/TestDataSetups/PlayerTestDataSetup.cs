@@ -34,7 +34,8 @@ public partial class TestDataSetup
     {
         var player = new PlayerEntity
         {
-            Name = RandomUtil.GetPrefixedRandomHexString("PName_", Random.Shared.Next(5, 25))
+            Name = RandomUtil.GetPrefixedRandomHexString("PName_", Random.Shared.Next(5, 25)),
+            Teams = []
         };
         var lastTeamAdded = GetLast<TeamEntity>();
         if (lastTeamAdded is not null) player.Teams.Add(lastTeamAdded);

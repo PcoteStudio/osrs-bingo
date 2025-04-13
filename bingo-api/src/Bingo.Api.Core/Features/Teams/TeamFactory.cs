@@ -15,7 +15,8 @@ public class TeamFactory : ITeamFactory
         return new TeamEntity
         {
             EventId = eventId,
-            Name = args.Name
+            Name = args.Name,
+            Players = []
         };
     }
 }

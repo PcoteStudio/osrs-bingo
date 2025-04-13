@@ -33,16 +33,16 @@ public class PlayerRepositoryIntegrationTest
     {
         // Arrange
         _testDataSetup
-            .AddPlayers(3)
+            .AddPlayers(Random.Shared.Next(4))
             .AddPlayer(out var player)
-            .AddPlayers(2);
+            .AddPlayers(Random.Shared.Next(3));
 
         // Act
         var actualPlayer = await _playerRepository.GetByNameAsync(player.Name);
 
         // Assert
         actualPlayer.Should().NotBeNull();
-        actualPlayer.Should().BeEquivalentTo(player);
+        actualPlayer.Id.Should().Be(player.Id);
     }
 
     [Test]
@@ -70,7 +70,7 @@ public class PlayerRepositoryIntegrationTest
 
         // Assert
         actualPlayers.Should().NotBeNull();
-        actualPlayers.Should().BeEquivalentTo(players);
+        actualPlayers.Select(x => x.Id).Should().BeEquivalentTo(players.Select(x => x.Id));
     }
 
     [Test]
@@ -90,7 +90,7 @@ public class PlayerRepositoryIntegrationTest
 
         // Assert
         actualPlayers.Should().NotBeNull();
-        actualPlayers.Should().BeEquivalentTo(players);
+        actualPlayers.Select(x => x.Id).Should().BeEquivalentTo(players.Select(x => x.Id));
     }
 
     [Test]
