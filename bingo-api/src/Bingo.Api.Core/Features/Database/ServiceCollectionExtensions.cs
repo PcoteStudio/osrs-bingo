@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Bingo.Api.Data;
 using Bingo.Api.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +8,7 @@ namespace Bingo.Api.Core.Features.Database;
 
 public class DatabaseOptions
 {
-    [Required] public string ConnectionString { get; set; } = string.Empty;
+    public required string ConnectionString { get; set; } = string.Empty;
 }
 
 public static class ServiceCollectionExtensions

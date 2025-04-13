@@ -72,7 +72,11 @@ public class AuthenticationFeatureTest
         var returnedTokens = JsonSerializer.Deserialize<TokenResponse>(responseContent, JsonSerializerOptions.Web);
         returnedTokens.Should().NotBeNull();
         returnedTokens.AccessToken.Length.Should().BeGreaterThan(0);
-        returnedTokens.RefreshToken.Length.Should().BeGreaterThan(0);
+
+        loginResponse.Headers.Should().ContainKey("Set-Cookie");
+        var setCookie = loginResponse.Headers.First(h => h.Key == "Set-Cookie");
+        setCookie.Value.Count().Should().BeGreaterThan(0);
+        setCookie.Value.First().Should().StartWith("refresh_token=");
 
         // Arrange
         _client.DefaultRequestHeaders.Authorization =

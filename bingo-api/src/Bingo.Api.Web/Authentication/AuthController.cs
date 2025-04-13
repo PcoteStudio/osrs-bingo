@@ -7,6 +7,7 @@ using Bingo.Api.Web.Generic.Exceptions;
 using Bingo.Api.Web.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Bingo.Api.Web.Authentication;
@@ -16,8 +17,11 @@ namespace Bingo.Api.Web.Authentication;
 public class AuthController(
     IUserService userService,
     IAuthService authService,
+    IOptions<CookieOptions> cookieOptions,
     IMapper mapper) : ControllerBase
 {
+    private const string RefreshTokenKey = "refresh_token";
+
     [HttpPost("signup")]
     public async Task<ActionResult<UserResponse>> SignupAsync(AuthSignupArguments args)
     {
@@ -31,7 +35,7 @@ public class AuthController(
         {
             switch (ex)
             {
-                case EmailAlreadyInUseException:
+                case EmailAlreadyInUseException or UsernameAlreadyInUseException:
                     throw new HttpException(StatusCodes.Status400BadRequest, ex);
                 default:
                     throw;
@@ -44,6 +48,7 @@ public class AuthController(
     {
         var tokenModel = await authService.LoginAsync(args);
         var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
+        Response.Cookies.Append(RefreshTokenKey, tokenModel.RefreshToken, cookieOptions.Value);
         return StatusCode(StatusCodes.Status200OK, tokenResponse);
     }
 
@@ -55,6 +60,7 @@ public class AuthController(
         {
             var tokenModel = await authService.RefreshTokenAsync(args);
             var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
+            Response.Cookies.Append(RefreshTokenKey, tokenModel.RefreshToken, cookieOptions.Value);
             return StatusCode(StatusCodes.Status200OK, tokenResponse);
         }
         catch (Exception ex)
@@ -74,6 +80,7 @@ public class AuthController(
     public async Task<IActionResult> RevokeAsync()
     {
         await authService.RevokeTokenAsync(User);
+        Response.Cookies.Delete(RefreshTokenKey);
         return StatusCode(StatusCodes.Status200OK);
     }
 }
