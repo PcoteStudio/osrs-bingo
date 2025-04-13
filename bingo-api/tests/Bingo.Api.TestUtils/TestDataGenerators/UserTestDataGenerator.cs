@@ -1,3 +1,5 @@
+using Bingo.Api.Data.Entities;
+
 namespace Bingo.Api.TestUtils.TestDataGenerators;
 
 public static partial class TestDataGenerator
@@ -15,5 +17,15 @@ public static partial class TestDataGenerator
     public static string GenerateUserEmail()
     {
         return RandomUtil.GetPrefixedRandomHexString("UMail_", Random.Shared.Next(5, 25)) + "@local.host";
+    }
+
+    public static UserEntity GenerateUserEntity()
+    {
+        return new UserEntity
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserName = GenerateUserName(),
+            Email = GenerateUserEmail()
+        };
     }
 }
