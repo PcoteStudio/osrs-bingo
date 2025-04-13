@@ -51,7 +51,7 @@ const onFormSubmit = async (submit: FormSubmitEvent) => {
         <span>
           No account yet? 😢
         </span>
-        <Button>Sign up</Button>
+        <Button @click="globalStore.openSignUpModal">Sign up</Button>
       </div>
       <Form v-slot="$form"
             :initialValues="initialValues"
