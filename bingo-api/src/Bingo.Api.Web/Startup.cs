@@ -24,7 +24,6 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ILogger, Logger<Program>>();
-        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
         services.AddCors(options =>
         {

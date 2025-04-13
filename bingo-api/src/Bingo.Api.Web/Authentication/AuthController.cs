@@ -58,7 +58,7 @@ public class AuthController(
     {
         try
         {
-            var tokenModel = await authService.RefreshTokenAsync(args);
+            var tokenModel = await authService.RefreshTokenAsync(Request.Cookies[RefreshTokenKey], args);
             var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
             Response.Cookies.Append(RefreshTokenKey, tokenModel.RefreshToken, cookieOptions.Value);
             return StatusCode(StatusCodes.Status200OK, tokenResponse);
