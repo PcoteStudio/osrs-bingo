@@ -62,7 +62,20 @@ export const useAuthenticationStore = defineStore('authenticationStore', {
       this.user = query.user.value;
     },
     async createUser(username: string, password: string, email: string,) {
+      if(await this.authenticationService.createAccount(username, password, email)) {
+        this.notificationStore.addNotification({
+          logLevel: 'success',
+          message: 'Account created : ' + email,
+          life: 5000
+        });
+        return true;
+      }
 
+      this.notificationStore.addNotification({
+        logLevel: 'error',
+        message: 'An error occurred while creating a new user : ' + email
+      });
+      return false;
     },
   }
 });

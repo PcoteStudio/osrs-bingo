@@ -34,5 +34,9 @@ export const useGlobalStore = defineStore('globalStore', {
     toggleSignupModal() {
       this.signupModalState.showModal = !this.signupModalState.showModal;
     },
+    openSignUpModal() {
+      this.loginModalState.showModal = false;
+      this.signupModalState.showModal = true;
+    }
   }
 });

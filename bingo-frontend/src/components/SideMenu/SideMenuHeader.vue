@@ -4,7 +4,10 @@
 
 <template>
 <div class="drawer-header">
-  <div class="logo">OSRS Bingo</div>
+  <div class="logo">
+    <img src="@/assets/logo.png"  alt="OSRS Bingo logo"/>
+    OSRS Bingo
+  </div>
 </div>
 </template>
 
@@ -17,7 +20,15 @@
 }
 
 .logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5em;
+
   font-weight: bold;
-  font-size: 18px;
+  font-size: 24px;
+  img {
+    height: 32px;
+  }
 }
 </style>

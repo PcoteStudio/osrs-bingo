@@ -31,7 +31,7 @@ export class AuthenticationService {
     return true;
   }
 
-  async refresh() {
-
+  async createAccount(username: string, password: string, email: string) {
+    return await this.authenticationClient.postAuthSignup(username, password, email);
   }
 }

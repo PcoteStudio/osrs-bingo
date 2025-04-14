@@ -37,6 +37,24 @@ export class AuthenticationClient {
     return this.httpMessageResponseUtil.parseJsonResponse<LoginResponse>(message);
   }
 
+  async postAuthSignup(username: string, password: string, email: string): Promise<LoginResponse> {
+    const message = new HttpMessageBuilder()
+      .withMethod('POST')
+      .withUrl('/api/auth/signup')
+      .withCors({ includeCredentials: true })
+      .withJsonBody({
+        username: username,
+        password: password,
+        email: email
+      })
+      .build();
+
+    await this.httpPipeline.send(message);
+    return this.httpMessageResponseUtil.parseJsonResponse<LoginResponse>(message);
+  }
+
+
+
   async postAuthRevoke(token: string) {
     const message = new HttpMessageBuilder()
       .withMethod('POST')

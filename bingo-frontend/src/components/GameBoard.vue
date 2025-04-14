@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { useNotificationStore } from '@/stores/notificationStore.ts';
 import { ref } from 'vue';
+import { useCurrentUser } from '@/queries/user.ts';
 
 const notificationStore = useNotificationStore();
 
 const counter = ref(0);
 const add = () => {
+  const query = useCurrentUser();
+  query.refresh();
   notificationStore.addNotification({
-    key: 'test',
     logLevel: 'info',
-    message: 'Test notification' + counter.value++,
+    message: query.user.value?.username + '',
     life: -1
   });
 };
