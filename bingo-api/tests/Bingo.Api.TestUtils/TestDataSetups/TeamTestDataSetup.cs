@@ -1,4 +1,4 @@
-using Bingo.Api.Data.Entities.Events;
+using Bingo.Api.Data.Entities;
 using Bingo.Api.TestUtils.TestDataGenerators;
 
 namespace Bingo.Api.TestUtils.TestDataSetups;

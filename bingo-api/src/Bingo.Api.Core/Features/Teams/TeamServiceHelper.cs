@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Bingo.Api.Core.Features.Teams.Exceptions;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data.Entities;
-using Bingo.Api.Data.Entities.Events;
 
 namespace Bingo.Api.Core.Features.Teams;
 

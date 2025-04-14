@@ -22,7 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Features\Permissions\"/>
         <Folder Include="Features\Users\Arguments\"/>
     </ItemGroup>
 </Project>

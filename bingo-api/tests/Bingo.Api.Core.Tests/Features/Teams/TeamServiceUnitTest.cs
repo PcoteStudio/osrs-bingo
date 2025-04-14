@@ -1,6 +1,5 @@
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams;
-using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data;
 using Bingo.Api.TestUtils.TestDataGenerators;
 using Moq;
@@ -18,7 +17,6 @@ public class TeamServiceUnitTest
         _teamServiceHelperMock = new Mock<ITeamServiceHelper>(MockBehavior.Strict);
         _teamFactoryMock = new Mock<ITeamFactory>(MockBehavior.Strict);
         _teamUtilMock = new Mock<ITeamUtil>(MockBehavior.Strict);
-        _userServiceMock = new Mock<IUserService>(MockBehavior.Strict);
         _playerServiceMock = new Mock<IPlayerService>(MockBehavior.Strict);
         _dbContextMock = new Mock<ApplicationDbContext>(MockBehavior.Loose);
         _teamServiceMock = new Mock<TeamService>(
@@ -38,7 +36,6 @@ public class TeamServiceUnitTest
     private Mock<ITeamRepository> _teamRepositoryMock;
     private Mock<ITeamFactory> _teamFactoryMock;
     private Mock<ITeamUtil> _teamUtilMock;
-    private Mock<IUserService> _userServiceMock;
     private Mock<IPlayerService> _playerServiceMock;
     private Mock<ApplicationDbContext> _dbContextMock;
 

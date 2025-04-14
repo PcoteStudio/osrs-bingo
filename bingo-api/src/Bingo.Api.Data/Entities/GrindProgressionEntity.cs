@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Bingo.Api.Data.Entities.Events;
+namespace Bingo.Api.Data.Entities;
 
 [Serializable]
 [Table("GrindProgressions")]

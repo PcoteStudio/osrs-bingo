@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Bingo.Api.Data.Entities.Events;
 using Microsoft.AspNetCore.Identity;
 
 namespace Bingo.Api.Data.Entities;

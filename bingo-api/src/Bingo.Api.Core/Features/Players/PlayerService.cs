@@ -2,7 +2,7 @@ using Bingo.Api.Core.Features.Players.Arguments;
 using Bingo.Api.Core.Features.Players.Exceptions;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Data;
-using Bingo.Api.Data.Entities.Events;
+using Bingo.Api.Data.Entities;
 
 namespace Bingo.Api.Core.Features.Players;
 

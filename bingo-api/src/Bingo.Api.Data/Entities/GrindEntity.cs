@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Bingo.Api.Data.Constants;
 
-namespace Bingo.Api.Data.Entities.Events;
+namespace Bingo.Api.Data.Entities;
 
 [Serializable]
 [Table("Grinds")]

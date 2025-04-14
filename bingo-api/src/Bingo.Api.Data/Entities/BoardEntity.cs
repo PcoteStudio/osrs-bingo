@@ -1,4 +1,4 @@
-namespace Bingo.Api.Data.Entities.Events;
+namespace Bingo.Api.Data.Entities;
 
 [Serializable]
 public abstract class BoardEntity

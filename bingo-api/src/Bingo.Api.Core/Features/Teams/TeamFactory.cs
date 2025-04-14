@@ -1,5 +1,5 @@
 using Bingo.Api.Core.Features.Teams.Arguments;
-using Bingo.Api.Data.Entities.Events;
+using Bingo.Api.Data.Entities;
 
 namespace Bingo.Api.Core.Features.Teams;
 

@@ -1,5 +1,4 @@
 using Bingo.Api.Data.Entities;
-using Bingo.Api.Data.Entities.Events;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

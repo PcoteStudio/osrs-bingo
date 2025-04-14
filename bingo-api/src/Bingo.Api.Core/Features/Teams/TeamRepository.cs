@@ -1,6 +1,6 @@
 using Bingo.Api.Core.Features.Generic;
 using Bingo.Api.Data;
-using Bingo.Api.Data.Entities.Events;
+using Bingo.Api.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bingo.Api.Core.Features.Teams;
