@@ -5,6 +5,7 @@ import GameBoard from '@/components/GameBoard.vue'
 import LoginModal from '@/components/LoginModal.vue';
 import SignupModal from '@/components/SignupModal.vue'
 import SettingsModal from '@/components/SettingsModal.vue';
+import PlayersModal from '@/components/PlayersModal.vue';
 </script>
 
 <template>
@@ -16,6 +17,7 @@ import SettingsModal from '@/components/SettingsModal.vue';
     <LoginModal />
     <SignupModal />
     <SettingsModal />
+    <PlayersModal />
 
     <!--  Regular components  -->
     <SideMenuContainer />
