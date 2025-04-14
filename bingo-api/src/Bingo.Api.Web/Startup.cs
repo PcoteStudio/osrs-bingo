@@ -7,8 +7,6 @@ using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data;
-using Bingo.Api.Web.Authentication;
-using Bingo.Api.Web.Cache;
 using Bingo.Api.Web.Events;
 using Bingo.Api.Web.Middlewares;
 using Bingo.Api.Web.Players;
@@ -45,11 +43,11 @@ public class Startup
         });
 
         // Features
-        services.AddSqliteDistributedCacheService();
+        services.AddDistributedMemoryCache();
+        // services.AddSqliteDistributedCacheService();
         services.AddOpenApi();
         services.AddSqliteDatabase();
         services.AddAuthenticationService();
-        services.AddAuthenticationWebService();
         services.AddUserService();
         services.AddPlayerService();
         services.AddPlayerWebService();
@@ -76,7 +74,6 @@ public class Startup
 
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseSession();
 
         app.UseEndpoints(endpoints =>
         {

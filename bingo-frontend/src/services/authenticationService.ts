@@ -14,9 +14,7 @@ export class AuthenticationService {
   }
 
   async authenticate(username: string, password: string) {
-    const response = await this.authenticationClient.postAuthLogin(username, password);
-
-    this.authToken = response.accessToken;
+    await this.authenticationClient.postAuthLogin(username, password);
     return true;
   }
 

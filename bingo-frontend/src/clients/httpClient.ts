@@ -47,12 +47,9 @@ class AuthenticationHttpPipelinePolicy extends HttpPipelinePolicy {
   }
 
   async process(message: HttpMessage, pipeline: HttpPipelinePolicy[]): Promise<void> {
-    message.request.headers['Authorization'] = 'Bearer ' + this.authService.getToken();
     await this.processNext(message, pipeline);
 
     if (message.response?.status === 401) {
-      await this.authService.refresh();
-      message.request.headers['Authorization'] = 'Bearer ' + this.authService.getToken();
       await this.processNext(message, pipeline);
     }
   }

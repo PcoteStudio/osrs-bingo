@@ -22,7 +22,7 @@ export class AuthenticationClient {
     return new AuthenticationClient(pipeline, new HttpMessageResponseUtil());
   }
 
-  async postAuthLogin(username: string, password: string): Promise<LoginResponse> {
+  async postAuthLogin(username: string, password: string) {
     const message = new HttpMessageBuilder()
       .withMethod('POST')
       .withUrl('/api/auth/login')
@@ -34,7 +34,6 @@ export class AuthenticationClient {
       .build();
 
     await this.httpPipeline.send(message);
-    return this.httpMessageResponseUtil.parseJsonResponse<LoginResponse>(message);
   }
 
   async postAuthSignup(username: string, password: string, email: string): Promise<LoginResponse> {
