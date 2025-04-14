@@ -19,23 +19,60 @@ const add = () => {
 </script>
 
 <template>
-  <div class="board">
-    <Button @click="add">Add notification {{ counter }}</Button>
-<!--    <img src="https://cdn.discordapp.com/attachments/1356383638698328065/1359015142318145661/H8lCf7D.png?ex=67f93cbb&is=67f7eb3b&hm=faa938adbc4030ad57f7d3c9ce9ae59286b318d5c10da727b4246d81017f1b2a" />-->
+  <div class="container">
+    <div class="banner">
+      <span class="title">Bingo</span>
+    </div>
+    <div class="board">
+      <div v-for="row in 10" class="row" :key="row">
+        <div v-for="column in 10" class="tile" :key="column">
+          <span>
+            {{ row }} / {{ column }}
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+
+
+}
+  .banner {
+    display: flex;
+    justify-content: space-around;
+
+    .title {
+      font-size: 3em;
+    }
+  }
 .board {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
   width: 100%;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 
-  img {
-    width: 100%;
-    height: auto;
-    image-rendering: optimizeQuality;
+  .row {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+
+    .tile {
+      display: flex;
+      padding-right: 5px;
+      justify-content: right;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
   }
 }
 </style>
