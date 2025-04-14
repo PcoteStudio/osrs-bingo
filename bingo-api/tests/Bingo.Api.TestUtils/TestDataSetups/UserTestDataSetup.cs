@@ -54,13 +54,11 @@ public partial class TestDataSetup
         dbContext.SaveChanges();
 
         // Login user (with low iteration count configured)
-        var tokens = authService.LoginAsync(new AuthLoginArguments
+        var TODO = authService.LoginAsync(new AuthLoginArguments
         {
             Username = userWithSecrets.User.UserName,
             Password = userWithSecrets.Password
         }).Result;
-        userWithSecrets.AccessToken = tokens.AccessToken;
-        userWithSecrets.RefreshToken = tokens.RefreshToken;
 
         return this;
     }
@@ -74,7 +72,5 @@ public partial class TestDataSetup
 public class UserWithSecrets
 {
     public required UserEntity User { get; set; }
-    public string AccessToken { get; set; } = string.Empty;
-    public string RefreshToken { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 }

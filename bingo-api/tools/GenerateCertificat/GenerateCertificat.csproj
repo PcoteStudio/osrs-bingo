@@ -5,14 +5,15 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>GenerateCretificat</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Nuke.Utilities" Version="9.0.4" />
+        <PackageReference Include="Nuke.Utilities" Version="9.0.4"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Bingo.Api.Shared\Bingo.Api.Shared.csproj" />
+        <ProjectReference Include="..\..\src\Bingo.Api.Shared\Bingo.Api.Shared.csproj"/>
     </ItemGroup>
 
 </Project>

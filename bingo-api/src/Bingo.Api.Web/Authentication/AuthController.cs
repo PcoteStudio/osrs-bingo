@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Authentication.Arguments;
@@ -5,10 +6,10 @@ using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Core.Features.Users.Exceptions;
 using Bingo.Api.Web.Generic.Exceptions;
 using Bingo.Api.Web.Users;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Bingo.Api.Web.Authentication;
 
@@ -17,11 +18,8 @@ namespace Bingo.Api.Web.Authentication;
 public class AuthController(
     IUserService userService,
     IAuthService authService,
-    IOptions<CookieOptions> cookieOptions,
     IMapper mapper) : ControllerBase
 {
-    private const string RefreshTokenKey = "refresh_token";
-
     [HttpPost("signup")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,48 +45,22 @@ public class AuthController(
 
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<TokenResponse>> LoginAsync(AuthLoginArguments args)
+    public async Task<ActionResult> LoginAsync(AuthLoginArguments args)
     {
-        var tokenModel = await authService.LoginAsync(args);
-        var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
-        Response.Cookies.Append(RefreshTokenKey, tokenModel.RefreshToken, cookieOptions.Value);
-        return StatusCode(StatusCodes.Status200OK, tokenResponse);
+        var username = await authService.LoginAsync(args);
+        var claims = new List<Claim> { new(ClaimTypes.Name, username) };
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity));
+        return StatusCode(StatusCodes.Status200OK);
     }
 
     [Authorize]
-    [HttpPost("refresh")]
+    [HttpPost("logout")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<TokenResponse>> RefreshTokenAsync(AuthRefreshArguments args)
+    public async Task<ActionResult> LogoutAsync()
     {
-        try
-        {
-            var tokenModel = await authService.RefreshTokenAsync(Request.Cookies[RefreshTokenKey], args);
-            var tokenResponse = mapper.Map<TokenResponse>(tokenModel);
-            Response.Cookies.Append(RefreshTokenKey, tokenModel.RefreshToken, cookieOptions.Value);
-            return StatusCode(StatusCodes.Status200OK, tokenResponse);
-        }
-        catch (Exception ex)
-        {
-            switch (ex)
-            {
-                case InvalidRefreshTokenException or SecurityTokenException:
-                    throw new HttpException(StatusCodes.Status400BadRequest, ex);
-                default:
-                    throw;
-            }
-        }
-    }
-
-    [Authorize]
-    [HttpPost("revoke")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> RevokeAsync()
-    {
-        await authService.RevokeTokenAsync(User);
-        Response.Cookies.Delete(RefreshTokenKey);
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return StatusCode(StatusCodes.Status200OK);
     }
 }

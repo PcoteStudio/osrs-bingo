@@ -9,6 +9,7 @@ namespace Bingo.Api.Core.Features.Database;
 public class DatabaseOptions
 {
     public required string ConnectionString { get; set; } = string.Empty;
+    public required string CachePath { get; set; } = string.Empty;
 }
 
 public static class ServiceCollectionExtensions
