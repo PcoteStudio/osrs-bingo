@@ -13,10 +13,15 @@ export const useGlobalStore = defineStore('globalStore', {
       showModal: false,
     };
 
+    const settingsState = {
+      showModal: false,
+    };
+
     return {
       authenticationStore: authenticationStore,
       loginModalState: loginModalState,
-      signupModalState: signupModalState
+      signupModalState: signupModalState,
+      settingsState: settingsState,
     };
   },
   getters: {
@@ -37,6 +42,9 @@ export const useGlobalStore = defineStore('globalStore', {
     openSignUpModal() {
       this.loginModalState.showModal = false;
       this.signupModalState.showModal = true;
-    }
+    },
+    toggleSettingsModal() {
+      this.settingsState.showModal = !this.settingsState.showModal;
+    },
   }
 });

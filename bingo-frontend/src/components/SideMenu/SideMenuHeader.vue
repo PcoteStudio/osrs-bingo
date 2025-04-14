@@ -20,6 +20,7 @@
 }
 
 .logo {
+  color: yellow;
   display: flex;
   flex-direction: row;
   align-items: center;

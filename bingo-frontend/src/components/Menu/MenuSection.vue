@@ -14,7 +14,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'toggleSection', index: number): void;
   (e: 'toggleSubmenu', sectionIndex: number, itemIndex: number): void;
-  (e: 'action', action: string): void;
 }>();
 
 const show = computed(() => {
@@ -27,10 +26,6 @@ const handleToggleSection = () => {
 
 const handleToggleSubmenu = (itemIndex: number) => {
   emit('toggleSubmenu', props.sectionIndex, itemIndex);
-};
-
-const handleAction = (action: string) => {
-  emit('action', action);
 };
 </script>
 
@@ -54,13 +49,13 @@ const handleAction = (action: string) => {
         <MenuItem
           v-if="!item.isSubmenu"
           :item="item"
-          @action="handleAction"
+          @action="item.action"
         />
         <SubMenuItem
           v-else
           :item="item"
           @toggle="handleToggleSubmenu(itemIndex)"
-          @action="handleAction"
+          @action="item.action"
         />
       </li>
     </ul>
