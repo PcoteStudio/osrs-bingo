@@ -7,6 +7,7 @@ namespace Bingo.Api.Core.Features.Players;
 
 public interface IPlayerRepository : IGenericRepository<PlayerEntity>
 {
+    Task<PlayerEntity?> GetCompleteByIdAsync(int id);
     Task<PlayerEntity?> GetByNameAsync(string name);
     Task<List<PlayerEntity>> GetByNamesAsync(IEnumerable<string> playerNames);
 }
@@ -14,6 +15,13 @@ public interface IPlayerRepository : IGenericRepository<PlayerEntity>
 public class PlayerRepository(ApplicationDbContext dbContext)
     : GenericRepository<PlayerEntity>(dbContext), IPlayerRepository
 {
+    public Task<PlayerEntity?> GetCompleteByIdAsync(int id)
+    {
+        return DbContext.Players
+            .Include(p => p.Teams)
+            .FirstOrDefaultAsync(t => t.Id == id);
+    }
+
     public Task<PlayerEntity?> GetByNameAsync(string name)
     {
         return DbContext.Players

@@ -10,5 +10,6 @@ public static class ServiceCollectionExtensions
         services.TryAddScoped<IPlayerService, PlayerService>();
         services.TryAddScoped<IPlayerRepository, PlayerRepository>();
         services.TryAddSingleton<IPlayerFactory, PlayerFactory>();
+        services.TryAddSingleton<IPlayerUtil, PlayerUtil>();
     }
 }

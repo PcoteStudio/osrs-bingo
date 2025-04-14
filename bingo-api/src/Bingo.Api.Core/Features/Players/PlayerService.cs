@@ -1,3 +1,5 @@
+using Bingo.Api.Core.Features.Players.Arguments;
+using Bingo.Api.Core.Features.Players.Exceptions;
 using Bingo.Api.Data;
 using Bingo.Api.Data.Entities.Events;
 
@@ -5,39 +7,32 @@ namespace Bingo.Api.Core.Features.Players;
 
 public interface IPlayerService
 {
-    ValueTask<PlayerEntity?> GetPlayerAsync(int playerId);
     Task<PlayerEntity> GetOrCreatePlayerByNameAsync(string name);
     Task<List<PlayerEntity>> GetOrCreatePlayersByNamesAsync(ICollection<string> names);
     Task<List<PlayerEntity>> GetPlayersAsync();
+    Task<PlayerEntity> GetRequiredCompletePlayerAsync(int teamId);
+    Task<PlayerEntity> RemovePlayerAsync(int teamId);
+    Task<PlayerEntity> UpdatePlayerAsync(int playerId, PlayerUpdateArguments args);
 }
 
 public class PlayerService(
     IPlayerFactory playerFactory,
     IPlayerRepository playerRepository,
+    IPlayerUtil playerUtil,
     ApplicationDbContext dbContext
 ) : IPlayerService
 {
-    public ValueTask<PlayerEntity?> GetPlayerAsync(int playerId)
-    {
-        return playerRepository.GetByIdAsync(playerId);
-    }
-
-    public async Task<List<PlayerEntity>> GetPlayersAsync()
-    {
-        return await playerRepository.GetAllAsync();
-    }
-
     public async Task<PlayerEntity> GetOrCreatePlayerByNameAsync(string name)
     {
-        var playerEntity = await playerRepository.GetByNameAsync(name);
-        if (playerEntity is null)
+        var player = await playerRepository.GetByNameAsync(name);
+        if (player is null)
         {
-            playerEntity = playerFactory.Create(name);
-            playerRepository.Add(playerEntity);
+            player = playerFactory.Create(name);
+            playerRepository.Add(player);
             await dbContext.SaveChangesAsync();
         }
 
-        return playerEntity;
+        return player;
     }
 
     public async Task<List<PlayerEntity>> GetOrCreatePlayersByNamesAsync(ICollection<string> names)
@@ -52,5 +47,32 @@ public class PlayerService(
         }
 
         return foundPlayers.Concat(newPlayers).ToList();
+    }
+
+    public async Task<List<PlayerEntity>> GetPlayersAsync()
+    {
+        return await playerRepository.GetAllAsync();
+    }
+
+    public virtual async Task<PlayerEntity> GetRequiredCompletePlayerAsync(int teamId)
+    {
+        var player = await playerRepository.GetCompleteByIdAsync(teamId);
+        if (player == null) throw new PlayerNotFoundException(teamId);
+        return player;
+    }
+
+    public virtual async Task<PlayerEntity> RemovePlayerAsync(int teamId)
+    {
+        var player = await playerRepository.GetCompleteByIdAsync(teamId);
+        if (player == null) throw new PlayerNotFoundException(teamId);
+        playerRepository.Remove(player);
+        return player;
+    }
+
+    public async Task<PlayerEntity> UpdatePlayerAsync(int playerId, PlayerUpdateArguments args)
+    {
+        var playerEntity = await GetRequiredCompletePlayerAsync(playerId);
+        playerUtil.UpdatePlayer(playerEntity, args);
+        return playerEntity;
     }
 }
