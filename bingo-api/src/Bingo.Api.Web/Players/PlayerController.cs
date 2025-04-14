@@ -10,7 +10,10 @@ namespace Bingo.Api.Web.Players;
 
 [Route("/api/players")]
 [ApiController]
-public class PlayerController(IPlayerService playerService, IMapper mapper) : ControllerBase
+public class PlayerController(
+    IPlayerService playerService,
+    IPlayerServiceHelper playerServiceHelper,
+    IMapper mapper) : ControllerBase
 {
     [HttpGet("{playerId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -19,7 +22,7 @@ public class PlayerController(IPlayerService playerService, IMapper mapper) : Co
     {
         try
         {
-            var player = await playerService.GetRequiredCompletePlayerAsync(playerId);
+            var player = await playerServiceHelper.GetRequiredCompletePlayerAsync(playerId);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
         }
         catch (Exception ex)
@@ -34,12 +37,37 @@ public class PlayerController(IPlayerService playerService, IMapper mapper) : Co
         }
     }
 
-    [HttpPost("{playerName:minlength(0)}")]
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<PlayerResponse>> GetOrCreatePlayerAsync([FromRoute] string playerName)
+    public async Task<ActionResult<List<PlayerResponse>>> GetPlayersAsync()
     {
-        var player = await playerService.GetOrCreatePlayerByNameAsync(playerName);
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
+        var player = await playerService.GetPlayersAsync();
+        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<PlayerResponse>>(player));
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<PlayerResponse>> CreatePlayerAsync([FromBody] PlayerCreateArguments args)
+    {
+        try
+        {
+            var player = await playerService.CreatePlayerAsync(args);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
+        }
+        catch (Exception ex)
+        {
+            switch (ex)
+            {
+                case PlayerAlreadyExistsException:
+                    throw new HttpException(StatusCodes.Status400BadRequest, ex);
+                default:
+                    throw;
+            }
+        }
     }
 
     [Authorize(Roles = "Admin")]

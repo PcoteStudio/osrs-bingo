@@ -10,7 +10,8 @@ namespace Bingo.Api.Web.Teams;
 
 [Route("/api/teams")]
 [ApiController]
-public class TeamController(ITeamService teamService, IMapper mapper) : ControllerBase
+public class TeamController(ITeamService teamService, ITeamServiceHelper teamServiceHelper, IMapper mapper)
+    : ControllerBase
 {
     [HttpGet("{teamId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -19,7 +20,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     {
         try
         {
-            var team = await teamService.GetRequiredCompleteTeamAsync(teamId);
+            var team = await teamServiceHelper.GetRequiredCompleteTeamAsync(teamId);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
         catch (Exception ex)
@@ -45,7 +46,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     {
         try
         {
-            await teamService.EnsureIsTeamAdminAsync(User, teamId);
+            await teamServiceHelper.EnsureIsTeamAdminAsync(User, teamId);
             var team = await teamService.UpdateTeamAsync(teamId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
@@ -74,7 +75,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     {
         try
         {
-            await teamService.EnsureIsTeamAdminAsync(User, teamId);
+            await teamServiceHelper.EnsureIsTeamAdminAsync(User, teamId);
             var team = await teamService.UpdateTeamPlayersAsync(teamId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
@@ -103,7 +104,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     {
         try
         {
-            await teamService.EnsureIsTeamAdminAsync(User, teamId);
+            await teamServiceHelper.EnsureIsTeamAdminAsync(User, teamId);
             var team = await teamService.AddTeamPlayersAsync(teamId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
@@ -130,7 +131,7 @@ public class TeamController(ITeamService teamService, IMapper mapper) : Controll
     {
         try
         {
-            await teamService.EnsureIsTeamAdminAsync(User, teamId);
+            await teamServiceHelper.EnsureIsTeamAdminAsync(User, teamId);
             var team = await teamService.RemoveTeamPlayerAsync(teamId, playerName);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }

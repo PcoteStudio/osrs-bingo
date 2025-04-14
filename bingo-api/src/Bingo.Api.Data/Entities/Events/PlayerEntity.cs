@@ -15,7 +15,7 @@ public class PlayerEntity
     [MaxLength(255)] public required string Name { get; set; } = string.Empty;
 
     [ForeignKey("PlayerId")]
-    public List<TeamEntity>? Teams
+    public List<TeamEntity> Teams
     {
         get => _teams.ThrowIfNotLoaded();
         set => _teams = value;

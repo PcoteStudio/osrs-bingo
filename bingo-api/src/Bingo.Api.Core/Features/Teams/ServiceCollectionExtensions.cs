@@ -8,6 +8,7 @@ public static class ServiceCollectionExtensions
     public static void AddTeamService(this IServiceCollection services)
     {
         services.TryAddScoped<ITeamService, TeamService>();
+        services.TryAddScoped<ITeamServiceHelper, TeamServiceHelper>();
         services.TryAddScoped<ITeamRepository, TeamRepository>();
         services.TryAddSingleton<ITeamFactory, TeamFactory>();
         services.TryAddSingleton<ITeamUtil, TeamUtil>();
