@@ -4,6 +4,7 @@ import SideMenuContainer from '@/components/SideMenu/SideMenuContainer.vue'
 import GameBoard from '@/components/GameBoard.vue'
 import LoginModal from '@/components/LoginModal.vue';
 import SignupModal from '@/components/SignupModal.vue'
+import SettingsModal from '@/components/SettingsModal.vue';
 </script>
 
 <template>
@@ -14,6 +15,7 @@ import SignupModal from '@/components/SignupModal.vue'
     <!--  Modals  -->
     <LoginModal />
     <SignupModal />
+    <SettingsModal />
 
     <!--  Regular components  -->
     <SideMenuContainer />

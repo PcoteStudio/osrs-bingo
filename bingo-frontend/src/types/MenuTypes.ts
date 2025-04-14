@@ -1,7 +1,7 @@
 export interface MenuItemType {
   id: string;
   label: string;
-  action: string;
+  action: () => void;
   icon?: string;
   isSubmenu?: boolean;
   expanded?: boolean;

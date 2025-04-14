@@ -8,7 +8,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import PrimeVue from 'primevue/config';
-import Aura from '@primevue/themes/aura';
+import Aura from '@primeuix/themes/aura';
 import Tooltip from 'primevue/tooltip';
 import ToastService from 'primevue/toastservice';
 
@@ -19,6 +19,8 @@ import { PiniaColada } from '@pinia/colada';
 import { AuthenticationService } from '@/services/authenticationService.ts';
 import { HttpClient } from '@/clients/httpClient.ts';
 import { AuthenticationClient } from '@/clients/authenticationClient.ts';
+import { initializeTheme, ThemeType } from '@/utils/themeUtils.ts';
+import { definePreset } from '@primevue/themes';
 
 library.add(fas, far, fab);
 
@@ -46,6 +48,8 @@ app.use(PrimeVue, {
   theme: {
     preset: Aura,
     options: {
+      prefix: 'p',
+      darkModeSelector: '.' + ThemeType.dark,
       ripple: true,
       cssLayer: {
         name: 'primevue',
@@ -56,6 +60,8 @@ app.use(PrimeVue, {
 });
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
+
+initializeTheme();
 
 // FontAwesome
 app.component('FontAwesomeIcon', FontAwesomeIcon);

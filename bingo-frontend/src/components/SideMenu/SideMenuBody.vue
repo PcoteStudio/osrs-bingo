@@ -2,6 +2,9 @@
 import { ref } from 'vue';
 import type { MenuSectionType } from '@/types/MenuTypes.ts';
 import MenuSection from '@/components/Menu/MenuSection.vue';
+import { useGlobalStore } from '@/stores/globalStore.ts';
+
+const globalState = useGlobalStore();
 
 const menuSections = ref<MenuSectionType[]>([
   {
@@ -12,7 +15,7 @@ const menuSections = ref<MenuSectionType[]>([
       {
         id: 'bingo',
         label: 'Bingo',
-        action: 'openBingo',
+        action: () => console.log('openBingo'),
         active: true,
         isSubmenu: true,
         expanded: true,
@@ -21,31 +24,31 @@ const menuSections = ref<MenuSectionType[]>([
             id: 'bingo-board',
             label: 'Board',
             icon: 'faChessBoard',
-            action: 'openBingoBoard'
+            action: () => console.log('openBingoBoard'),
           },
           {
             id: 'bingo-leaderboard',
             label: 'Leaderboard',
             icon: 'faTrophy',
-            action: 'openBingoLeaderboard'
+            action: () => console.log('openBingoLeaderboard'),
           },
           {
             id: 'bingo-teams',
             label: 'Teams',
             icon: 'faUsers',
-            action: 'openBingoTeams'
+            action: () => console.log('openBingoTeams'),
           }
         ]
       },
       {
         id: 'dashboard',
         label: 'Snake and Ladder',
-        action: 'openSnake'
+        action: () => console.log('openSnake'),
       },
       {
         id: 'game-of-life',
         label: 'Game of Life',
-        action: 'openGOL'
+        action: () => console.log('openGOL'),
       },
     ]
   },
@@ -59,13 +62,13 @@ const menuSections = ref<MenuSectionType[]>([
         id: 'players',
         label: 'Players',
         icon: 'faUsers',
-        action: 'openPlayers'
+        action: () => console.log('openPlayers'),
       },
       {
         id: 'settings',
         label: 'Settings',
         icon: 'faCog',
-        action: 'openSettings'
+        action: globalState.toggleSettingsModal,
       },
     ]
   }
@@ -81,10 +84,6 @@ const toggleSubmenu = (sectionIndex: number, itemIndex: number): void => {
     item.expanded = !item.expanded;
   }
 };
-
-const handleAction = (action: string): void => {
-  console.log(`Action triggered: ${action}`);
-};
 </script>
 
 <template>
@@ -96,7 +95,6 @@ const handleAction = (action: string): void => {
       :section-index="sectionIndex"
       @toggle-section="toggleSection"
       @toggle-submenu="toggleSubmenu"
-      @action="handleAction"
     />
   </div>
 </template>
