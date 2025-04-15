@@ -16,7 +16,8 @@ public class EventFactory : IEventFactory
         {
             Name = args.Name,
             StartTime = args.StartTime,
-            EndTime = args.EndTime
+            EndTime = args.EndTime,
+            Administrators = []
         };
     }
 }

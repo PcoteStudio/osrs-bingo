@@ -1,4 +1,5 @@
 using Bingo.Api.Data.Entities;
+using Bingo.Api.Shared;
 
 namespace Bingo.Api.TestUtils.TestDataGenerators;
 

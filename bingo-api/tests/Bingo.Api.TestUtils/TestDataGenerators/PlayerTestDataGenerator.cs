@@ -1,3 +1,5 @@
+using Bingo.Api.Shared;
+
 namespace Bingo.Api.TestUtils.TestDataGenerators;
 
 public static partial class TestDataGenerator

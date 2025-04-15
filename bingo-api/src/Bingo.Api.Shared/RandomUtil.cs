@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Bingo.Api.TestUtils;
+namespace Bingo.Api.Shared;
 
 public static class RandomUtil
 {

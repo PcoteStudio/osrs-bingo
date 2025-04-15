@@ -14,9 +14,6 @@ public class ApplicationDbContext : IdentityDbContext<UserEntity>
     {
     }
 
-    // Auth
-    public DbSet<TokenEntity> Tokens { get; set; }
-
     // Events
     public DbSet<EventEntity> Events { get; set; }
     public DbSet<TeamEntity> Teams { get; set; }

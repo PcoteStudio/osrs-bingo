@@ -14,9 +14,9 @@ public class EventEntity
 
     [MaxLength(255)] public string Name { get; set; } = string.Empty;
 
-    public DateTimeOffset StartTime { get; set; }
+    public DateTimeOffset? StartTime { get; set; }
 
-    public DateTimeOffset EndTime { get; set; }
+    public DateTimeOffset? EndTime { get; set; }
 
     [ForeignKey("EventId")]
     public List<TeamEntity> Teams

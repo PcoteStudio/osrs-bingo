@@ -1,5 +1,6 @@
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Data.Entities;
+using Bingo.Api.Shared;
 using Bingo.Api.Web.Teams;
 
 namespace Bingo.Api.TestUtils.TestDataGenerators;

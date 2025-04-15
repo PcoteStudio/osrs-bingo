@@ -7,6 +7,7 @@ namespace Bingo.Api.Core.Features.Players;
 
 public interface IPlayerRepository : IGenericRepository<PlayerEntity>
 {
+    Task<List<PlayerEntity>> GetAllCompleteAsync();
     Task<PlayerEntity?> GetCompleteByIdAsync(int id);
     Task<PlayerEntity?> GetByNameAsync(string name);
     Task<List<PlayerEntity>> GetByNamesAsync(IEnumerable<string> playerNames);
@@ -15,11 +16,18 @@ public interface IPlayerRepository : IGenericRepository<PlayerEntity>
 public class PlayerRepository(ApplicationDbContext dbContext)
     : GenericRepository<PlayerEntity>(dbContext), IPlayerRepository
 {
+    public Task<List<PlayerEntity>> GetAllCompleteAsync()
+    {
+        return DbContext.Players
+            .Include(p => p.Teams)
+            .ToListAsync();
+    }
+
     public Task<PlayerEntity?> GetCompleteByIdAsync(int id)
     {
         return DbContext.Players
             .Include(p => p.Teams)
-            .FirstOrDefaultAsync(t => t.Id == id);
+            .FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public Task<PlayerEntity?> GetByNameAsync(string name)
@@ -33,12 +41,5 @@ public class PlayerRepository(ApplicationDbContext dbContext)
         return DbContext.Players
             .Where(p => playerNames.Contains(p.Name))
             .ToListAsync();
-    }
-
-    public Task<PlayerEntity?> GetCompletePlayerByIdAsync(int playerId)
-    {
-        return DbContext.Players
-            .Include(p => p.Teams)
-            .FirstOrDefaultAsync(p => p.Id == playerId);
     }
 }

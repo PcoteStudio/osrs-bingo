@@ -65,7 +65,7 @@ public class PlayerService(
 
     public async Task<List<PlayerEntity>> GetPlayersAsync()
     {
-        return await playerRepository.GetAllAsync();
+        return await playerRepository.GetAllCompleteAsync();
     }
 
     public virtual async Task<PlayerEntity> RemovePlayerAsync(int teamId)

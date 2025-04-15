@@ -7,6 +7,6 @@ public class PlayerMappingProfile : Profile
 {
     public PlayerMappingProfile()
     {
-        CreateMap<PlayerEntity, PlayerResponse>();
+        CreateMap<PlayerEntity, PlayerResponse>().MaxDepth(1);
     }
 }
