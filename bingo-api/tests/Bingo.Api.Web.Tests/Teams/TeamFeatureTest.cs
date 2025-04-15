@@ -52,7 +52,6 @@ public class TeamFeatureTest
     #region RemoveTeamPlayerAsync
 
     [Test]
-    [Ignore("TODO Sessions")]
     public async Task RemoveTeamPlayerAsync_ShouldReturnTheUpdatedTeam()
     {
         // Arrange
@@ -65,6 +64,7 @@ public class TeamFeatureTest
         var player = originalPlayers[Random.Shared.Next(originalPlayers.Count)];
 
         // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.DeleteAsync(
             new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players/{player.Name}"));
 
@@ -91,7 +91,6 @@ public class TeamFeatureTest
     }
 
     [Test]
-    [Ignore("TODO Sessions")]
     public async Task RemoveTeamPlayerAsync_ShouldReturnNotFoundIfTeamDoesNotExist()
     {
         // Arrange
@@ -102,6 +101,7 @@ public class TeamFeatureTest
         var playerName = TestDataGenerator.GeneratePlayerName();
 
         // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.DeleteAsync(new Uri(_baseUrl, $"/api/teams/{teamId}/players/{playerName}"));
 
         // Assert response status
@@ -118,7 +118,6 @@ public class TeamFeatureTest
     #region UpdateTeamPlayersAsync
 
     [Test]
-    [Ignore("TODO Sessions")]
     public async Task UpdateTeamPlayersAsync_ShouldReturnTheUpdatedTeam()
     {
         // Arrange
@@ -133,6 +132,7 @@ public class TeamFeatureTest
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.PutAsync(
             new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players"),
             stringContent);
@@ -159,7 +159,6 @@ public class TeamFeatureTest
     }
 
     [Test]
-    [Ignore("TODO Sessions")]
     public async Task UpdateTeamPlayersAsync_ShouldReturnNotFoundIfTeamDoesNotExist()
     {
         // Arrange
@@ -172,6 +171,7 @@ public class TeamFeatureTest
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.PutAsync(
             new Uri(_baseUrl, $"/api/teams/{teamId}/players"),
             stringContent);
@@ -190,7 +190,6 @@ public class TeamFeatureTest
     #region AddTeamPlayersAsync
 
     [Test]
-    [Ignore("TODO Sessions")]
     public async Task AddTeamPlayersAsync_ShouldReturnTheUpdatedTeam()
     {
         // Arrange
@@ -203,6 +202,7 @@ public class TeamFeatureTest
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.PostAsync(
             new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players"),
             stringContent);
@@ -229,7 +229,6 @@ public class TeamFeatureTest
     }
 
     [Test]
-    [Ignore("TODO Sessions")]
     public async Task AddTeamPlayersAsync_ShouldReturnNotFoundIfTeamDoesNotExist()
     {
         // Arrange
@@ -242,6 +241,7 @@ public class TeamFeatureTest
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.PostAsync(
             new Uri(_baseUrl, $"/api/teams/{teamId}/players"),
             stringContent);
@@ -260,7 +260,6 @@ public class TeamFeatureTest
     #region UpdateTeamAsync
 
     [Test]
-    [Ignore("TODO Sessions")]
     public async Task UpdateTeamAsync_ShouldReturnTheUpdatedTeam()
     {
         // Arrange
@@ -273,6 +272,7 @@ public class TeamFeatureTest
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}"),
             stringContent);
 
@@ -296,7 +296,6 @@ public class TeamFeatureTest
     }
 
     [Test]
-    [Ignore("TODO Sessions")]
     public async Task UpdateTeamAsync_ShouldReturnNotFoundIfTeamDoesNotExist()
     {
         // Arrange
@@ -309,6 +308,7 @@ public class TeamFeatureTest
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{teamId}"),
             stringContent);
 

@@ -26,7 +26,9 @@ public static partial class TestDataGenerator
         {
             Id = Random.Shared.Next(),
             Username = GenerateUserName(),
-            Email = GenerateUserEmail()
+            Email = GenerateUserEmail(),
+            EmailConfirmed = true,
+            Permissions = []
         };
     }
 }

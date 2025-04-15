@@ -49,7 +49,6 @@ public class EventFeatureTest
     }
 
     [Test]
-    [Ignore("TODO Sessions")]
     public async Task CreateTeam_ShouldReturnTheCreatedTeam()
     {
         // Arrange
@@ -59,10 +58,9 @@ public class EventFeatureTest
         var teamArgs = TestDataGenerator.GenerateTeamCreateArguments();
         var postContent = JsonSerializer.Serialize(teamArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
-        // _client.DefaultRequestHeaders.Authorization =
-        //     new AuthenticationHeaderValue("Bearer", userWithSecrets.AccessToken);
 
         // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"), stringContent);
 
         // Assert response status

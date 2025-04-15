@@ -40,7 +40,7 @@ public class StatisticsUtilUnitTest
     {
         var item = new ItemEntity { DropInfos = [] };
         foreach (var diEhc in dropInfoEhcs)
-            item.DropInfos.Add(new DropInfoEntity { DropRate = diEhc });
+            item.DropInfos.Add(new DropInfoEntity { Ehc = diEhc });
         var ehc = _statisticsUtil.GetItemEhc(item);
         ehc.Should().BeApproximately(expectedEhc, 0.000001);
     }
@@ -72,15 +72,15 @@ public class StatisticsUtilUnitTest
 
     private static IEnumerable<TestCaseData> GetDropsEhcAndExpectedEhc()
     {
-        yield return new TestCaseData(new List<double?> { null })
+        yield return new TestCaseData(new List<double?> { null }, null)
             .SetArgDisplayNames("Drops EHC: [null], Expected EHC: null");
-        yield return new TestCaseData(new List<double?> { null, null })
+        yield return new TestCaseData(new List<double?> { null, null }, null)
             .SetArgDisplayNames("Drops EHC: [null, null], Expected EHC: null");
-        yield return new TestCaseData(new List<double?> { 2.4 })
+        yield return new TestCaseData(new List<double?> { 2.4 }, 2.4)
             .SetArgDisplayNames("Drops EHC: [2.4, Expected EHC: 2.4");
-        yield return new TestCaseData(new List<double?> { null, 12.6 })
+        yield return new TestCaseData(new List<double?> { null, 12.6 }, 12.6)
             .SetArgDisplayNames("Drops EHC: [null, 12.6], Expected EHC: 12.6");
-        yield return new TestCaseData(new List<double?> { 72.3, 43.1, 65.8 })
+        yield return new TestCaseData(new List<double?> { 72.3, 43.1, 65.8 }, 43.1)
             .SetArgDisplayNames("Drops EHC: [72.3, 43.1, 65.8], Expected EHC: 43.1");
     }
 }

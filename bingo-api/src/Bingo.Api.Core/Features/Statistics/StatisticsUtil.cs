@@ -36,7 +36,7 @@ public class StatisticsUtil
     {
         return item.DropInfos
             .Select(di => di.Ehc)
-            .Where(ehc => ehc != null)
+            .Where(ehc => ehc is not null)
             .Min() ?? null;
     }
 }

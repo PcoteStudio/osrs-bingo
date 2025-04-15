@@ -11,7 +11,7 @@ public interface ITeamServiceHelper
 {
     Task EnsureIsTeamAdminAsync(IIdentity? identity, int teamId);
     Task<List<TeamEntity>> GetAllRequiredByIdsAsync(ICollection<int> teamIds);
-    Task<TeamEntity> GetRequiredCompleteTeamAsync(int teamId);
+    Task<TeamEntity> GetRequiredCompleteAsync(int teamId);
 }
 
 public class TeamServiceHelper(
@@ -27,7 +27,7 @@ public class TeamServiceHelper(
                 throw new UserIsNotLoggedInException();
             case UserIdentity userIdentity:
             {
-                var team = await GetRequiredCompleteTeamAsync(teamId);
+                var team = await GetRequiredCompleteAsync(teamId);
                 if (team.Event.Administrators.Any(a => a.Id == userIdentity.UserId))
                     return;
                 throw new UserIsNotATeamAdminException(teamId, userIdentity.User.Username);
@@ -46,7 +46,7 @@ public class TeamServiceHelper(
         return teams;
     }
 
-    public virtual async Task<TeamEntity> GetRequiredCompleteTeamAsync(int teamId)
+    public virtual async Task<TeamEntity> GetRequiredCompleteAsync(int teamId)
     {
         var team = await teamRepository.GetCompleteByIdAsync(teamId);
         if (team == null) throw new TeamNotFoundException(teamId);

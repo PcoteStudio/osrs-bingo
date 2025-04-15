@@ -10,12 +10,7 @@ public partial class TestDataSetup
     {
         userWithSecrets = new UserWithSecrets
         {
-            User = new UserEntity
-            {
-                Username = TestDataGenerator.GenerateUserName(),
-                Email = TestDataGenerator.GenerateUserName(),
-                EmailConfirmed = true
-            },
+            User = TestDataGenerator.GenerateUserEntity(),
             Password = TestDataGenerator.GenerateUserPassword()
         };
         userWithSecrets.User.HashedPassword = passwordHasher.HashPassword(

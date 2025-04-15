@@ -5,7 +5,6 @@ using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.Data;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataSetups;
-using Bingo.Api.Web.Authentication;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 
@@ -49,14 +48,13 @@ public class AuthenticationFeatureTest
     }
 
     [Test]
-    [Ignore("TODO Sessions")]
-    public async Task Login_ShouldReturnNewTokens()
+    public async Task LoginAsync_ShouldAutomaticallyGiveAccessToGetMe()
     {
         // Arrange
         _testDataSetup.AddUser(out var userWithPassword);
         var loginArgs = new AuthLoginArguments
         {
-            Username = userWithPassword.User.Username!,
+            Username = userWithPassword.User.Username,
             Password = userWithPassword.Password
         };
         var postContent = JsonSerializer.Serialize(loginArgs);
@@ -70,18 +68,12 @@ public class AuthenticationFeatureTest
 
         // Assert response content
         var responseContent = await loginResponse.Content.ReadAsStringAsync();
-        var returnedTokens = JsonSerializer.Deserialize<TokenResponse>(responseContent, JsonSerializerOptions.Web);
-        returnedTokens.Should().NotBeNull();
-        returnedTokens.AccessToken.Length.Should().BeGreaterThan(0);
+        responseContent.Should().BeEmpty();
 
         loginResponse.Headers.Should().ContainKey("Set-Cookie");
         var setCookie = loginResponse.Headers.First(h => h.Key == "Set-Cookie");
         setCookie.Value.Count().Should().BeGreaterThan(0);
-        setCookie.Value.First().Should().StartWith("refresh_token=");
-
-        // Arrange
-        _client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", returnedTokens.AccessToken);
+        setCookie.Value.First().Should().StartWith(".AspNetCore.Session=");
 
         // Act
         var meResponse = await _client.GetAsync(new Uri(_baseUrl, "/api/users/me"));

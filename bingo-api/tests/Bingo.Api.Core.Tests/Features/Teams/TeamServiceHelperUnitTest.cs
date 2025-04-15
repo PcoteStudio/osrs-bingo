@@ -32,7 +32,7 @@ public class TeamServiceHelperUnitTest
     #region GetRequiredTeamAsync
 
     [Test]
-    public async Task GetRequiredTeamAsync_ShouldReturnTheSpecifiedTeam()
+    public async Task GetRequiredCompleteAsync_ShouldReturnTheSpecifiedTeam()
     {
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
@@ -41,7 +41,7 @@ public class TeamServiceHelperUnitTest
             .ReturnsAsync(team).Verifiable(Times.Once);
 
         // Act
-        var actualTeam = await _teamServiceHelper.GetRequiredCompleteTeamAsync(team.Id);
+        var actualTeam = await _teamServiceHelper.GetRequiredCompleteAsync(team.Id);
 
         // Assert
         Assert.That(actualTeam, Is.EqualTo(team));
@@ -56,48 +56,46 @@ public class TeamServiceHelperUnitTest
     public async Task EnsureIsTeamAdminAsync_ShouldNotThrowIfTheUserIsATeamAdmin()
     {
         // Arrange
-        var userIdentityMock = new Mock<UserIdentity>();
         var user = TestDataGenerator.GenerateUserEntity();
+        var userIdentity = new UserIdentity(user);
         var eventEntity = TestDataGenerator.GenerateEventEntity();
         var team = TestDataGenerator.GenerateTeamEntity();
 
         eventEntity.Administrators.Add(user);
         team.Event = eventEntity;
 
-        // TODO Mock identity
-        _teamServiceHelperMock.Setup(x => x.GetRequiredCompleteTeamAsync(team.Id))
+        _teamServiceHelperMock.Setup(x => x.GetRequiredCompleteAsync(team.Id))
             .ReturnsAsync(team).Verifiable(Times.Once);
 
         // Act
-        var act = async () => await _teamServiceHelper.EnsureIsTeamAdminAsync(userIdentityMock.Object, team.Id);
+        var act = async () => await _teamServiceHelper.EnsureIsTeamAdminAsync(userIdentity, team.Id);
 
         // Assert thrown error
         await act.Should().NotThrowAsync();
-        Mock.VerifyAll(_teamServiceHelperMock, userIdentityMock);
+        Mock.VerifyAll(_teamServiceHelperMock);
     }
 
     [Test]
     public async Task EnsureIsTeamAdminAsync_ShouldThrowIfTheUserIsANotTeamAdmin()
     {
         // Arrange
-        var userIdentityMock = new Mock<UserIdentity>();
         var user = TestDataGenerator.GenerateUserEntity();
+        var userIdentity = new UserIdentity(user);
         var eventEntity = TestDataGenerator.GenerateEventEntity();
         var team = TestDataGenerator.GenerateTeamEntity();
 
         team.Event = eventEntity;
 
-        // TODO Mock identity
-        _teamServiceHelperMock.Setup(x => x.GetRequiredCompleteTeamAsync(team.Id))
+        _teamServiceHelperMock.Setup(x => x.GetRequiredCompleteAsync(team.Id))
             .ReturnsAsync(team).Verifiable(Times.Once);
 
         // Act
-        var act = async () => await _teamServiceHelper.EnsureIsTeamAdminAsync(userIdentityMock.Object, team.Id);
+        var act = async () => await _teamServiceHelper.EnsureIsTeamAdminAsync(userIdentity, team.Id);
 
         // Assert thrown error
         await act.Should().ThrowAsync<UserIsNotATeamAdminException>();
 
-        Mock.VerifyAll(_teamServiceHelperMock, userIdentityMock);
+        Mock.VerifyAll(_teamServiceHelperMock);
     }
 
     #endregion

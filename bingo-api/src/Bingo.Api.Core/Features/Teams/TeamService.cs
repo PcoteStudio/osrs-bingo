@@ -33,7 +33,7 @@ public class TeamService(
 
     public async Task<TeamEntity> UpdateTeamAsync(int teamId, TeamUpdateArguments args)
     {
-        var team = await teamServiceHelper.GetRequiredCompleteTeamAsync(teamId);
+        var team = await teamServiceHelper.GetRequiredCompleteAsync(teamId);
         teamUtil.UpdateTeam(team, args);
         dbContext.Update(team);
         await dbContext.SaveChangesAsync();
@@ -42,7 +42,7 @@ public class TeamService(
 
     public async Task<TeamEntity> AddTeamPlayersAsync(int teamId, TeamPlayersArguments args)
     {
-        var team = await teamServiceHelper.GetRequiredCompleteTeamAsync(teamId);
+        var team = await teamServiceHelper.GetRequiredCompleteAsync(teamId);
         var players = await playerService.GetOrCreatePlayersByNamesAsync(args.PlayerNames);
         var newPlayers = players
             .Where(newPlayer => team.Players
@@ -55,7 +55,7 @@ public class TeamService(
 
     public async Task<TeamEntity> UpdateTeamPlayersAsync(int teamId, TeamPlayersArguments args)
     {
-        var team = await teamServiceHelper.GetRequiredCompleteTeamAsync(teamId);
+        var team = await teamServiceHelper.GetRequiredCompleteAsync(teamId);
         var players = await playerService.GetOrCreatePlayersByNamesAsync(args.PlayerNames);
         team.Players = players;
         dbContext.Update(team);
@@ -65,7 +65,7 @@ public class TeamService(
 
     public async Task<TeamEntity> RemoveTeamPlayerAsync(int teamId, string playerName)
     {
-        var team = await teamServiceHelper.GetRequiredCompleteTeamAsync(teamId);
+        var team = await teamServiceHelper.GetRequiredCompleteAsync(teamId);
         var player = await playerService.GetOrCreatePlayerByNameAsync(playerName);
         if (team.Players.Contains(player))
         {
