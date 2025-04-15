@@ -7,7 +7,7 @@ public class UserMappingProfile : Profile
 {
     public UserMappingProfile()
     {
-        CreateMap<UserEntity, UserResponse>().PreserveReferences();
-        CreateMap<UserEntity, UserPublicResponse>().PreserveReferences();
+        CreateMap<UserEntity, UserResponse>();
+        CreateMap<UserEntity, UserPublicResponse>();
     }
 }

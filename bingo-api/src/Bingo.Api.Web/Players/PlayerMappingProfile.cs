@@ -7,7 +7,7 @@ public class PlayerMappingProfile : Profile
 {
     public PlayerMappingProfile()
     {
-        CreateMap<PlayerEntity, PlayerResponse>().PreserveReferences();
-        CreateMap<PlayerEntity, PlayerShortResponse>().PreserveReferences();
+        CreateMap<PlayerEntity, PlayerResponse>();
+        CreateMap<PlayerEntity, PlayerShortResponse>();
     }
 }

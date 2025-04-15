@@ -7,7 +7,7 @@ public class TeamMappingProfile : Profile
 {
     public TeamMappingProfile()
     {
-        CreateMap<TeamEntity, TeamResponse>().PreserveReferences();
-        CreateMap<TeamEntity, TeamShortResponse>().PreserveReferences();
+        CreateMap<TeamEntity, TeamResponse>();
+        CreateMap<TeamEntity, TeamShortResponse>();
     }
 }

@@ -5,8 +5,8 @@
 <template>
 <div class="drawer-header">
   <div class="logo">
-    <img src="@/assets/logo.png"  alt="OSRS Bingo logo"/>
-    OSRS Bingo
+    <img src="@/assets/logo.png"  alt="Nieve’s Orders logo"/>
+    Nieve’s Orders
   </div>
 </div>
 </template>

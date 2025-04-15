@@ -25,6 +25,13 @@ public class DevController(
     IHostEnvironment environment)
     : ControllerBase
 {
+    [HttpGet("ping")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<string> Ping()
+    {
+        return StatusCode(StatusCodes.Status200OK, "pong");
+    }
+
     [Authorize]
     [HttpPost("seed")]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -55,7 +62,7 @@ public class DevController(
                 });
             }
         }
-        
+
         return StatusCode(StatusCodes.Status201Created, mapper.Map<EventResponse>(newEvent));
     }
 }
