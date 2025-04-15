@@ -40,15 +40,22 @@ public class DevController(
         {
             Name = RandomUtil.GetPrefixedRandomHexString("EventName_", Random.Shared.Next(5, 20))
         });
-        var newTeam = await teamService.CreateTeamAsync(newEvent.Id, new TeamCreateArguments
+        for (var i = 0; i < Random.Shared.Next(1, 10); i++)
         {
-            Name = RandomUtil.GetPrefixedRandomHexString("TeamName_", Random.Shared.Next(5, 20))
-        });
-        var newPlayer = await playerService.CreatePlayerAsync(new PlayerCreateArguments
-        {
-            Name = RandomUtil.GetPrefixedRandomHexString("PlayerName_", Random.Shared.Next(5, 20)),
-            TeamIds = [newTeam.Id]
-        });
+            var newTeam = await teamService.CreateTeamAsync(newEvent.Id, new TeamCreateArguments
+            {
+                Name = RandomUtil.GetPrefixedRandomHexString("TeamName_", Random.Shared.Next(5, 20))
+            });
+            for (var j = 0; j < Random.Shared.Next(1, 20); j++)
+            {
+                var newPlayer = await playerService.CreatePlayerAsync(new PlayerCreateArguments
+                {
+                    Name = RandomUtil.GetPrefixedRandomHexString("PlayerName_", Random.Shared.Next(5, 20)),
+                    TeamIds = [newTeam.Id]
+                });
+            }
+        }
+        
         return StatusCode(StatusCodes.Status201Created, mapper.Map<EventResponse>(newEvent));
     }
 }
