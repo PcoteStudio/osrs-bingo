@@ -1,7 +1,6 @@
 import type {
   IHttpMessageResponseUtil,
-  IHttpPipeline,
-  IHttpPipelineFactory
+  IHttpPipeline
 } from '@mediaclip/http-pipeline';
 import {
   HttpMessage,
@@ -49,6 +48,16 @@ export class HttpClient {
 
     await this.httpPipeline.send(message);
     return this.httpMessageResponseUtil.parseJsonResponse<PlayerResponse[]>(message);
+  }
+
+  async seedDatabase(): Promise<Response> {
+    const message = new HttpMessageBuilder()
+      .withMethod('POST')
+      .withUrl('/api/dev/seed')
+      .build();
+
+    await this.httpPipeline.send(message);
+    return this.httpMessageResponseUtil.parseJsonResponse<Response>(message);
   }
 }
 

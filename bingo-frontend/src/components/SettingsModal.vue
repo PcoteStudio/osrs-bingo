@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores/globalStore';
-import { ref, watch } from 'vue';
+import { inject, ref, watch } from 'vue';
 import { useNotificationStore } from '@/stores/notificationStore.ts';
 import { applyTheme, getPreferredTheme, ThemeType } from '@/utils/themeUtils.ts';
+import { HttpClient } from '@/clients/httpClient.ts';
 
 const globalStore = useGlobalStore();
 const notificationStore = useNotificationStore();
+
+const httpClient = inject(HttpClient.injectionKey)!;
 
 const selectedTheme = ref(getPreferredTheme());
 const options = ref([
@@ -41,6 +44,13 @@ watch(selectedTheme, (newTheme) => {
           optionValue="value"
         />
       </div>
+      <div class="flex flex-col gap-1 w-fit">
+        <label>Seed Database</label>
+        <Button
+          @click="httpClient.seedDatabase()"
+          label="Seed"
+        />
+      </div>
     </div>
   </Dialog>
 </template>
@@ -50,9 +60,5 @@ watch(selectedTheme, (newTheme) => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-
-.content * {
-  width: 100%;
 }
 </style>
