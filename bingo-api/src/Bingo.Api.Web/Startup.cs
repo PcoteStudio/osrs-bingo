@@ -45,7 +45,6 @@ public class Startup
 
         // Features
         services.AddDistributedMemoryCache();
-        // services.AddSqliteDistributedCacheService();
         services.AddAuthenticationWebService();
         services.AddOpenApi();
         services.AddSqliteDatabase();

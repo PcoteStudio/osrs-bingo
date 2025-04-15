@@ -10,18 +10,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
+        <PackageReference Include="JetBrains.Annotations"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.13.61">
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NeoSmart.Caching.Sqlite.AspNetCore" Version="9.0.1"/>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.1.8"/>
+        <PackageReference Include="Scalar.AspNetCore"/>
     </ItemGroup>
 
     <ItemGroup>
