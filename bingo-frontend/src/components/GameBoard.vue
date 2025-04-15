@@ -27,6 +27,7 @@ const add = () => {
       <div v-for="row in 10" class="row" :key="row">
         <div v-for="column in 10" class="tile" :key="column">
           <span>
+<!--             <img src="@/assets/logo.png"  alt="OSRS Bingo logo"/>-->
             {{ row }} / {{ column }}
           </span>
         </div>
