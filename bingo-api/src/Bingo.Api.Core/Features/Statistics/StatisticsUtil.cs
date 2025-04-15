@@ -25,15 +25,17 @@ public class StatisticsUtil
         return currentKc - (diffLast <= diffCurrent ? 0 : 1);
     }
 
+    public double? GetDropEhc(DropInfoEntity dropInfo)
+    {
+        var kc = GetAverageKillCount(dropInfo.DropRate);
+        if (kc is null) return null;
+        return kc / dropInfo.Npc.KillsPerHours;
+    }
+
     public double? GetItemEhc(ItemEntity item)
     {
         return item.DropInfos
-            .Select(di =>
-            {
-                var kc = GetAverageKillCount(di.DropRate);
-                if (kc is null) return null;
-                return kc / di.Npc.KillsPerHours;
-            })
+            .Select(di => di.Ehc)
             .Where(ehc => ehc != null)
             .Min() ?? null;
     }

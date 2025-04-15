@@ -293,5 +293,6 @@ public static class ServiceCollectionExtensions
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EA57B3935271AC419E308B9B54EB6555/Scope/=E8F0594528C33E45BBFEC6CFE851095D/Type/@EntryValue"></s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EA57B3935271AC419E308B9B54EB6555/ShortenQualifiedReferences/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EA57B3935271AC419E308B9B54EB6555/Text/@EntryValue"></s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=ehcs/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=npcs/@EntryIndexedValue">True</s:Boolean>
 </wpf:ResourceDictionary>

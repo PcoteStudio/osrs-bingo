@@ -13,13 +13,13 @@ public class DropInfoEntity
     public int NpcId { get; set; }
     public int ItemId { get; set; }
     public double? DropRate { get; set; }
+    public double? Ehc { get; set; }
 
     public NpcEntity Npc
     {
         get => _npc.ThrowIfNotLoaded();
         set => _npc = value;
     }
-
 
     public ItemEntity Item
     {

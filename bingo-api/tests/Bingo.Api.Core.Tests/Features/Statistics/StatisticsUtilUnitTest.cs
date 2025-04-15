@@ -26,16 +26,21 @@ public class StatisticsUtilUnitTest
 
     [Test]
     [TestCaseSource(nameof(GetKphDropRatesAndExpectedEhc))]
-    public void GetItemEhc(List<Tuple<double?, double?>> kphAndDropRates, double? expectedEhc)
+    public void GetDropEhc(double? kpc, double? dropRate, double? expectedEhc)
+    {
+        var npc = new NpcEntity { KillsPerHours = kpc };
+        var dropInfo = new DropInfoEntity { Npc = npc, DropRate = dropRate };
+        var ehc = _statisticsUtil.GetDropEhc(dropInfo);
+        ehc.Should().BeApproximately(expectedEhc, 0.000001);
+    }
+
+    [Test]
+    [TestCaseSource(nameof(GetDropsEhcAndExpectedEhc))]
+    public void GetItemEhc(List<double?> dropInfoEhcs, double? expectedEhc)
     {
         var item = new ItemEntity { DropInfos = [] };
-        foreach (var kphAndDropRate in kphAndDropRates)
-        {
-            var npc = new NpcEntity { KillsPerHours = kphAndDropRate.Item1 };
-            var dropInfo = new DropInfoEntity { Npc = npc, DropRate = kphAndDropRate.Item2 };
-            item.DropInfos.Add(dropInfo);
-        }
-
+        foreach (var diEhc in dropInfoEhcs)
+            item.DropInfos.Add(new DropInfoEntity { DropRate = diEhc });
         var ehc = _statisticsUtil.GetItemEhc(item);
         ehc.Should().BeApproximately(expectedEhc, 0.000001);
     }
@@ -59,17 +64,23 @@ public class StatisticsUtilUnitTest
 
     private static IEnumerable<TestCaseData> GetKphDropRatesAndExpectedEhc()
     {
-        yield return new TestCaseData(new List<Tuple<double?, double?>>
-                { new(null, 400d) }, null)
-            .SetArgDisplayNames("(KPH: null, Drop rate: 400), Expected EHC: null");
-        yield return new TestCaseData(new List<Tuple<double?, double?>>
-                { new(31d, null) }, null)
-            .SetArgDisplayNames("(KPH: 31, Drop rate: null), Expected EHC: null");
-        yield return new TestCaseData(new List<Tuple<double?, double?>>
-                { new(6.5, 400d) }, 42.61538461538461)
-            .SetArgDisplayNames("(KPH: 6.5, Drop rate: 400), Expected EHC: 42.615384");
-        yield return new TestCaseData(new List<Tuple<double?, double?>>
-                { new(31d, 16256d), new(31d, 381d) }, 8.516129032258064)
-            .SetArgDisplayNames("(KPH: 31, Drop rate: 16256), (KPH: 31, Drop rate: 381), Expected EHC: null");
+        yield return new TestCaseData(null, 400d, null);
+        yield return new TestCaseData(31d, null, null);
+        yield return new TestCaseData(6.5, 400d, 42.61538461538461);
+        yield return new TestCaseData(31d, 381d, 8.516129032258064);
+    }
+
+    private static IEnumerable<TestCaseData> GetDropsEhcAndExpectedEhc()
+    {
+        yield return new TestCaseData(new List<double?> { null })
+            .SetArgDisplayNames("Drops EHC: [null], Expected EHC: null");
+        yield return new TestCaseData(new List<double?> { null, null })
+            .SetArgDisplayNames("Drops EHC: [null, null], Expected EHC: null");
+        yield return new TestCaseData(new List<double?> { 2.4 })
+            .SetArgDisplayNames("Drops EHC: [2.4, Expected EHC: 2.4");
+        yield return new TestCaseData(new List<double?> { null, 12.6 })
+            .SetArgDisplayNames("Drops EHC: [null, 12.6], Expected EHC: 12.6");
+        yield return new TestCaseData(new List<double?> { 72.3, 43.1, 65.8 })
+            .SetArgDisplayNames("Drops EHC: [72.3, 43.1, 65.8], Expected EHC: 43.1");
     }
 }

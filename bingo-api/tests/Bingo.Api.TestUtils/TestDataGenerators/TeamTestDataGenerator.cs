@@ -14,10 +14,12 @@ public static partial class TestDataGenerator
 
     public static TeamEntity GenerateTeamEntity()
     {
+        var eventEntity = GenerateEventEntity();
         return new TeamEntity
         {
             Id = Random.Shared.Next(),
-            EventId = Random.Shared.Next(),
+            EventId = eventEntity.Id,
+            Event = eventEntity,
             Name = GenerateTeamName(),
             Players = []
         };

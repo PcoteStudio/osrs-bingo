@@ -12,8 +12,7 @@ public class PlayersMappingProfileUnitTest
     public void BeforeAll()
     {
         _mapper = new MapperConfiguration(
-            c => c.AddMaps(typeof(TeamMappingProfile).Assembly)
-        ).CreateMapper();
+            c => { c.AddMaps(typeof(TeamMappingProfile).Assembly); }).CreateMapper();
     }
 
     private IMapper _mapper;

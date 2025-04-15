@@ -25,10 +25,12 @@ public class DevController(
     IHostEnvironment environment)
     : ControllerBase
 {
+    [Authorize]
     [HttpGet("ping")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<string> Ping()
     {
+        if (!environment.IsDevelopment()) return StatusCode(StatusCodes.Status403Forbidden);
         return StatusCode(StatusCodes.Status200OK, "pong");
     }
 
