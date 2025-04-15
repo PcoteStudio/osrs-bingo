@@ -3,6 +3,7 @@ using System;
 using Bingo.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bingo.Api.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250414235759_AddedDropInfos")]
+    partial class AddedDropInfos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
@@ -23,8 +26,8 @@ namespace Bingo.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double?>("DropRate")
-                        .HasColumnType("REAL");
+                    b.Property<decimal?>("DropRate")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ItemId")
                         .HasColumnType("INTEGER");
@@ -79,8 +82,8 @@ namespace Bingo.Api.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("Target")
-                        .HasColumnType("REAL");
+                    b.Property<decimal?>("Target")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
@@ -174,8 +177,8 @@ namespace Bingo.Api.Data.Migrations
                     b.Property<int>("InGameId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double?>("KillsPerHours")
-                        .HasColumnType("REAL");
+                    b.Property<decimal?>("KillsPerHours")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -218,8 +221,8 @@ namespace Bingo.Api.Data.Migrations
                     b.Property<int>("GrindProgressionId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double?>("MetricsProgress")
-                        .HasColumnType("REAL");
+                    b.Property<decimal?>("MetricsProgress")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("PlayerId")
                         .HasColumnType("INTEGER");

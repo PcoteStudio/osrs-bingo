@@ -26,6 +26,6 @@ public class ProgressionEntity
         set => _grindProgression = value;
     }
 
-    public decimal? MetricsProgress { get; set; }
+    public double? MetricsProgress { get; set; }
     public ItemEntity? Drop { get; set; }
 }

@@ -7,16 +7,13 @@ namespace Bingo.Api.Data.Entities;
 [Table("Items")]
 public class ItemEntity
 {
-    private NpcEntity? _npc;
     public int Id { get; set; }
-    public int InGameId { get; set; }
-    [MaxLength(255)] public string Name { get; set; } = string.Empty;
-    [MaxLength(255)] public string Image { get; set; } = string.Empty;
-    public decimal? DropRate { get; set; }
 
-    public NpcEntity Npc
-    {
-        get => _npc.ThrowIfNotLoaded();
-        set => _npc = value;
-    }
+    public int InGameId { get; set; }
+
+    [MaxLength(255)] public string Name { get; set; } = string.Empty;
+
+    [MaxLength(255)] public string Image { get; set; } = string.Empty;
+
+    [ForeignKey("ItemId")] public List<DropInfoEntity> DropInfos { get; set; } = [];
 }

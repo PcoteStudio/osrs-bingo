@@ -15,7 +15,7 @@ public class GrindEntity
     [MaxLength(255)] public string Name { get; set; } = string.Empty;
 
     // Metric grind
-    public decimal? Target { get; set; }
+    public double? Target { get; set; }
     [MaxLength(255)] public string Metric { get; set; } = string.Empty;
 
     // Drop grind
