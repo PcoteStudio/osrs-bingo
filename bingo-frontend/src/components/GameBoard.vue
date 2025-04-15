@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useNotificationStore } from '@/stores/notificationStore.ts';
 import { ref } from 'vue';
-import { useCurrentUser } from '@/queries/user.ts';
+import { useCurrentUser } from '@/queries/userQueries.ts';
 
 const notificationStore = useNotificationStore();
 

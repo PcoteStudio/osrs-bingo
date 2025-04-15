@@ -4,9 +4,11 @@ import { useGlobalStore } from '@/stores/globalStore.ts';
 import { nextTick, onMounted, ref } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
 import type { PlayerResponse } from '@/clients/responses/playerResponse.ts';
+import { useGetAllPlayers } from '@/queries/playerQueries.ts';
 
 const globalStore = useGlobalStore();
 const playersState = ref(globalStore.getPlayersState);
+const { players } = useGetAllPlayers();
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS }
@@ -36,10 +38,6 @@ const addPlayer = () => {
     }
   });
 };
-
-onMounted(() => {
-  globalStore.fetchPlayers();
-});
 </script>
 
 <template>
@@ -50,7 +48,7 @@ onMounted(() => {
   >
     <template #header>
       <span class="title">
-        Players
+        Players {{ players.length }}
       </span>
       <div class="search-bar">
         <IconField>

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { AuthenticationService } from '@/services/authenticationService.ts';
 import { inject } from 'vue';
-import { useCurrentUser } from '@/queries/user.ts';
+import { useCurrentUser } from '@/queries/userQueries.ts';
 import type { UserResponse } from '@/clients/responses/userResponse.ts';
 import { useNotificationStore } from '@/stores/notificationStore.ts';
 

@@ -14,6 +14,7 @@ import {
 import { AuthenticationService } from '../services/authenticationService.ts';
 import type { InjectionKey } from 'vue';
 import type { UserResponse } from '@/clients/responses/userResponse.ts';
+import type { PlayerResponse } from '@/clients/responses/playerResponse.ts';
 
 export class HttpClient {
   static injectionKey : InjectionKey<HttpClient>  = Symbol("💩");
@@ -38,6 +39,16 @@ export class HttpClient {
 
     await this.httpPipeline.send(message);
     return this.httpMessageResponseUtil.parseJsonResponse<UserResponse>(message);
+  }
+
+  async getPlayers(): Promise<PlayerResponse[]> {
+    const message = new HttpMessageBuilder()
+      .withMethod('GET')
+      .withUrl('/api/players')
+      .build();
+
+    await this.httpPipeline.send(message);
+    return this.httpMessageResponseUtil.parseJsonResponse<PlayerResponse[]>(message);
   }
 }
 
