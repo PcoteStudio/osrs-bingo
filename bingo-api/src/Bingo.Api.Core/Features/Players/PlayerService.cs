@@ -71,7 +71,7 @@ public class PlayerService(
     public virtual async Task<PlayerEntity> RemovePlayerAsync(int teamId)
     {
         var player = await playerRepository.GetCompleteByIdAsync(teamId);
-        if (player == null) throw new PlayerNotFoundException(teamId);
+        if (player is null) throw new PlayerNotFoundException(teamId);
         playerRepository.Remove(player);
         return player;
     }

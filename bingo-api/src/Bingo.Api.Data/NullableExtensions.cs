@@ -10,7 +10,7 @@ public static class NullableExtensions
         [CallerArgumentExpression("value")] string? expression = null
     ) where T : class
     {
-        if (value == null)
+        if (value is null)
             throw new NullReferenceException($"{expression} should not be null");
         return value;
     }

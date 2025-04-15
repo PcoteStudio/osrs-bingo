@@ -15,7 +15,7 @@ public partial class TestDataSetup(
     public T GetRequiredLast<T>() where T : class
     {
         var last = _allEntities.OfType<T>().LastOrDefault();
-        if (last == null)
+        if (last is null)
             throw new Exception($"Unable to find an element of type {typeof(T).Name}. " +
                                 $"Did you call Add{typeof(T).Name.Replace("Entity", "")}() first?");
         return last;

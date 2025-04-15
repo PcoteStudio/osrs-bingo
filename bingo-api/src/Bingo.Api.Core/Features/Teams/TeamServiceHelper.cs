@@ -49,7 +49,7 @@ public class TeamServiceHelper(
     public virtual async Task<TeamEntity> GetRequiredCompleteAsync(int teamId)
     {
         var team = await teamRepository.GetCompleteByIdAsync(teamId);
-        if (team == null) throw new TeamNotFoundException(teamId);
+        if (team is null) throw new TeamNotFoundException(teamId);
         return team;
     }
 }

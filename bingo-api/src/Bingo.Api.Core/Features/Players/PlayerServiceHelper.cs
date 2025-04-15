@@ -22,7 +22,7 @@ public class PlayerServiceHelper(
     public virtual async Task<PlayerEntity> GetRequiredCompletePlayerAsync(int teamId)
     {
         var player = await playerRepository.GetCompleteByIdAsync(teamId);
-        if (player == null) throw new PlayerNotFoundException(teamId);
+        if (player is null) throw new PlayerNotFoundException(teamId);
         return player;
     }
 }

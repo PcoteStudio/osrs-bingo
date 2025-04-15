@@ -37,7 +37,7 @@ public class EventServiceHelper(
     public virtual async Task<EventEntity> GetRequiredByIdAsync(int eventId)
     {
         var eventEntity = await eventRepository.GetCompleteByIdAsync(eventId);
-        if (eventEntity == null) throw new EventNotFoundException(eventId);
+        if (eventEntity is null) throw new EventNotFoundException(eventId);
         return eventEntity;
     }
 }
