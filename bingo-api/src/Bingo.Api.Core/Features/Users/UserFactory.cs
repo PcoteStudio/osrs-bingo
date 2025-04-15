@@ -15,8 +15,7 @@ public class UserFactory : IUserFactory
         return new UserEntity
         {
             Email = args.Email,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = args.Username,
+            Username = args.Username,
             EmailConfirmed = true
         };
     }

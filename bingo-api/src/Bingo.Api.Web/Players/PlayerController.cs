@@ -1,9 +1,9 @@
 using AutoMapper;
+using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Players.Arguments;
 using Bingo.Api.Core.Features.Players.Exceptions;
 using Bingo.Api.Web.Generic.Exceptions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bingo.Api.Web.Players;
@@ -11,6 +11,7 @@ namespace Bingo.Api.Web.Players;
 [Route("/api/players")]
 [ApiController]
 public class PlayerController(
+    IPermissionServiceHelper permissionServiceHelper,
     IPlayerService playerService,
     IPlayerServiceHelper playerServiceHelper,
     IMapper mapper) : ControllerBase
@@ -45,16 +46,18 @@ public class PlayerController(
         return StatusCode(StatusCodes.Status200OK, mapper.Map<List<PlayerResponse>>(player));
     }
 
-    [Authorize]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<PlayerResponse>> CreatePlayerAsync([FromBody] PlayerCreateArguments args)
+    public async Task<ActionResult<PlayerResponse>> CreatePlayerAsync(
+        [FromServices] IdentityContainer identityContainer,
+        [FromBody] PlayerCreateArguments args)
     {
         try
         {
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, []);
             var player = await playerService.CreatePlayerAsync(args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
         }
@@ -70,17 +73,19 @@ public class PlayerController(
         }
     }
 
-    [Authorize]
     [HttpPut("{playerId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<PlayerResponse>> UpdatePlayerAsync([FromRoute] int playerId,
+    public async Task<ActionResult<PlayerResponse>> UpdatePlayerAsync(
+        [FromServices] IdentityContainer identityContainer,
+        [FromRoute] int playerId,
         [FromBody] PlayerUpdateArguments args)
     {
         try
         {
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, []);
             var player = await playerService.UpdatePlayerAsync(playerId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
         }
@@ -96,14 +101,16 @@ public class PlayerController(
         }
     }
 
-    [Authorize]
     [HttpDelete("{playerId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<PlayerResponse>> RemovePlayerAsync([FromRoute] int playerId)
+    public async Task<ActionResult<PlayerResponse>> RemovePlayerAsync(
+        [FromServices] IdentityContainer identityContainer,
+        [FromRoute] int playerId)
     {
         try
         {
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, []);
             var player = await playerService.RemovePlayerAsync(playerId);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
         }

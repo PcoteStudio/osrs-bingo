@@ -1,13 +1,15 @@
-using System.Security.Claims;
+using Bingo.Api.Core.Features.Authentication;
+using Bingo.Api.Core.Features.Authentication.Exception;
 using Bingo.Api.Core.Features.Teams.Exceptions;
 using Bingo.Api.Core.Features.Users;
+using Bingo.Api.Core.Features.Users.Exceptions;
 using Bingo.Api.Data.Entities;
 
 namespace Bingo.Api.Core.Features.Teams;
 
 public interface ITeamServiceHelper
 {
-    Task<UserEntity> EnsureIsTeamAdminAsync(ClaimsPrincipal principal, int teamId);
+    Task EnsureIsTeamAdminAsync(IIdentity? identity, int teamId);
     Task<List<TeamEntity>> GetAllRequiredByIdsAsync(ICollection<int> teamIds);
     Task<TeamEntity> GetRequiredCompleteTeamAsync(int teamId);
 }
@@ -17,13 +19,22 @@ public class TeamServiceHelper(
     IUserService userService
 ) : ITeamServiceHelper
 {
-    public async Task<UserEntity> EnsureIsTeamAdminAsync(ClaimsPrincipal principal, int teamId)
+    public async Task EnsureIsTeamAdminAsync(IIdentity? identity, int teamId)
     {
-        var user = await userService.GetRequiredMeAsync(principal);
-        var team = await GetRequiredCompleteTeamAsync(teamId);
-        if (!team.Event.Administrators.Contains(user))
-            throw new UserIsNotATeamAdminException(teamId, principal.Identity!.Name!);
-        return user;
+        switch (identity)
+        {
+            case null:
+                throw new UserIsNotLoggedInException();
+            case UserIdentity userIdentity:
+            {
+                var team = await GetRequiredCompleteTeamAsync(teamId);
+                if (team.Event.Administrators.Any(a => a.Id == userIdentity.UserId))
+                    return;
+                throw new UserIsNotATeamAdminException(teamId, userIdentity.User.Username);
+            }
+            default:
+                throw new AccessHasNotBeenDefinedException();
+        }
     }
 
     public virtual async Task<List<TeamEntity>> GetAllRequiredByIdsAsync(ICollection<int> teamIds)

@@ -1,4 +1,5 @@
 using Bingo.Api.Core.Features.Authentication.Arguments;
+using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Core.Features.Users.Exceptions;
 using Bingo.Api.Data;
 using Bingo.Api.Data.Entities;
@@ -8,21 +9,23 @@ namespace Bingo.Api.Core.Features.Authentication;
 
 public interface IAuthService
 {
-    Task<string> LoginAsync(AuthLoginArguments args);
+    Task<UserEntity> LoginAsync(AuthLoginArguments args);
 }
 
 public class AuthService(
-    UserManager<UserEntity> userManager,
+    IUserRepository userRepository,
+    IPasswordHasher<UserEntity> passwordHasher,
     ApplicationDbContext dbContext) : IAuthService
 {
-    public async Task<string> LoginAsync(AuthLoginArguments args)
+    public async Task<UserEntity> LoginAsync(AuthLoginArguments args)
     {
-        var user = await userManager.FindByNameAsync(args.Username);
+        var user = await userRepository.GetCompleteByNameAsync(args.Username);
         if (user is null) throw new UserNotFoundException(args.Username);
 
-        var isPasswordValid = await userManager.CheckPasswordAsync(user, args.Password);
-        if (!isPasswordValid) throw new InvalidCredentialsException();
+        // TODO check if password needs rehashing
+        var verifyPasswordResults = passwordHasher.VerifyHashedPassword(user, user.HashedPassword, args.Password);
+        if (verifyPasswordResults == PasswordVerificationResult.Failed) throw new InvalidCredentialsException();
 
-        return args.Username;
+        return user;
     }
 }

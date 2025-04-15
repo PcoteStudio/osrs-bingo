@@ -6,24 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Bingo.Api.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class RestrictTextLength : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "EventId",
-                table: "Teams",
-                type: "INTEGER",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<int>(
-                name: "TeamId",
-                table: "Teams",
-                type: "INTEGER",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "Events",
                 columns: table => new
@@ -31,8 +18,8 @@ namespace Bingo.Api.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
-                    StartTime = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    EndTime = table.Column<DateTimeOffset>(type: "TEXT", nullable: false)
+                    StartTime = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
+                    EndTime = table.Column<DateTimeOffset>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,7 +34,7 @@ namespace Bingo.Api.Data.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
-                    Target = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Target = table.Column<double>(type: "REAL", nullable: true),
                     Metric = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
@@ -76,12 +63,90 @@ namespace Bingo.Api.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     InGameId = table.Column<int>(type: "INTEGER", nullable: false),
+                    KillsPerHours = table.Column<double>(type: "REAL", nullable: true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     Image = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Npcs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Players",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Players", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Teams",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Teams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Teams_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Username = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    EmailConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    HashedPassword = table.Column<string>(type: "TEXT", nullable: false),
+                    Permissions = table.Column<string>(type: "TEXT", nullable: false),
+                    EventId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    InGameId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Image = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    GrindEntityId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Items_Grinds_GrindEntityId",
+                        column: x => x.GrindEntityId,
+                        principalTable: "Grinds",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -106,31 +171,55 @@ namespace Bingo.Api.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Items",
+                name: "PlayerEntityTeamEntity",
+                columns: table => new
+                {
+                    PlayerId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TeamId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlayerEntityTeamEntity", x => new { x.PlayerId, x.TeamId });
+                    table.ForeignKey(
+                        name: "FK_PlayerEntityTeamEntity_Players_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Players",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlayerEntityTeamEntity_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DropInfos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    InGameId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
-                    Image = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
-                    DropRate = table.Column<decimal>(type: "TEXT", nullable: true),
-                    NpcId = table.Column<int>(type: "INTEGER", nullable: true),
-                    GrindEntityId = table.Column<int>(type: "INTEGER", nullable: true)
+                    NpcId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ItemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DropRate = table.Column<double>(type: "REAL", nullable: true),
+                    Ehc = table.Column<double>(type: "REAL", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Items", x => x.Id);
+                    table.PrimaryKey("PK_DropInfos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Items_Grinds_GrindEntityId",
-                        column: x => x.GrindEntityId,
-                        principalTable: "Grinds",
-                        principalColumn: "Id");
+                        name: "FK_DropInfos_Items_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Items",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Items_Npcs_NpcId",
+                        name: "FK_DropInfos_Npcs_NpcId",
                         column: x => x.NpcId,
                         principalTable: "Npcs",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,7 +256,7 @@ namespace Bingo.Api.Data.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     PlayerId = table.Column<int>(type: "INTEGER", nullable: false),
                     GrindProgressionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    MetricsProgress = table.Column<decimal>(type: "TEXT", nullable: true),
+                    MetricsProgress = table.Column<double>(type: "REAL", nullable: true),
                     DropId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
@@ -193,14 +282,14 @@ namespace Bingo.Api.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Teams_EventId",
-                table: "Teams",
-                column: "EventId");
+                name: "IX_DropInfos_ItemId",
+                table: "DropInfos",
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Teams_TeamId",
-                table: "Teams",
-                column: "TeamId");
+                name: "IX_DropInfos_NpcId",
+                table: "DropInfos",
+                column: "NpcId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GrindProgressions_GrindId",
@@ -218,9 +307,15 @@ namespace Bingo.Api.Data.Migrations
                 column: "GrindEntityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Items_NpcId",
-                table: "Items",
-                column: "NpcId");
+                name: "IX_PlayerEntityTeamEntity_TeamId",
+                table: "PlayerEntityTeamEntity",
+                column: "TeamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Players_Name",
+                table: "Players",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Progressions_DropId",
@@ -238,42 +333,41 @@ namespace Bingo.Api.Data.Migrations
                 column: "PlayerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Teams_EventId",
+                table: "Teams",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tiles_MultiLayerBoardId",
                 table: "Tiles",
                 column: "MultiLayerBoardId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Teams_Events_EventId",
-                table: "Teams",
-                column: "EventId",
-                principalTable: "Events",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Teams_Events_TeamId",
-                table: "Teams",
-                column: "TeamId",
-                principalTable: "Events",
-                principalColumn: "Id");
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_EventId",
+                table: "Users",
+                column: "EventId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Teams_Events_EventId",
-                table: "Teams");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Teams_Events_TeamId",
-                table: "Teams");
+            migrationBuilder.DropTable(
+                name: "DropInfos");
 
             migrationBuilder.DropTable(
-                name: "Events");
+                name: "PlayerEntityTeamEntity");
 
             migrationBuilder.DropTable(
                 name: "Progressions");
+
+            migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Npcs");
+
+            migrationBuilder.DropTable(
+                name: "Teams");
 
             migrationBuilder.DropTable(
                 name: "GrindProgressions");
@@ -282,32 +376,19 @@ namespace Bingo.Api.Data.Migrations
                 name: "Items");
 
             migrationBuilder.DropTable(
+                name: "Players");
+
+            migrationBuilder.DropTable(
+                name: "Events");
+
+            migrationBuilder.DropTable(
                 name: "Tiles");
 
             migrationBuilder.DropTable(
                 name: "Grinds");
 
             migrationBuilder.DropTable(
-                name: "Npcs");
-
-            migrationBuilder.DropTable(
                 name: "MultiLayerBoards");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Teams_EventId",
-                table: "Teams");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Teams_TeamId",
-                table: "Teams");
-
-            migrationBuilder.DropColumn(
-                name: "EventId",
-                table: "Teams");
-
-            migrationBuilder.DropColumn(
-                name: "TeamId",
-                table: "Teams");
         }
     }
 }

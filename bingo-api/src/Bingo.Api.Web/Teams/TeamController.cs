@@ -1,9 +1,9 @@
 using AutoMapper;
+using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Teams.Exceptions;
 using Bingo.Api.Web.Generic.Exceptions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bingo.Api.Web.Teams;
@@ -35,18 +35,19 @@ public class TeamController(ITeamService teamService, ITeamServiceHelper teamSer
         }
     }
 
-    [Authorize]
     [HttpPut("{teamId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TeamResponse>> UpdateTeamAsync([FromRoute] int teamId,
+    public async Task<ActionResult<TeamResponse>> UpdateTeamAsync(
+        [FromServices] IdentityContainer identityContainer,
+        [FromRoute] int teamId,
         [FromBody] TeamUpdateArguments args)
     {
         try
         {
-            await teamServiceHelper.EnsureIsTeamAdminAsync(User, teamId);
+            await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
             var team = await teamService.UpdateTeamAsync(teamId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
@@ -64,18 +65,19 @@ public class TeamController(ITeamService teamService, ITeamServiceHelper teamSer
         }
     }
 
-    [Authorize]
     [HttpPut("{teamId:min(0)}/players")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TeamResponse>> UpdateTeamPlayersAsync([FromRoute] int teamId,
+    public async Task<ActionResult<TeamResponse>> UpdateTeamPlayersAsync(
+        [FromServices] IdentityContainer identityContainer,
+        [FromRoute] int teamId,
         [FromBody] TeamPlayersArguments args)
     {
         try
         {
-            await teamServiceHelper.EnsureIsTeamAdminAsync(User, teamId);
+            await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
             var team = await teamService.UpdateTeamPlayersAsync(teamId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
@@ -93,18 +95,19 @@ public class TeamController(ITeamService teamService, ITeamServiceHelper teamSer
         }
     }
 
-    [Authorize]
     [HttpPost("{teamId:min(0)}/players")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TeamResponse>> AddTeamPlayersAsync([FromRoute] int teamId,
+    public async Task<ActionResult<TeamResponse>> AddTeamPlayersAsync(
+        [FromServices] IdentityContainer identityContainer,
+        [FromRoute] int teamId,
         [FromBody] TeamPlayersArguments args)
     {
         try
         {
-            await teamServiceHelper.EnsureIsTeamAdminAsync(User, teamId);
+            await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
             var team = await teamService.AddTeamPlayersAsync(teamId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
@@ -122,16 +125,17 @@ public class TeamController(ITeamService teamService, ITeamServiceHelper teamSer
         }
     }
 
-    [Authorize]
     [HttpDelete("{teamId:min(0)}/players/{playerName:minlength(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TeamResponse>> RemoveTeamPlayerAsync([FromRoute] int teamId,
+    public async Task<ActionResult<TeamResponse>> RemoveTeamPlayerAsync(
+        [FromServices] IdentityContainer identityContainer,
+        [FromRoute] int teamId,
         [FromRoute] string playerName)
     {
         try
         {
-            await teamServiceHelper.EnsureIsTeamAdminAsync(User, teamId);
+            await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
             var team = await teamService.RemoveTeamPlayerAsync(teamId, playerName);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }

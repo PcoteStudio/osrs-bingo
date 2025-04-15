@@ -13,8 +13,8 @@ public class Program
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await dbContext.Database.MigrateAsync();
         await new DbSeeder(
-            scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>(),
-            scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IPasswordHasher<UserEntity>>(),
             scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>(),
             scope.ServiceProvider.GetRequiredService<ILogger>()
         ).SeedAsync();

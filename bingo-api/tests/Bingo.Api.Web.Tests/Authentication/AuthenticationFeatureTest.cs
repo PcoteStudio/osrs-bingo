@@ -56,7 +56,7 @@ public class AuthenticationFeatureTest
         _testDataSetup.AddUser(out var userWithPassword);
         var loginArgs = new AuthLoginArguments
         {
-            Username = userWithPassword.User.UserName!,
+            Username = userWithPassword.User.Username!,
             Password = userWithPassword.Password
         };
         var postContent = JsonSerializer.Serialize(loginArgs);

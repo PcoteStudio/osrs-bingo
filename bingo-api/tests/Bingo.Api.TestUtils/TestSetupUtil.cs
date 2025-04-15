@@ -83,8 +83,7 @@ public static class TestSetupUtil
         var sp = BuildWebHost(project).Services;
         return new TestDataSetup(
             sp.GetRequiredService<ApplicationDbContext>(),
-            sp.GetRequiredService<UserManager<UserEntity>>(),
-            sp.GetRequiredService<RoleManager<IdentityRole>>(),
+            sp.GetRequiredService<IPasswordHasher<UserEntity>>(),
             sp.GetRequiredService<IAuthService>()
         );
     }

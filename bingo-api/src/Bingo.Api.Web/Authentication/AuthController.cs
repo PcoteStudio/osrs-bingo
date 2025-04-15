@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Authentication.Arguments;
@@ -6,9 +5,6 @@ using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Core.Features.Users.Exceptions;
 using Bingo.Api.Web.Generic.Exceptions;
 using Bingo.Api.Web.Users;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bingo.Api.Web.Authentication;
@@ -47,20 +43,16 @@ public class AuthController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> LoginAsync(AuthLoginArguments args)
     {
-        var username = await authService.LoginAsync(args);
-        var claims = new List<Claim> { new(ClaimTypes.Name, username) };
-        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(claimsIdentity));
+        var user = await authService.LoginAsync(args);
+        HttpContext.Session.SetString("userId", user.Id.ToString());
         return StatusCode(StatusCodes.Status200OK);
     }
 
-    [Authorize]
     [HttpPost("logout")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult> LogoutAsync()
+    public ActionResult Logout()
     {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        HttpContext.Session.Remove("userId");
         return StatusCode(StatusCodes.Status200OK);
     }
 }

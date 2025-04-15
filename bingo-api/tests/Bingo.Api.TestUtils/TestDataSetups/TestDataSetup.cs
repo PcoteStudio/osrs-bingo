@@ -7,8 +7,7 @@ namespace Bingo.Api.TestUtils.TestDataSetups;
 
 public partial class TestDataSetup(
     ApplicationDbContext dbContext,
-    UserManager<UserEntity> userManager,
-    RoleManager<IdentityRole> roleManager,
+    IPasswordHasher<UserEntity> passwordHasher,
     IAuthService authService)
 {
     private readonly List<object> _allEntities = [];

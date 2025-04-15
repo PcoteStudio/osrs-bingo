@@ -1,10 +1,9 @@
 using Bingo.Api.Data.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bingo.Api.Data;
 
-public class ApplicationDbContext : IdentityDbContext<UserEntity>
+public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext()
     {
@@ -13,6 +12,9 @@ public class ApplicationDbContext : IdentityDbContext<UserEntity>
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
     }
+
+    // Users
+    public DbSet<UserEntity> Users { get; set; }
 
     // Events
     public DbSet<EventEntity> Events { get; set; }

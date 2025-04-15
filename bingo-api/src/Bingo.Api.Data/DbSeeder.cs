@@ -1,70 +1,45 @@
-using Bingo.Api.Data.Constants;
 using Bingo.Api.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Bingo.Api.Data;
 
 public class DbSeeder(
-    UserManager<UserEntity> userManager,
-    RoleManager<IdentityRole> roleManager,
+    DbContext dbContext,
+    IPasswordHasher<UserEntity> passwordHasher,
     IHostEnvironment environment,
     ILogger logger)
 {
-    private async Task CreateRoleIfNotExistsAsync(string role)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            var createRoleResult = await roleManager.CreateAsync(new IdentityRole(role));
-            if (!createRoleResult.Succeeded)
-                throw new Exception($"Failed to create {role} role. Errors: {string.Join(",",
-                    createRoleResult.Errors.Select(e => e.Description))}");
-        }
-    }
-
-    private async Task AddRoleToUserAsync(UserEntity user, string role)
-    {
-        var addRoleToUserResult = await userManager.AddToRoleAsync(user, role);
-        if (!addRoleToUserResult.Succeeded)
-            throw new Exception($"Failed to add admin role to user. Errors: {string.Join(",",
-                addRoleToUserResult.Errors.Select(e => e.Description))}");
-    }
-
-    private async Task<UserEntity?> CreateDevelopmentUserAsync(string role, string email, string username,
-        string password)
+    private async Task<UserEntity?> CreateDevelopmentUserAsync(string email, string username,
+        string password, List<string> permissions)
     {
         if (!environment.IsDevelopment()) return null;
         var user = new UserEntity
         {
-            UserName = username,
+            Username = username,
             Email = email,
             EmailConfirmed = true,
-            SecurityStamp = Guid.NewGuid().ToString()
+            Permissions = permissions
         };
-        var createUserResult = await userManager.CreateAsync(user, password);
-        if (!createUserResult.Succeeded)
-            throw new Exception($"Failed to create {username} user. Errors: {string.Join(",",
-                createUserResult.Errors.Select(e => e.Description))}");
-        await AddRoleToUserAsync(user, role);
-        logger.LogInformation("Created {name} user with {role} role.", username, role);
-        return user;
-    }
+        user.HashedPassword = passwordHasher.HashPassword(user, password);
+        await dbContext.Set<UserEntity>().AddAsync(user);
+        await dbContext.SaveChangesAsync();
 
-    private async Task CreateRolesAsync()
-    {
-        await CreateRoleIfNotExistsAsync(Roles.Admin.ToString());
-        await CreateRoleIfNotExistsAsync(Roles.User.ToString());
+        logger.LogInformation("Created {username} user with following permissions: {permissions}.",
+            username,
+            string.Join(", ", permissions)
+        );
+        return user;
     }
 
     public async Task SeedAsync()
     {
-        await CreateRolesAsync();
-
-        if (!userManager.Users.Any())
+        if (!await dbContext.Set<UserEntity>().AnyAsync())
         {
-            await CreateDevelopmentUserAsync(Roles.Admin.ToString(), "admin@local.host", "Admin", "Password1!");
-            await CreateDevelopmentUserAsync(Roles.User.ToString(), "user@local.host", "User", "Password1!");
+            await CreateDevelopmentUserAsync("admin@local.host", "Admin", "Password1!", ["*"]);
+            await CreateDevelopmentUserAsync("user@local.host", "User", "Password1!", []);
         }
     }
 }

@@ -1,3 +1,5 @@
+using Bingo.Api.Data.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -8,6 +10,8 @@ public static class ServiceCollectionExtensions
     public static void AddUserService(this IServiceCollection services)
     {
         services.TryAddScoped<IUserService, UserService>();
-        services.TryAddScoped<IUserFactory, UserFactory>();
+        services.TryAddScoped<IUserRepository, UserRepository>();
+        services.TryAddSingleton<IUserFactory, UserFactory>();
+        services.TryAddSingleton<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
     }
 }

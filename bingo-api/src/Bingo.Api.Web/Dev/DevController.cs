@@ -1,14 +1,14 @@
 using AutoMapper;
+using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Events.Arguments;
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Players.Arguments;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
-using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Shared;
 using Bingo.Api.Web.Events;
-using Microsoft.AspNetCore.Authorization;
+using Bingo.Api.Web.Generic.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bingo.Api.Web.Dev;
@@ -16,7 +16,7 @@ namespace Bingo.Api.Web.Dev;
 [Route("/api/dev")]
 [ApiController]
 public class DevController(
-    IUserService userService,
+    IPermissionServiceHelper permissionServiceHelper,
     IEventService eventService,
     ITeamService teamService,
     IPlayerService playerService,
@@ -25,26 +25,25 @@ public class DevController(
     IHostEnvironment environment)
     : ControllerBase
 {
-    [Authorize]
     [HttpGet("ping")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<string> Ping()
+    public ActionResult<string> Ping([FromServices] IdentityContainer identityContainer)
     {
-        if (!environment.IsDevelopment()) return StatusCode(StatusCodes.Status403Forbidden);
+        EnsureHasAccess(identityContainer.Identity, []);
         return StatusCode(StatusCodes.Status200OK, "pong");
     }
 
-    [Authorize]
     [HttpPost("seed")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<EventResponse>> SeedAsync()
+    public async Task<ActionResult<EventResponse>> SeedAsync([FromServices] IdentityContainer identityContainer)
     {
-        if (!environment.IsDevelopment()) return StatusCode(StatusCodes.Status403Forbidden);
+        EnsureHasAccess(identityContainer.Identity, []);
+        var user = (identityContainer.Identity as UserIdentity)!.User;
+
         logger.LogInformation("Seeding an event");
 
-        var user = await userService.GetRequiredMeAsync(User);
         var newEvent = await eventService.CreateEventAsync(user, new EventCreateArguments
         {
             Name = RandomUtil.GetPrefixedRandomHexString("EventName_", Random.Shared.Next(5, 20))
@@ -66,5 +65,13 @@ public class DevController(
         }
 
         return StatusCode(StatusCodes.Status201Created, mapper.Map<EventResponse>(newEvent));
+    }
+
+    private void EnsureHasAccess(IIdentity? identity, List<string> permissions)
+    {
+        if (!environment.IsDevelopment())
+            throw new HttpException(StatusCodes.Status404NotFound);
+
+        permissionServiceHelper.EnsureHasPermissions(identity, permissions);
     }
 }

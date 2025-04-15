@@ -1,4 +1,4 @@
-using System.Security.Claims;
+using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Exceptions;
 using Bingo.Api.Core.Features.Users;
@@ -56,7 +56,7 @@ public class TeamServiceHelperUnitTest
     public async Task EnsureIsTeamAdminAsync_ShouldNotThrowIfTheUserIsATeamAdmin()
     {
         // Arrange
-        var principalMock = new Mock<ClaimsPrincipal>();
+        var userIdentityMock = new Mock<UserIdentity>();
         var user = TestDataGenerator.GenerateUserEntity();
         var eventEntity = TestDataGenerator.GenerateEventEntity();
         var team = TestDataGenerator.GenerateTeamEntity();
@@ -64,44 +64,40 @@ public class TeamServiceHelperUnitTest
         eventEntity.Administrators.Add(user);
         team.Event = eventEntity;
 
-        _userServiceMock.Setup(x => x.GetRequiredMeAsync(principalMock.Object))
-            .ReturnsAsync(user).Verifiable(Times.Once);
+        // TODO Mock identity
         _teamServiceHelperMock.Setup(x => x.GetRequiredCompleteTeamAsync(team.Id))
             .ReturnsAsync(team).Verifiable(Times.Once);
 
         // Act
-        var actualUser = await _teamServiceHelper.EnsureIsTeamAdminAsync(principalMock.Object, team.Id);
+        var act = async () => await _teamServiceHelper.EnsureIsTeamAdminAsync(userIdentityMock.Object, team.Id);
 
-        // Assert
-        actualUser.Should().Be(user);
-        Mock.VerifyAll(_userServiceMock, _teamServiceHelperMock);
+        // Assert thrown error
+        await act.Should().NotThrowAsync();
+        Mock.VerifyAll(_teamServiceHelperMock, userIdentityMock);
     }
 
     [Test]
     public async Task EnsureIsTeamAdminAsync_ShouldThrowIfTheUserIsANotTeamAdmin()
     {
         // Arrange
-        var principalMock = new Mock<ClaimsPrincipal>();
+        var userIdentityMock = new Mock<UserIdentity>();
         var user = TestDataGenerator.GenerateUserEntity();
         var eventEntity = TestDataGenerator.GenerateEventEntity();
         var team = TestDataGenerator.GenerateTeamEntity();
 
         team.Event = eventEntity;
 
-        _userServiceMock.Setup(x => x.GetRequiredMeAsync(principalMock.Object))
-            .ReturnsAsync(user).Verifiable(Times.Once);
+        // TODO Mock identity
         _teamServiceHelperMock.Setup(x => x.GetRequiredCompleteTeamAsync(team.Id))
             .ReturnsAsync(team).Verifiable(Times.Once);
-        principalMock.Setup(x => x.Identity)
-            .Returns(new ClaimsIdentity()).Verifiable(Times.Once);
 
         // Act
-        var act = async () => await _teamServiceHelper.EnsureIsTeamAdminAsync(principalMock.Object, team.Id);
+        var act = async () => await _teamServiceHelper.EnsureIsTeamAdminAsync(userIdentityMock.Object, team.Id);
 
         // Assert thrown error
         await act.Should().ThrowAsync<UserIsNotATeamAdminException>();
 
-        Mock.VerifyAll(_userServiceMock, _teamServiceHelperMock);
+        Mock.VerifyAll(_teamServiceHelperMock, userIdentityMock);
     }
 
     #endregion

@@ -1,6 +1,5 @@
 using AutoMapper;
-using Bingo.Api.Core.Features.Users;
-using Microsoft.AspNetCore.Authorization;
+using Bingo.Api.Core.Features.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bingo.Api.Web.Users;
@@ -8,16 +7,16 @@ namespace Bingo.Api.Web.Users;
 [Route("/api/users")]
 [ApiController]
 public class AuthController(
-    IUserService userService,
+    IPermissionServiceHelper permissionServiceHelper,
     IMapper mapper) : ControllerBase
 {
-    [Authorize(Roles = "Admin")]
     [HttpGet("me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<UserResponse>> GetMeAsync()
+    public ActionResult<UserResponse> GetMe([FromServices] IdentityContainer identityContainer)
     {
-        var user = await userService.GetRequiredMeAsync(User);
+        permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, []);
+        var user = (identityContainer.Identity as UserIdentity)!.User;
         return StatusCode(StatusCodes.Status200OK, mapper.Map<UserResponse>(user));
     }
 }

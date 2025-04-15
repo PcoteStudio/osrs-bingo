@@ -24,8 +24,8 @@ public static partial class TestDataGenerator
     {
         return new UserEntity
         {
-            Id = Guid.NewGuid().ToString(),
-            UserName = GenerateUserName(),
+            Id = Random.Shared.Next(),
+            Username = GenerateUserName(),
             Email = GenerateUserEmail()
         };
     }

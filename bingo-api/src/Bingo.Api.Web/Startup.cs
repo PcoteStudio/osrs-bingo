@@ -7,6 +7,7 @@ using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data;
+using Bingo.Api.Web.Authentication;
 using Bingo.Api.Web.Events;
 using Bingo.Api.Web.Middlewares;
 using Bingo.Api.Web.Players;
@@ -45,6 +46,7 @@ public class Startup
         // Features
         services.AddDistributedMemoryCache();
         // services.AddSqliteDistributedCacheService();
+        services.AddAuthenticationWebService();
         services.AddOpenApi();
         services.AddSqliteDatabase();
         services.AddAuthenticationService();
@@ -63,6 +65,7 @@ public class Startup
 
         app.UseMiddleware<HttpExceptionMiddleware>();
         if (env.IsDevelopment() || env.IsEnvironment("Test")) app.UseMiddleware<DevExceptionMiddleware>();
+        app.UseMiddleware<AuthenticationExceptionMiddleware>();
 
         using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()!.CreateScope())
         {
@@ -70,10 +73,10 @@ public class Startup
             context.Database.Migrate();
         }
 
-        app.UseCors("AllowAll");
+        app.UseSession();
+        app.UseMiddleware<AuthenticationMiddleware>();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
+        app.UseCors("AllowAll");
 
         app.UseEndpoints(endpoints =>
         {

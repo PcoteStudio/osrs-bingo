@@ -1,13 +1,12 @@
 using AutoMapper;
+using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Events.Arguments;
 using Bingo.Api.Core.Features.Events.Exceptions;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
-using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Web.Generic.Exceptions;
 using Bingo.Api.Web.Teams;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bingo.Api.Web.Events;
@@ -16,8 +15,9 @@ namespace Bingo.Api.Web.Events;
 [ApiController]
 public class EventController(
     IEventService eventService,
+    IEventServiceHelper eventServiceHelper,
+    IPermissionServiceHelper permissionServiceHelper,
     ITeamService teamService,
-    IUserService userService,
     IMapper mapper)
     : ControllerBase
 {
@@ -36,7 +36,7 @@ public class EventController(
     {
         try
         {
-            var events = await eventService.GetRequiredEventAsync(eventId);
+            var events = await eventServiceHelper.GetRequiredByIdAsync(eventId);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<List<EventResponse>>(events));
         }
         catch (Exception ex)
@@ -51,29 +51,32 @@ public class EventController(
         }
     }
 
-    [Authorize]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<TeamResponse>> CreateEventAsync([FromBody] EventCreateArguments args)
+    public async Task<ActionResult<TeamResponse>> CreateEventAsync(
+        [FromServices] IdentityContainer identityContainer,
+        [FromBody] EventCreateArguments args)
     {
-        var user = await userService.GetRequiredMeAsync(User);
+        permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, []);
+        var user = (identityContainer.Identity as UserIdentity)!.User;
         var eventEntity = await eventService.CreateEventAsync(user, args);
         return StatusCode(StatusCodes.Status201Created, mapper.Map<EventResponse>(eventEntity));
     }
 
-    [Authorize]
     [HttpPost("{eventId:min(0)}/teams")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TeamResponse>> CreateTeamAsync([FromRoute] int eventId,
+    public async Task<ActionResult<TeamResponse>> CreateTeamAsync(
+        [FromServices] IdentityContainer identityContainer,
+        [FromRoute] int eventId,
         [FromBody] TeamCreateArguments args)
     {
         try
         {
-            await eventService.EnsureIsEventAdminAsync(User, eventId);
+            await eventServiceHelper.EnsureIsEventAdminAsync(identityContainer.Identity, eventId);
             var team = await teamService.CreateTeamAsync(eventId, args);
             return StatusCode(StatusCodes.Status201Created, mapper.Map<TeamResponse>(team));
         }
@@ -97,11 +100,13 @@ public class EventController(
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TeamResponse>> UpdateEventAsync(
-        [FromRoute] int eventId, [FromBody] EventUpdateArguments args)
+        [FromServices] IdentityContainer identityContainer,
+        [FromRoute] int eventId,
+        [FromBody] EventUpdateArguments args)
     {
         try
         {
-            await eventService.EnsureIsEventAdminAsync(User, eventId);
+            await eventServiceHelper.EnsureIsEventAdminAsync(identityContainer.Identity, eventId);
             var team = await eventService.UpdateEventAsync(eventId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<EventResponse>(team));
         }

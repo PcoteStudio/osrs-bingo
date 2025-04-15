@@ -1,5 +1,5 @@
-using System.Security.Claims;
 using AutoMapper;
+using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Teams.Exceptions;
@@ -90,17 +90,18 @@ public class TeamControllerUnitTest
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
         var teamResponse = TestDataGenerator.GenerateTeamResponse();
+        var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = new TeamUpdateArguments();
 
-        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), team.Id))
-            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(identityContainer.Identity, team.Id))
+            .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.UpdateTeamAsync(team.Id, args))
             .ReturnsAsync(team).Verifiable(Times.Once());
         _mapperMock.Setup(x => x.Map<TeamResponse>(team))
             .Returns(teamResponse).Verifiable(Times.Once());
 
         // Act
-        var result = await _teamController.UpdateTeamAsync(team.Id, args);
+        var result = await _teamController.UpdateTeamAsync(identityContainer, team.Id, args);
 
         // Assert status code
         result.Result.Should().BeOfType<ObjectResult>();
@@ -122,14 +123,15 @@ public class TeamControllerUnitTest
     {
         // Arrange
         var teamId = Random.Shared.Next();
+        var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = new TeamUpdateArguments();
-        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), teamId))
-            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId))
+            .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.UpdateTeamAsync(teamId, args))
             .ThrowsAsync(exception).Verifiable(Times.Once());
 
         // Act
-        var act = async () => await _teamController.UpdateTeamAsync(teamId, args);
+        var act = async () => await _teamController.UpdateTeamAsync(identityContainer, teamId, args);
 
         // Assert thrown error
         (await act.Should().ThrowAsync<HttpException>()).Which.StatusCode.Should().Be(expectedStatusCode);
@@ -143,17 +145,18 @@ public class TeamControllerUnitTest
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
         var teamResponse = TestDataGenerator.GenerateTeamResponse();
+        var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(0, 5));
 
-        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), team.Id))
-            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(identityContainer.Identity, team.Id))
+            .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.UpdateTeamPlayersAsync(team.Id, args))
             .ReturnsAsync(team).Verifiable(Times.Once());
         _mapperMock.Setup(x => x.Map<TeamResponse>(team))
             .Returns(teamResponse).Verifiable(Times.Once());
 
         // Act
-        var result = await _teamController.UpdateTeamPlayersAsync(team.Id, args);
+        var result = await _teamController.UpdateTeamPlayersAsync(identityContainer, team.Id, args);
 
         // Assert status code
         result.Result.Should().BeOfType<ObjectResult>();
@@ -175,14 +178,15 @@ public class TeamControllerUnitTest
     {
         // Arrange
         var teamId = Random.Shared.Next();
+        var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(3));
-        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), teamId))
-            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId))
+            .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.UpdateTeamPlayersAsync(teamId, args))
             .ThrowsAsync(exception).Verifiable(Times.Once());
 
         // Act
-        var act = async () => await _teamController.UpdateTeamPlayersAsync(teamId, args);
+        var act = async () => await _teamController.UpdateTeamPlayersAsync(identityContainer, teamId, args);
 
         // Assert thrown error
         (await act.Should().ThrowAsync<HttpException>()).Which.StatusCode.Should().Be(expectedStatusCode);
@@ -196,17 +200,18 @@ public class TeamControllerUnitTest
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
         var teamResponse = TestDataGenerator.GenerateTeamResponse();
+        var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(0, 5));
 
-        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), team.Id))
-            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(identityContainer.Identity, team.Id))
+            .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.AddTeamPlayersAsync(team.Id, args))
             .ReturnsAsync(team).Verifiable(Times.Once());
         _mapperMock.Setup(x => x.Map<TeamResponse>(team))
             .Returns(teamResponse).Verifiable(Times.Once());
 
         // Act
-        var result = await _teamController.AddTeamPlayersAsync(team.Id, args);
+        var result = await _teamController.AddTeamPlayersAsync(identityContainer, team.Id, args);
 
         // Assert status code
         result.Result.Should().BeOfType<ObjectResult>();
@@ -228,14 +233,15 @@ public class TeamControllerUnitTest
     {
         // Arrange
         var teamId = Random.Shared.Next();
+        var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(3));
-        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), teamId))
-            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId))
+            .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.AddTeamPlayersAsync(teamId, args))
             .ThrowsAsync(exception).Verifiable(Times.Once());
 
         // Act
-        var act = async () => await _teamController.AddTeamPlayersAsync(teamId, args);
+        var act = async () => await _teamController.AddTeamPlayersAsync(identityContainer, teamId, args);
 
         // Assert thrown error
         (await act.Should().ThrowAsync<HttpException>()).Which.StatusCode.Should().Be(expectedStatusCode);
@@ -249,17 +255,18 @@ public class TeamControllerUnitTest
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
         var teamResponse = TestDataGenerator.GenerateTeamResponse();
+        var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = TestDataGenerator.GeneratePlayerName();
 
-        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), team.Id))
-            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(identityContainer.Identity, team.Id))
+            .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.RemoveTeamPlayerAsync(team.Id, args))
             .ReturnsAsync(team).Verifiable(Times.Once());
         _mapperMock.Setup(x => x.Map<TeamResponse>(team))
             .Returns(teamResponse).Verifiable(Times.Once());
 
         // Act
-        var result = await _teamController.RemoveTeamPlayerAsync(team.Id, args);
+        var result = await _teamController.RemoveTeamPlayerAsync(identityContainer, team.Id, args);
 
         // Assert status code
         result.Result.Should().BeOfType<ObjectResult>();
@@ -281,14 +288,15 @@ public class TeamControllerUnitTest
     {
         // Arrange
         var teamId = Random.Shared.Next();
+        var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var playerName = TestDataGenerator.GeneratePlayerName();
-        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(It.IsAny<ClaimsPrincipal>(), teamId))
-            .ReturnsAsync(new UserEntity()).Verifiable(Times.Once());
+        _teamServiceHelperMock.Setup(x => x.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId))
+            .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.RemoveTeamPlayerAsync(teamId, playerName))
             .ThrowsAsync(exception).Verifiable(Times.Once());
 
         // Act
-        var act = async () => await _teamController.RemoveTeamPlayerAsync(teamId, playerName);
+        var act = async () => await _teamController.RemoveTeamPlayerAsync(identityContainer, teamId, playerName);
 
         // Assert thrown error
         (await act.Should().ThrowAsync<HttpException>()).Which.StatusCode.Should().Be(expectedStatusCode);

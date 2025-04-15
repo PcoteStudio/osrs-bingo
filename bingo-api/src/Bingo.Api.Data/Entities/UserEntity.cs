@@ -1,18 +1,26 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Identity;
 
 namespace Bingo.Api.Data.Entities;
 
 [Serializable]
 [Table("Users")]
-public class UserEntity : IdentityUser
+public class UserEntity
 {
-    private List<EventEntity>? _eventsAdministrated;
+    private List<string>? _permissions;
+    public int Id { get; set; }
+
+    [MaxLength(30)] public string Username { get; set; } = string.Empty;
+
+    [MaxLength(255)] public string Email { get; set; } = string.Empty;
+
+    public bool EmailConfirmed { get; set; }
+    public string HashedPassword { get; set; } = string.Empty;
 
     [ForeignKey("UserId")]
-    public List<EventEntity> EventsAdministrated
+    public List<string> Permissions
     {
-        get => _eventsAdministrated.ThrowIfNotLoaded();
-        set => _eventsAdministrated = value;
+        get => _permissions.ThrowIfNotLoaded();
+        set => _permissions = value;
     }
 }

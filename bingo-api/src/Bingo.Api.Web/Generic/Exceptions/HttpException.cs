@@ -20,6 +20,11 @@ public class HttpException : Exception
         StatusCode = statusCode;
     }
 
+    public HttpException(int statusCode)
+    {
+        StatusCode = statusCode;
+    }
+
     public int StatusCode { get; }
 
     private static string GetMessage(int statusCode)
