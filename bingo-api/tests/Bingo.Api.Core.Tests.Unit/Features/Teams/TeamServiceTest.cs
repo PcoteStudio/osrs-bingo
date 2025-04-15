@@ -4,7 +4,7 @@ using Bingo.Api.Data;
 using Bingo.Api.TestUtils.TestDataGenerators;
 using Moq;
 
-namespace Bingo.Api.Core.Tests.Features.Teams;
+namespace Bingo.Api.Core.Tests.Unit.Features.Teams;
 
 [TestFixture]
 [TestOf(typeof(TeamService))]

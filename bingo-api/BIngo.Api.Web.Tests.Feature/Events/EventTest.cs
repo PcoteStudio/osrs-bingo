@@ -8,8 +8,9 @@ using Bingo.Api.TestUtils.TestDataSetups;
 using Bingo.Api.Web.Teams;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
+using NUnit.Framework;
 
-namespace Bingo.Api.Web.Tests.Events;
+namespace BIngo.Api.Web.Tests.Feature.Events;
 
 public class EventFeatureTest
 {

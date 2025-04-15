@@ -6,10 +6,11 @@
     <Project Path="src\Bingo.Api.Web\Bingo.Api.Web.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests\Bingo.Api.Core.Tests\Bingo.Api.Core.Tests.csproj" Type="Classic C#" />
-    <Project Path="tests\Bingo.Api.Data.Tests\Bingo.Api.Data.Tests.csproj" Type="Classic C#" />
+    <Project Path="Bingo.Api.Core.Tests.Integration\Bingo.Api.Core.Tests.Integration.csproj" Type="Classic C#" />
+    <Project Path="BIngo.Api.Web.Tests.Feature\BIngo.Api.Web.Tests.Feature.csproj" Type="Classic C#" />
+    <Project Path="tests\Bingo.Api.Core.Tests.Unit\Bingo.Api.Core.Tests.Unit.csproj" Type="Classic C#" />
     <Project Path="tests\Bingo.Api.TestUtils\Bingo.Api.TestUtils.csproj" Type="Classic C#" />
-    <Project Path="tests\Bingo.Api.Web.Tests\Bingo.Api.Web.Tests.csproj" Type="Classic C#" />
+    <Project Path="tests\Bingo.Api.Web.Tests.Unit\Bingo.Api.Web.Tests.Unit.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools\GenerateCertificat\GenerateCertificat.csproj" Type="Classic C#" />

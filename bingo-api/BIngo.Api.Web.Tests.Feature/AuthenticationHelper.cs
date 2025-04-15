@@ -5,7 +5,7 @@ using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataSetups;
 
-namespace Bingo.Api.Web.Tests;
+namespace BIngo.Api.Web.Tests.Feature;
 
 public static class AuthenticationHelper
 {

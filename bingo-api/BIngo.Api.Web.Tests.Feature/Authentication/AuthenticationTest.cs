@@ -7,8 +7,9 @@ using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataSetups;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
+using NUnit.Framework;
 
-namespace Bingo.Api.Web.Tests.Authentication;
+namespace BIngo.Api.Web.Tests.Feature.Authentication;
 
 public class AuthenticationFeatureTest
 {

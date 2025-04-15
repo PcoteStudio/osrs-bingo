@@ -1,14 +1,15 @@
 using Bingo.Api.TestUtils;
+using NUnit.Framework;
 
-namespace Bingo.Api.Web.Tests;
+namespace Bingo.Api.Core.Tests.Integration;
 
 [SetUpFixture]
-public class ProjectTestSteps
+public class CoreIntegrationTest
 {
     [OneTimeSetUp]
     public async Task RunBeforeAnyTests()
     {
-        await TestProjectStepsUtil.RunBeforeAnyTests(BingoProjects.Web);
+        await TestProjectStepsUtil.RunBeforeAnyTests(BingoProjects.Core);
     }
 
     [OneTimeTearDown]

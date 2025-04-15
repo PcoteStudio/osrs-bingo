@@ -9,8 +9,9 @@ using Bingo.Api.Web.Teams;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using NUnit.Framework;
 
-namespace Bingo.Api.Web.Tests.Teams;
+namespace BIngo.Api.Web.Tests.Feature.Teams;
 
 public class TeamFeatureTest
 {

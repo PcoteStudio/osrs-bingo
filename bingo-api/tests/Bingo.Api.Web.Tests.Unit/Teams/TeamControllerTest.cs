@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace Bingo.Api.Web.Tests.Teams;
+namespace Bingo.Api.Web.Tests.Unit.Teams;
 
 [TestFixture]
 [TestOf(typeof(TeamController))]

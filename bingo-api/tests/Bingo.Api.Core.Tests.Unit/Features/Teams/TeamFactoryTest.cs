@@ -2,7 +2,7 @@ using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.TestUtils.TestDataGenerators;
 using FluentAssertions;
 
-namespace Bingo.Api.Core.Tests.Features.Teams;
+namespace Bingo.Api.Core.Tests.Unit.Features.Teams;
 
 [TestFixture]
 [TestOf(typeof(TeamFactory))]

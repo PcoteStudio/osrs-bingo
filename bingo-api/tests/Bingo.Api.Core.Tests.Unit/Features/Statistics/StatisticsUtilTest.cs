@@ -2,7 +2,7 @@ using Bingo.Api.Core.Features.Statistics;
 using Bingo.Api.Data.Entities;
 using FluentAssertions;
 
-namespace Bingo.Api.Core.Tests.Features.Statistics;
+namespace Bingo.Api.Core.Tests.Unit.Features.Statistics;
 
 [TestFixture]
 [TestOf(typeof(StatisticsUtil))]

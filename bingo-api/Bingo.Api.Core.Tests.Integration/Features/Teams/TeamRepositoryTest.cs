@@ -3,8 +3,9 @@ using Bingo.Api.Data;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataSetups;
 using FluentAssertions;
+using NUnit.Framework;
 
-namespace Bingo.Api.Core.Tests.Features.Teams;
+namespace Bingo.Api.Core.Tests.Integration.Features.Teams;
 
 [TestFixture]
 [TestOf(typeof(TeamRepository))]

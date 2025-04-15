@@ -1,14 +1,15 @@
 using Bingo.Api.TestUtils;
+using NUnit.Framework;
 
-namespace Bingo.Api.Core.Tests;
+namespace BIngo.Api.Web.Tests.Feature;
 
 [SetUpFixture]
-public class ProjectTestSteps
+public class WebFeatureTest
 {
     [OneTimeSetUp]
     public async Task RunBeforeAnyTests()
     {
-        await TestProjectStepsUtil.RunBeforeAnyTests(BingoProjects.Core);
+        await TestProjectStepsUtil.RunBeforeAnyTests(BingoProjects.Web);
     }
 
     [OneTimeTearDown]

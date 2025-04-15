@@ -2,7 +2,7 @@ using AutoMapper;
 using Bingo.Api.TestUtils.TestDataGenerators;
 using Bingo.Api.Web.Teams;
 
-namespace Bingo.Api.Web.Tests.Teams;
+namespace Bingo.Api.Web.Tests.Unit.Teams;
 
 [TestFixture]
 [TestOf(typeof(TeamMappingProfile))]
