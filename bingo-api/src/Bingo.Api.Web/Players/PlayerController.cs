@@ -45,7 +45,7 @@ public class PlayerController(
         return StatusCode(StatusCodes.Status200OK, mapper.Map<List<PlayerResponse>>(player));
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -70,7 +70,7 @@ public class PlayerController(
         }
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [HttpPut("{playerId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -96,7 +96,7 @@ public class PlayerController(
         }
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [HttpDelete("{playerId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

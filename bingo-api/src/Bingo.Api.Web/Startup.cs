@@ -4,7 +4,6 @@ using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Database;
 using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Players;
-using Bingo.Api.Core.Features.Seeder;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data;
@@ -48,7 +47,6 @@ public class Startup
         // services.AddSqliteDistributedCacheService();
         services.AddOpenApi();
         services.AddSqliteDatabase();
-        services.AddSeederService();
         services.AddAuthenticationService();
         services.AddUserService();
         services.AddPlayerService();
