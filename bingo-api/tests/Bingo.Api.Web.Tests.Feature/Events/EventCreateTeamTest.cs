@@ -1,54 +1,16 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using Bingo.Api.Data;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataGenerators;
-using Bingo.Api.TestUtils.TestDataSetups;
 using Bingo.Api.Web.Teams;
 using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
 using NUnit.Framework;
 
-namespace BIngo.Api.Web.Tests.Feature.Events;
+namespace Bingo.Api.Web.Tests.Feature.Events;
 
-public class EventFeatureTest
+public partial class EventFeatureTest
 {
-    private Uri _baseUrl;
-    private HttpClient _client;
-    private ApplicationDbContext _dbContext;
-    private IWebHost _host;
-    private TestDataSetup _testDataSetup;
-
-    [OneTimeSetUp]
-    public void BeforeAll()
-    {
-        _host = TestSetupUtil.BuildWebHost();
-        _host.Start();
-        _baseUrl = TestSetupUtil.GetRequiredHostUri(_host);
-    }
-
-    [OneTimeTearDown]
-    public void AfterAll()
-    {
-        _host.Dispose();
-    }
-
-    [SetUp]
-    public void BeforeEach()
-    {
-        _dbContext = TestSetupUtil.GetDbContext(BingoProjects.Web);
-        _testDataSetup = TestSetupUtil.GetTestDataSetup(BingoProjects.Web);
-        _client = new HttpClient();
-    }
-
-    [TearDown]
-    public void AfterEach()
-    {
-        _dbContext.Dispose();
-        _client.Dispose();
-    }
-
     [Test]
     public async Task CreateTeam_ShouldReturnTheCreatedTeam()
     {

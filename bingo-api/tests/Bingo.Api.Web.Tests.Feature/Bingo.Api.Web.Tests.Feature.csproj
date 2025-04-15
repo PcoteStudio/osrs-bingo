@@ -4,6 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>BIngo.Api.Web.Tests.Feature</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,9 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\Bingo.Api.Core\Bingo.Api.Core.csproj"/>
-        <ProjectReference Include="..\src\Bingo.Api.Shared\Bingo.Api.Shared.csproj"/>
-        <ProjectReference Include="..\tests\Bingo.Api.TestUtils\Bingo.Api.TestUtils.csproj"/>
+        <ProjectReference Include="..\..\src\Bingo.Api.Core\Bingo.Api.Core.csproj"/>
+        <ProjectReference Include="..\Bingo.Api.TestUtils\Bingo.Api.TestUtils.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -31,6 +31,8 @@ public class HttpException : Exception
     {
         switch (statusCode)
         {
+            case StatusCodes.Status400BadRequest:
+                return "Bad request";
             case StatusCodes.Status401Unauthorized:
                 return "Unauthorized";
             case StatusCodes.Status403Forbidden:

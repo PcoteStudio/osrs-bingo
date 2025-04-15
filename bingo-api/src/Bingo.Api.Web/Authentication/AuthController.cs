@@ -43,9 +43,22 @@ public class AuthController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> LoginAsync(AuthLoginArguments args)
     {
-        var user = await authService.LoginAsync(args);
-        HttpContext.Session.SetString("userId", user.Id.ToString());
-        return StatusCode(StatusCodes.Status200OK);
+        try
+        {
+            var user = await authService.LoginAsync(args);
+            HttpContext.Session.SetString("userId", user.Id.ToString());
+            return StatusCode(StatusCodes.Status200OK);
+        }
+        catch (Exception ex)
+        {
+            switch (ex)
+            {
+                case InvalidCredentialsException:
+                    throw new HttpException(StatusCodes.Status400BadRequest, ex);
+                default:
+                    throw;
+            }
+        }
     }
 
     [HttpPost("logout")]

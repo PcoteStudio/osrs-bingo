@@ -20,7 +20,7 @@ public class AuthService(
     public async Task<UserEntity> LoginAsync(AuthLoginArguments args)
     {
         var user = await userRepository.GetCompleteByNameAsync(args.Username);
-        if (user is null) throw new UserNotFoundException(args.Username);
+        if (user is null) throw new InvalidCredentialsException();
 
         // TODO check if password needs rehashing
         var verifyPasswordResults = passwordHasher.VerifyHashedPassword(user, user.HashedPassword, args.Password);

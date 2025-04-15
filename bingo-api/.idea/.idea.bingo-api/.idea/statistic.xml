@@ -14,14 +14,8 @@
         <option value="$PROJECT_DIR$/src/Bingo.Api.Web/obj" />
         <option value="$PROJECT_DIR$/src/Bingo.Api.Core/bin" />
         <option value="$PROJECT_DIR$/src/Bingo.Api.Core/obj" />
-        <option value="$PROJECT_DIR$/tests/Bingo.Api.Core.Tests/bin" />
-        <option value="$PROJECT_DIR$/tests/Bingo.Api.Core.Tests/obj" />
-        <option value="$PROJECT_DIR$/tests/Bingo.Api.Data.Tests/bin" />
-        <option value="$PROJECT_DIR$/tests/Bingo.Api.Data.Tests/obj" />
         <option value="$PROJECT_DIR$/tests/Bingo.Api.TestUtils/bin" />
         <option value="$PROJECT_DIR$/tests/Bingo.Api.TestUtils/obj" />
-        <option value="$PROJECT_DIR$/tests/Bingo.Api.Web.Tests/bin" />
-        <option value="$PROJECT_DIR$/tests/Bingo.Api.Web.Tests/obj" />
       </list>
     </option>
   </component>

@@ -1,0 +1,75 @@
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Text.Json;
+using Bingo.Api.TestUtils;
+using Bingo.Api.TestUtils.TestDataGenerators;
+using Bingo.Api.Web.Teams;
+using FluentAssertions;
+using NUnit.Framework;
+
+namespace Bingo.Api.Web.Tests.Feature.Teams;
+
+public partial class TeamFeatureTest
+{
+    [Test]
+    public async Task UpdateTeamAsync_ShouldReturnTheUpdatedTeam()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddEvent()
+            .AddTeam(out var originalTeam);
+        var teamArgs = TestDataGenerator.GenerateTeamUpdateArguments();
+        var postContent = JsonSerializer.Serialize(teamArgs);
+        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+
+        // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}"),
+            stringContent);
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
+
+        // Assert response content
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
+        returnedTeam.Should().NotBeNull();
+        returnedTeam.Name.Should().Be(teamArgs.Name);
+        returnedTeam.Id.Should().Be(originalTeam.Id);
+        returnedTeam.EventId.Should().Be(originalTeam.EventId);
+
+        // Assert db content
+        var updatedTeam = await _dbContext.Teams.FindAsync(originalTeam.Id);
+        updatedTeam.Should().NotBeNull();
+        updatedTeam.Name.Should().Be(returnedTeam.Name);
+        updatedTeam.Id.Should().Be(returnedTeam.Id);
+        updatedTeam.EventId.Should().Be(returnedTeam.EventId);
+    }
+
+    [Test]
+    public async Task UpdateTeamAsync_ShouldReturnNotFoundIfTeamDoesNotExist()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddEvent();
+        const int teamId = 1_000_000;
+        var teamArgs = TestDataGenerator.GenerateTeamUpdateArguments();
+        var postContent = JsonSerializer.Serialize(teamArgs);
+        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+
+        // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{teamId}"),
+            stringContent);
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.NotFound, response);
+
+        // Assert response content
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var expectedContent = HttpResponseGenerator.GetExpectedJsonResponse(HttpStatusCode.NotFound);
+        Expect.EquivalentJsonWithPrettyOutput(responseContent, expectedContent);
+    }
+}

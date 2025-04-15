@@ -1,7 +1,7 @@
 using Bingo.Api.TestUtils;
 using NUnit.Framework;
 
-namespace BIngo.Api.Web.Tests.Feature;
+namespace Bingo.Api.Web.Tests.Feature;
 
 [SetUpFixture]
 public class WebFeatureTest
