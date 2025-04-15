@@ -11,7 +11,7 @@ public class AuthController(
     IUserService userService,
     IMapper mapper) : ControllerBase
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpGet("me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

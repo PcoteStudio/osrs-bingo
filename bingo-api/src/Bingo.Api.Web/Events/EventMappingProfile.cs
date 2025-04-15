@@ -7,7 +7,7 @@ public class EventMappingProfile : Profile
 {
     public EventMappingProfile()
     {
-        CreateMap<EventEntity, EventResponse>().MaxDepth(1);
-        ;
+        CreateMap<EventEntity, EventResponse>();
+        CreateMap<EventEntity, EventShortResponse>();
     }
 }
