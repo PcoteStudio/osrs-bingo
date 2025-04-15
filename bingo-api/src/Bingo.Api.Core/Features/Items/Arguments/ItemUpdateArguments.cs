@@ -1,8 +1,7 @@
-namespace Bingo.Api.Core.Features.Npcs.Arguments;
+namespace Bingo.Api.Core.Features.Items.Arguments;
 
-public class NpcUpdateArguments
+public class ItemUpdateArguments
 {
-    public int InGameId { get; set; }
     public double? KillsPerHours { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Image { get; set; } = string.Empty;

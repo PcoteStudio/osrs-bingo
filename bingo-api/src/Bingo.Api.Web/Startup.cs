@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Database;
 using Bingo.Api.Core.Features.Events;
+using Bingo.Api.Core.Features.Items;
+using Bingo.Api.Core.Features.Npcs;
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Users;
@@ -43,19 +45,21 @@ public class Startup
             options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         });
 
-        // Features
-        services.AddDistributedMemoryCache();
-        services.AddAuthenticationWebService();
         services.AddOpenApi();
         services.AddSqliteDatabase();
         services.AddAuthenticationService();
+        services.AddAuthenticationWebService();
+
+        // Features
         services.AddUserService();
-        services.AddPlayerService();
-        services.AddPlayerWebService();
-        services.AddTeamService();
-        services.AddTeamWebService();
         services.AddEventService();
         services.AddEventWebService();
+        services.AddTeamService();
+        services.AddTeamWebService();
+        services.AddPlayerService();
+        services.AddPlayerWebService();
+        services.AddItemService();
+        services.AddNpcService();
     }
 
     public void Configure(IApplicationBuilder app, ILogger<Startup> logger, IServer server, IWebHostEnvironment env)

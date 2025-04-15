@@ -16,7 +16,6 @@ public class NpcFactory : INpcFactory
         {
             Name = args.Name,
             Image = args.Image,
-            InGameId = args.InGameId,
             KillsPerHours = args.KillsPerHours
         };
     }

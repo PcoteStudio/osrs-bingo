@@ -8,6 +8,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddAuthenticationService(this IServiceCollection services)
     {
+        services.AddDistributedMemoryCache();
         services.AddSession();
         services.AddHttpContextAccessor();
         services.TryAddScoped<IAuthService, AuthService>();

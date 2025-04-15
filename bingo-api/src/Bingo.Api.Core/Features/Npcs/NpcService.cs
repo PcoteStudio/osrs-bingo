@@ -45,7 +45,7 @@ public class NpcService(
 
     public async Task<NpcEntity> UpdateNpcAsync(int npcId, NpcUpdateArguments args)
     {
-        var npcEntity = await npcServiceHelper.GetRequiredCompleteNpcAsync(npcId);
+        var npcEntity = await npcServiceHelper.GetRequiredCompleteByIdAsync(npcId);
         npcUtil.UpdateNpc(npcEntity, args);
         dbContext.Update(npcEntity);
         await dbContext.SaveChangesAsync();

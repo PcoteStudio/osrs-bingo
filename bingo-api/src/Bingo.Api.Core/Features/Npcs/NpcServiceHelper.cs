@@ -6,7 +6,7 @@ namespace Bingo.Api.Core.Features.Npcs;
 public interface INpcServiceHelper
 {
     Task EnsureNpcDoesNotExistByNameAsync(string name);
-    Task<NpcEntity> GetRequiredCompleteNpcAsync(int teamId);
+    Task<NpcEntity> GetRequiredCompleteByIdAsync(int npcId);
 }
 
 public class NpcServiceHelper(
@@ -15,14 +15,14 @@ public class NpcServiceHelper(
 {
     public async Task EnsureNpcDoesNotExistByNameAsync(string name)
     {
-        var player = await npcRepository.GetByNameAsync(name);
-        if (player is not null) throw new NpcAlreadyExistsException(player.Name);
+        var npc = await npcRepository.GetByNameAsync(name);
+        if (npc is not null) throw new NpcAlreadyExistsException(npc.Name);
     }
 
-    public virtual async Task<NpcEntity> GetRequiredCompleteNpcAsync(int teamId)
+    public virtual async Task<NpcEntity> GetRequiredCompleteByIdAsync(int npcId)
     {
-        var player = await npcRepository.GetCompleteByIdAsync(teamId);
-        if (player is null) throw new NpcNotFoundException(teamId);
+        var player = await npcRepository.GetCompleteByIdAsync(npcId);
+        if (player is null) throw new NpcNotFoundException(npcId);
         return player;
     }
 }

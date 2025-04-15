@@ -13,7 +13,6 @@ public class NpcUtil : INpcUtil
     public void UpdateNpc(NpcEntity npc, NpcUpdateArguments args)
     {
         npc.Name = args.Name;
-        npc.InGameId = args.InGameId;
         npc.Image = args.Image;
         npc.KillsPerHours = args.KillsPerHours;
     }
