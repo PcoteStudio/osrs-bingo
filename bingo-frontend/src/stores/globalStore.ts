@@ -19,7 +19,7 @@ export const useGlobalStore = defineStore('globalStore', {
     };
 
     const playersState = {
-      showModal: true,
+      showModal: false,
       players: [] as PlayerResponse[]
     };
 

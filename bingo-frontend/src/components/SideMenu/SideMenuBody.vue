@@ -62,7 +62,7 @@ const menuSections = ref<MenuSectionType[]>([
         id: 'players',
         label: 'Players',
         icon: 'faUsers',
-        action: () => console.log('openPlayers'),
+        action: globalState.togglePlayersModal,
       },
       {
         id: 'settings',
