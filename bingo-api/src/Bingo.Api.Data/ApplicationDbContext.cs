@@ -31,4 +31,5 @@ public class ApplicationDbContext : DbContext
     // Data
     public DbSet<ItemEntity> Items { get; set; }
     public DbSet<NpcEntity> Npcs { get; set; }
+    public DbSet<DropInfoEntity> DropInfos { get; set; }
 }

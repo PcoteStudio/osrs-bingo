@@ -1,36 +1,36 @@
 using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
-using Bingo.Api.Core.Features.Items;
-using Bingo.Api.Core.Features.Items.Arguments;
-using Bingo.Api.Core.Features.Items.Exceptions;
+using Bingo.Api.Core.Features.DropInfos;
+using Bingo.Api.Core.Features.DropInfos.Arguments;
+using Bingo.Api.Core.Features.DropInfos.Exceptions;
 using Bingo.Api.Web.Generic.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bingo.Api.Web.Items;
+namespace Bingo.Api.Web.DropInfos;
 
-[Route("/api/items")]
+[Route("/api/drops")]
 [ApiController]
-public class ItemController(
+public class DropInfoController(
     IPermissionServiceHelper permissionServiceHelper,
-    IItemService itemService,
-    IItemServiceHelper itemServiceHelper,
+    IDropInfoService dropService,
+    IDropInfoServiceHelper dropServiceHelper,
     IMapper mapper) : ControllerBase
 {
-    [HttpGet("{itemId:min(0)}")]
+    [HttpGet("{dropId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ItemResponse>> GetItemAsync([FromRoute] int itemId)
+    public async Task<ActionResult<DropInfoResponse>> GetDropInfoAsync([FromRoute] int dropId)
     {
         try
         {
-            var item = await itemServiceHelper.GetRequiredCompleteByIdAsync(itemId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
+            var drop = await dropServiceHelper.GetRequiredCompleteByIdAsync(dropId);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropInfoResponse>(drop));
         }
         catch (Exception ex)
         {
             switch (ex)
             {
-                case ItemNotFoundException:
+                case DropInfoNotFoundException:
                     throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;
@@ -40,10 +40,10 @@ public class ItemController(
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<ItemResponse>>> GetItemsAsync()
+    public async Task<ActionResult<List<DropInfoResponse>>> GetDropInfosAsync()
     {
-        var item = await itemService.GetItemsAsync();
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<ItemResponse>>(item));
+        var drop = await dropService.GetDropInfosAsync();
+        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<DropInfoResponse>>(drop));
     }
 
     [HttpPost]
@@ -51,21 +51,21 @@ public class ItemController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<ItemResponse>> CreateItemAsync(
+    public async Task<ActionResult<DropInfoResponse>> CreateDropInfoAsync(
         [FromServices] IdentityContainer identityContainer,
-        [FromBody] ItemCreateArguments args)
+        [FromBody] DropInfoCreateArguments args)
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["item.create"]);
-            var item = await itemService.CreateItemAsync(args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["drop.create"]);
+            var drop = await dropService.CreateDropInfoAsync(args);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropInfoResponse>(drop));
         }
         catch (Exception ex)
         {
             switch (ex)
             {
-                case ItemAlreadyExistsException:
+                case DropInfoAlreadyExistsException:
                     throw new HttpException(StatusCodes.Status400BadRequest, ex);
                 default:
                     throw;
@@ -73,27 +73,27 @@ public class ItemController(
         }
     }
 
-    [HttpPut("{itemId:min(0)}")]
+    [HttpPut("{dropId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ItemResponse>> UpdateItemAsync(
+    public async Task<ActionResult<DropInfoResponse>> UpdateDropInfoAsync(
         [FromServices] IdentityContainer identityContainer,
-        [FromRoute] int itemId,
-        [FromBody] ItemUpdateArguments args)
+        [FromRoute] int dropId,
+        [FromBody] DropInfoUpdateArguments args)
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["item.update"]);
-            var item = await itemService.UpdateItemAsync(itemId, args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["drop.update"]);
+            var drop = await dropService.UpdateDropInfoAsync(dropId, args);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropInfoResponse>(drop));
         }
         catch (Exception ex)
         {
             switch (ex)
             {
-                case ItemNotFoundException:
+                case DropInfoNotFoundException:
                     throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;
@@ -101,26 +101,26 @@ public class ItemController(
         }
     }
 
-    [HttpDelete("{itemId:min(0)}")]
+    [HttpDelete("{dropId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ItemResponse>> RemoveItemAsync(
+    public async Task<ActionResult<DropInfoResponse>> RemoveDropInfoAsync(
         [FromServices] IdentityContainer identityContainer,
-        [FromRoute] int itemId)
+        [FromRoute] int dropId)
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["item.delete"]);
-            var item = await itemService.RemoveItemAsync(itemId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["drop.delete"]);
+            var drop = await dropService.RemoveDropInfoAsync(dropId);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropInfoResponse>(drop));
         }
         catch (Exception ex)
         {
             switch (ex)
             {
-                case ItemNotFoundException:
+                case DropInfoNotFoundException:
                     throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;

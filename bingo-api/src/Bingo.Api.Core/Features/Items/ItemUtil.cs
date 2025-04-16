@@ -5,14 +5,14 @@ namespace Bingo.Api.Core.Features.Items;
 
 public interface IItemUtil
 {
-    void UpdateItem(ItemEntity npc, ItemUpdateArguments args);
+    void UpdateItem(ItemEntity item, ItemUpdateArguments args);
 }
 
 public class ItemUtil : IItemUtil
 {
-    public void UpdateItem(ItemEntity npc, ItemUpdateArguments args)
+    public void UpdateItem(ItemEntity item, ItemUpdateArguments args)
     {
-        npc.Name = args.Name;
-        npc.Image = args.Image;
+        item.Name = args.Name;
+        item.Image = args.Image;
     }
 }

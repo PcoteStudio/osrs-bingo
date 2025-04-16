@@ -103,6 +103,8 @@ public class NpcController(
 
     [HttpDelete("{npcId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<NpcResponse>> RemoveNpcAsync(
         [FromServices] IdentityContainer identityContainer,

@@ -103,6 +103,8 @@ public class PlayerController(
 
     [HttpDelete("{playerId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<PlayerResponse>> RemovePlayerAsync(
         [FromServices] IdentityContainer identityContainer,
