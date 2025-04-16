@@ -10,8 +10,11 @@ using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data;
 using Bingo.Api.Web.Authentication;
+using Bingo.Api.Web.DropInfos;
 using Bingo.Api.Web.Events;
+using Bingo.Api.Web.Items;
 using Bingo.Api.Web.Middlewares;
+using Bingo.Api.Web.Npcs;
 using Bingo.Api.Web.Players;
 using Bingo.Api.Web.Teams;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -58,8 +61,11 @@ public class Startup
         services.AddTeamWebService();
         services.AddPlayerService();
         services.AddPlayerWebService();
+        services.AddDropInfoWebService();
         services.AddItemService();
+        services.AddItemWebService();
         services.AddNpcService();
+        services.AddNpcWebService();
     }
 
     public void Configure(IApplicationBuilder app, ILogger<Startup> logger, IServer server, IWebHostEnvironment env)
