@@ -16,6 +16,16 @@
         <option value="$PROJECT_DIR$/src/Bingo.Api.Core/obj" />
         <option value="$PROJECT_DIR$/tests/Bingo.Api.TestUtils/bin" />
         <option value="$PROJECT_DIR$/tests/Bingo.Api.TestUtils/obj" />
+        <option value="$PROJECT_DIR$/tests/Bingo.Api.Core.Tests.Integration/bin" />
+        <option value="$PROJECT_DIR$/tests/Bingo.Api.Core.Tests.Integration/obj" />
+        <option value="$PROJECT_DIR$/tests/Bingo.Api.Web.Tests.Feature/bin" />
+        <option value="$PROJECT_DIR$/tests/Bingo.Api.Web.Tests.Feature/obj" />
+        <option value="$PROJECT_DIR$/tests/Bingo.Api.Web.Tests.Unit/bin" />
+        <option value="$PROJECT_DIR$/tests/Bingo.Api.Web.Tests.Unit/obj" />
+        <option value="$PROJECT_DIR$/tools/GenerateCertificat/bin" />
+        <option value="$PROJECT_DIR$/tools/GenerateCertificat/obj" />
+        <option value="$PROJECT_DIR$/tests/Bingo.Api.Core.Tests.Unit/bin" />
+        <option value="$PROJECT_DIR$/tests/Bingo.Api.Core.Tests.Unit/obj" />
       </list>
     </option>
   </component>
