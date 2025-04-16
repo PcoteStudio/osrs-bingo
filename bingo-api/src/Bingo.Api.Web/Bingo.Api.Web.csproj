@@ -27,4 +27,9 @@
         <ProjectReference Include="..\Bingo.Api.Core\Bingo.Api.Core.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="Items\"/>
+        <Folder Include="Npcs\"/>
+    </ItemGroup>
+
 </Project>

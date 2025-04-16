@@ -16,8 +16,6 @@ public class AuthenticationMiddleware(
             if (user is not null) context.Items[typeof(IIdentity)] = new UserIdentity(user);
         }
 
-        // TODO Permissions middleware to catch permission errors
-
         await next(context);
     }
 }

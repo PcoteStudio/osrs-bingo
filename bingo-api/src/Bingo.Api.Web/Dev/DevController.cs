@@ -27,9 +27,12 @@ public class DevController(
 {
     [HttpGet("ping")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<string> Ping([FromServices] IdentityContainer identityContainer)
     {
-        EnsureHasAccess(identityContainer.Identity, []);
+        EnsureHasAccess(identityContainer.Identity, ["dev.ping"]);
         return StatusCode(StatusCodes.Status200OK, "pong");
     }
 
@@ -37,9 +40,10 @@ public class DevController(
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<EventResponse>> SeedAsync([FromServices] IdentityContainer identityContainer)
     {
-        EnsureHasAccess(identityContainer.Identity, []);
+        EnsureHasAccess(identityContainer.Identity, ["dev.seed"]);
         var user = (identityContainer.Identity as UserIdentity)!.User;
 
         logger.LogInformation("Seeding an event");

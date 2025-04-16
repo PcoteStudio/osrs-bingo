@@ -5,7 +5,10 @@
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:E:\workspace\osrs-bingo\bingo-api\data\localdb.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/data/localdb.db</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+      </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="webtestdb.db" uuid="3180ee31-038c-4aec-aac6-3b38b432f743">
