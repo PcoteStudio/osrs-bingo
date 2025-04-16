@@ -4,7 +4,7 @@ namespace Bingo.Api.Data.Entities;
 
 [Serializable]
 [Table("DropInfos")]
-public class DropInfoEntity
+public class DropEntity
 {
     private ItemEntity? _item;
     private NpcEntity? _npc;

@@ -1,36 +1,36 @@
 using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
-using Bingo.Api.Core.Features.DropInfos;
-using Bingo.Api.Core.Features.DropInfos.Arguments;
-using Bingo.Api.Core.Features.DropInfos.Exceptions;
+using Bingo.Api.Core.Features.Drops;
+using Bingo.Api.Core.Features.Drops.Arguments;
+using Bingo.Api.Core.Features.Drops.Exceptions;
 using Bingo.Api.Web.Generic.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bingo.Api.Web.DropInfos;
+namespace Bingo.Api.Web.Drops;
 
 [Route("/api/drops")]
 [ApiController]
-public class DropInfoController(
+public class DropController(
     IPermissionServiceHelper permissionServiceHelper,
-    IDropInfoService dropService,
-    IDropInfoServiceHelper dropServiceHelper,
+    IDropService dropService,
+    IDropServiceHelper dropServiceHelper,
     IMapper mapper) : ControllerBase
 {
     [HttpGet("{dropId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<DropInfoResponse>> GetDropInfoAsync([FromRoute] int dropId)
+    public async Task<ActionResult<DropResponse>> GetDropAsync([FromRoute] int dropId)
     {
         try
         {
             var drop = await dropServiceHelper.GetRequiredCompleteByIdAsync(dropId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropInfoResponse>(drop));
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
         }
         catch (Exception ex)
         {
             switch (ex)
             {
-                case DropInfoNotFoundException:
+                case DropNotFoundException:
                     throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;
@@ -40,10 +40,10 @@ public class DropInfoController(
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<DropInfoResponse>>> GetDropInfosAsync()
+    public async Task<ActionResult<List<DropResponse>>> GetDropsAsync()
     {
-        var drop = await dropService.GetDropInfosAsync();
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<DropInfoResponse>>(drop));
+        var drop = await dropService.GetDropsAsync();
+        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<DropResponse>>(drop));
     }
 
     [HttpPost]
@@ -51,21 +51,21 @@ public class DropInfoController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<DropInfoResponse>> CreateDropInfoAsync(
+    public async Task<ActionResult<DropResponse>> CreateDropAsync(
         [FromServices] IdentityContainer identityContainer,
-        [FromBody] DropInfoCreateArguments args)
+        [FromBody] DropCreateArguments args)
     {
         try
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["drop.create"]);
-            var drop = await dropService.CreateDropInfoAsync(args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropInfoResponse>(drop));
+            var drop = await dropService.CreateDropAsync(args);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
         }
         catch (Exception ex)
         {
             switch (ex)
             {
-                case DropInfoAlreadyExistsException:
+                case DropAlreadyExistsException:
                     throw new HttpException(StatusCodes.Status400BadRequest, ex);
                 default:
                     throw;
@@ -78,22 +78,22 @@ public class DropInfoController(
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<DropInfoResponse>> UpdateDropInfoAsync(
+    public async Task<ActionResult<DropResponse>> UpdateDropAsync(
         [FromServices] IdentityContainer identityContainer,
         [FromRoute] int dropId,
-        [FromBody] DropInfoUpdateArguments args)
+        [FromBody] DropUpdateArguments args)
     {
         try
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["drop.update"]);
-            var drop = await dropService.UpdateDropInfoAsync(dropId, args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropInfoResponse>(drop));
+            var drop = await dropService.UpdateDropAsync(dropId, args);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
         }
         catch (Exception ex)
         {
             switch (ex)
             {
-                case DropInfoNotFoundException:
+                case DropNotFoundException:
                     throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;
@@ -106,21 +106,21 @@ public class DropInfoController(
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<DropInfoResponse>> RemoveDropInfoAsync(
+    public async Task<ActionResult<DropResponse>> RemoveDropAsync(
         [FromServices] IdentityContainer identityContainer,
         [FromRoute] int dropId)
     {
         try
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["drop.delete"]);
-            var drop = await dropService.RemoveDropInfoAsync(dropId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropInfoResponse>(drop));
+            var drop = await dropService.RemoveDropAsync(dropId);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
         }
         catch (Exception ex)
         {
             switch (ex)
             {
-                case DropInfoNotFoundException:
+                case DropNotFoundException:
                     throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;

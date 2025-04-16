@@ -18,7 +18,7 @@ public class ItemRepository(ApplicationDbContext dbContext)
     public Task<List<ItemEntity>> GetAllCompleteAsync()
     {
         return DbContext.Items
-            .Include(n => n.DropInfos)
+            .Include(n => n.Drops)
             .ToListAsync();
     }
 
@@ -31,7 +31,7 @@ public class ItemRepository(ApplicationDbContext dbContext)
     public Task<ItemEntity?> GetCompleteByIdAsync(int id)
     {
         return DbContext.Items
-            .Include(n => n.DropInfos)
+            .Include(n => n.Drops)
             .FirstOrDefaultAsync(n => n.Id == id);
     }
 }

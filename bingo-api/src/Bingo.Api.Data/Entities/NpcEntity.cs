@@ -13,5 +13,5 @@ public class NpcEntity
     public double? KillsPerHours { get; set; }
     [MaxLength(255)] public string Name { get; set; } = string.Empty;
     [MaxLength(255)] public string Image { get; set; } = string.Empty;
-    [ForeignKey("NpcId")] public List<DropInfoEntity> DropInfos { get; set; } = [];
+    [ForeignKey("NpcId")] public List<DropEntity> Drops { get; set; } = [];
 }

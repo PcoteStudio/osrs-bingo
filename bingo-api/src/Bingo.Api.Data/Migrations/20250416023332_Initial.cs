@@ -62,7 +62,6 @@ namespace Bingo.Api.Data.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    InGameId = table.Column<int>(type: "INTEGER", nullable: false),
                     KillsPerHours = table.Column<double>(type: "REAL", nullable: true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     Image = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false)
@@ -134,7 +133,6 @@ namespace Bingo.Api.Data.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    InGameId = table.Column<int>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     Image = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     GrindEntityId = table.Column<int>(type: "INTEGER", nullable: true)
@@ -305,6 +303,18 @@ namespace Bingo.Api.Data.Migrations
                 name: "IX_Items_GrindEntityId",
                 table: "Items",
                 column: "GrindEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_Name",
+                table: "Items",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Npcs_Name",
+                table: "Npcs",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PlayerEntityTeamEntity_TeamId",

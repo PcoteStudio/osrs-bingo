@@ -1,9 +1,9 @@
-using Bingo.Api.Web.DropInfos;
+using Bingo.Api.Web.Drops;
 
 namespace Bingo.Api.Web.Npcs;
 
 [Serializable]
 public class NpcResponse : NpcShortResponse
 {
-    public List<DropInfoResponse> DropInfos { get; set; } = [];
+    public List<DropResponse> Drops { get; set; } = [];
 }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bingo.Api.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250415190542_SmallChanges")]
-    partial class SmallChanges
+    [Migration("20250416023332_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace Bingo.Api.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
 
-            modelBuilder.Entity("Bingo.Api.Data.Entities.DropInfoEntity", b =>
+            modelBuilder.Entity("Bingo.Api.Data.Entities.DropEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -134,9 +134,6 @@ namespace Bingo.Api.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("InGameId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -145,6 +142,9 @@ namespace Bingo.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GrindEntityId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Items");
                 });
@@ -177,9 +177,6 @@ namespace Bingo.Api.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("InGameId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<double?>("KillsPerHours")
                         .HasColumnType("REAL");
 
@@ -189,6 +186,9 @@ namespace Bingo.Api.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Npcs");
                 });
@@ -339,16 +339,16 @@ namespace Bingo.Api.Data.Migrations
                     b.ToTable("PlayerEntityTeamEntity");
                 });
 
-            modelBuilder.Entity("Bingo.Api.Data.Entities.DropInfoEntity", b =>
+            modelBuilder.Entity("Bingo.Api.Data.Entities.DropEntity", b =>
                 {
                     b.HasOne("Bingo.Api.Data.Entities.ItemEntity", "Item")
-                        .WithMany("DropInfos")
+                        .WithMany("Drops")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Bingo.Api.Data.Entities.NpcEntity", "Npc")
-                        .WithMany("DropInfos")
+                        .WithMany("Drops")
                         .HasForeignKey("NpcId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -464,7 +464,7 @@ namespace Bingo.Api.Data.Migrations
 
             modelBuilder.Entity("Bingo.Api.Data.Entities.ItemEntity", b =>
                 {
-                    b.Navigation("DropInfos");
+                    b.Navigation("Drops");
                 });
 
             modelBuilder.Entity("Bingo.Api.Data.Entities.MultiLayerBoardEntity", b =>
@@ -474,7 +474,7 @@ namespace Bingo.Api.Data.Migrations
 
             modelBuilder.Entity("Bingo.Api.Data.Entities.NpcEntity", b =>
                 {
-                    b.Navigation("DropInfos");
+                    b.Navigation("Drops");
                 });
 
             modelBuilder.Entity("Bingo.Api.Data.Entities.TileEntity", b =>

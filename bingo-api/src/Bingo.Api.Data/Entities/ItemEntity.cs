@@ -15,5 +15,5 @@ public class ItemEntity
 
     [MaxLength(255)] public string Image { get; set; } = string.Empty;
 
-    [ForeignKey("ItemId")] public List<DropInfoEntity> DropInfos { get; set; } = [];
+    [ForeignKey("ItemId")] public List<DropEntity> Drops { get; set; } = [];
 }

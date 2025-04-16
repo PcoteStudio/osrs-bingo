@@ -1,6 +1,6 @@
-namespace Bingo.Api.Core.Features.DropInfos.Arguments;
+namespace Bingo.Api.Core.Features.Drops.Arguments;
 
-public class DropInfoCreateArguments
+public class DropUpdateArguments
 {
     public int NpcId { get; set; }
     public int ItemId { get; set; }

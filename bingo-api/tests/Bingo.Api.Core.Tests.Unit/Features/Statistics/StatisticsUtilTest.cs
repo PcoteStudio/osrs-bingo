@@ -29,7 +29,7 @@ public class StatisticsUtilUnitTest
     public void GetDropEhc(double? kpc, double? dropRate, double? expectedEhc)
     {
         var npc = new NpcEntity { KillsPerHours = kpc };
-        var dropInfo = new DropInfoEntity { Npc = npc, DropRate = dropRate };
+        var dropInfo = new DropEntity { Npc = npc, DropRate = dropRate };
         var ehc = _statisticsUtil.GetDropEhc(dropInfo);
         ehc.Should().BeApproximately(expectedEhc, 0.000001);
     }
@@ -38,9 +38,9 @@ public class StatisticsUtilUnitTest
     [TestCaseSource(nameof(GetDropsEhcAndExpectedEhc))]
     public void GetItemEhc(List<double?> dropInfoEhcs, double? expectedEhc)
     {
-        var item = new ItemEntity { DropInfos = [] };
+        var item = new ItemEntity { Drops = [] };
         foreach (var diEhc in dropInfoEhcs)
-            item.DropInfos.Add(new DropInfoEntity { Ehc = diEhc });
+            item.Drops.Add(new DropEntity { Ehc = diEhc });
         var ehc = _statisticsUtil.GetItemEhc(item);
         ehc.Should().BeApproximately(expectedEhc, 0.000001);
     }

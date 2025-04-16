@@ -18,7 +18,7 @@ public class NpcRepository(ApplicationDbContext dbContext)
     public Task<List<NpcEntity>> GetAllCompleteAsync()
     {
         return DbContext.Npcs
-            .Include(n => n.DropInfos)
+            .Include(n => n.Drops)
             .ToListAsync();
     }
 
@@ -31,7 +31,7 @@ public class NpcRepository(ApplicationDbContext dbContext)
     public Task<NpcEntity?> GetCompleteByIdAsync(int id)
     {
         return DbContext.Npcs
-            .Include(n => n.DropInfos)
+            .Include(n => n.Drops)
             .FirstOrDefaultAsync(n => n.Id == id);
     }
 }

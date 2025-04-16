@@ -1,7 +1,7 @@
-namespace Bingo.Api.Web.DropInfos;
+namespace Bingo.Api.Web.Drops;
 
 [Serializable]
-public class DropInfoShortResponse
+public class DropShortResponse
 {
     public int Id { get; set; }
     public int NpcId { get; set; }

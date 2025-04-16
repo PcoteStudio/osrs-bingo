@@ -17,7 +17,7 @@ namespace Bingo.Api.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
 
-            modelBuilder.Entity("Bingo.Api.Data.Entities.DropInfoEntity", b =>
+            modelBuilder.Entity("Bingo.Api.Data.Entities.DropEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -336,16 +336,16 @@ namespace Bingo.Api.Data.Migrations
                     b.ToTable("PlayerEntityTeamEntity");
                 });
 
-            modelBuilder.Entity("Bingo.Api.Data.Entities.DropInfoEntity", b =>
+            modelBuilder.Entity("Bingo.Api.Data.Entities.DropEntity", b =>
                 {
                     b.HasOne("Bingo.Api.Data.Entities.ItemEntity", "Item")
-                        .WithMany("DropInfos")
+                        .WithMany("Drops")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Bingo.Api.Data.Entities.NpcEntity", "Npc")
-                        .WithMany("DropInfos")
+                        .WithMany("Drops")
                         .HasForeignKey("NpcId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -461,7 +461,7 @@ namespace Bingo.Api.Data.Migrations
 
             modelBuilder.Entity("Bingo.Api.Data.Entities.ItemEntity", b =>
                 {
-                    b.Navigation("DropInfos");
+                    b.Navigation("Drops");
                 });
 
             modelBuilder.Entity("Bingo.Api.Data.Entities.MultiLayerBoardEntity", b =>
@@ -471,7 +471,7 @@ namespace Bingo.Api.Data.Migrations
 
             modelBuilder.Entity("Bingo.Api.Data.Entities.NpcEntity", b =>
                 {
-                    b.Navigation("DropInfos");
+                    b.Navigation("Drops");
                 });
 
             modelBuilder.Entity("Bingo.Api.Data.Entities.TileEntity", b =>
