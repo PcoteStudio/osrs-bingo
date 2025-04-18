@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddScoped<IUserService, UserService>();
         services.TryAddScoped<IUserRepository, UserRepository>();
+        services.TryAddSingleton<IUserUtil, UserUtil>();
         services.TryAddSingleton<IUserFactory, UserFactory>();
         services.TryAddSingleton<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
     }

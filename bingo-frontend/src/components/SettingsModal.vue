@@ -50,7 +50,7 @@ const loadingDropMessage = ref('');
 const dropDatabase = () => {
   loadingDropDatabase.value = true;
 
-  httpClient.seedDatabase().then(() => {
+  httpClient.dropDatabase().then(() => {
     loadingDropState.value = 'success';
     loadingDropMessage.value = 'Database deleted successfully 👀';
   }).catch((error) => {

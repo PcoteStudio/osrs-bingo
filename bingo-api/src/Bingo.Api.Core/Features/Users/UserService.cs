@@ -22,7 +22,7 @@ public class UserService(
     {
         var existingUser = await userRepository.GetByEmailAsync(args.Email);
         if (existingUser is not null) throw new EmailAlreadyInUseException(args.Email);
-        existingUser = await userRepository.GetByNameAsync(args.Username);
+        existingUser = await userRepository.GetByUsernameAsync(args.Username);
         if (existingUser is not null) throw new UsernameAlreadyInUseException(args.Username);
 
         var user = userFactory.Create(args);

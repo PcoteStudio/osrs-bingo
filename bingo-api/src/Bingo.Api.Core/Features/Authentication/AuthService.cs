@@ -19,7 +19,7 @@ public class AuthService(
 {
     public async Task<UserEntity> LoginAsync(AuthLoginArguments args)
     {
-        var user = await userRepository.GetCompleteByNameAsync(args.Username);
+        var user = await userRepository.GetCompleteByUsernameAsync(args.Username);
         if (user is null) throw new InvalidCredentialsException();
 
         var verifyPasswordResults = passwordHasher.VerifyHashedPassword(user, user.HashedPassword, args.Password);

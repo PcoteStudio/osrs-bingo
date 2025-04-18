@@ -8,24 +8,24 @@ namespace Bingo.Api.Core.Features.Users;
 public interface IUserRepository : IGenericRepository<UserEntity>
 {
     Task<UserEntity?> GetByEmailAsync(string email);
-    Task<UserEntity?> GetByNameAsync(string username);
+    Task<UserEntity?> GetByUsernameAsync(string username);
     Task<UserEntity?> GetCompleteByIdAsync(int id);
-    Task<UserEntity?> GetCompleteByNameAsync(string username);
+    Task<UserEntity?> GetCompleteByUsernameAsync(string username);
 }
 
-public class UserRepository(ApplicationDbContext dbContext)
+public class UserRepository(ApplicationDbContext dbContext, IUserUtil userUtil)
     : GenericRepository<UserEntity>(dbContext), IUserRepository
 {
     public Task<UserEntity?> GetByEmailAsync(string email)
     {
         return DbContext.Users
-            .FirstOrDefaultAsync(p => p.Email == email);
+            .FirstOrDefaultAsync(p => p.EmailNormalized == userUtil.NormalizeEmail(email));
     }
 
-    public Task<UserEntity?> GetByNameAsync(string username)
+    public Task<UserEntity?> GetByUsernameAsync(string username)
     {
         return DbContext.Users
-            .FirstOrDefaultAsync(p => p.Username == username);
+            .FirstOrDefaultAsync(p => p.UsernameNormalized == userUtil.NormalizeUsername(username));
     }
 
     public Task<UserEntity?> GetCompleteByIdAsync(int id)
@@ -34,9 +34,9 @@ public class UserRepository(ApplicationDbContext dbContext)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public Task<UserEntity?> GetCompleteByNameAsync(string username)
+    public Task<UserEntity?> GetCompleteByUsernameAsync(string username)
     {
         return DbContext.Users
-            .FirstOrDefaultAsync(p => p.Username == username);
+            .FirstOrDefaultAsync(p => p.UsernameNormalized == userUtil.NormalizeUsername(username));
     }
 }

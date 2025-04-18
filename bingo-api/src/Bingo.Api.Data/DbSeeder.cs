@@ -33,7 +33,9 @@ public class DbSeeder(
         var user = new UserEntity
         {
             Username = username,
+            UsernameNormalized = username.ToLower(),
             Email = email,
+            EmailNormalized = email.ToLower(),
             EmailConfirmed = true,
             Permissions = permissions
         };
