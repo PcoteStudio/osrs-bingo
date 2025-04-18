@@ -52,13 +52,10 @@ export class AuthenticationClient {
     return this.httpMessageResponseUtil.parseJsonResponse<LoginResponse>(message);
   }
 
-
-
-  async postAuthRevoke(token: string) {
+  async postAuthRevoke() {
     const message = new HttpMessageBuilder()
       .withMethod('POST')
-      .withUrl('/api/auth/revoke')
-      .withHeader('Authorization', 'Bearer ' + token)
+      .withUrl('/api/auth/logout')
       .build();
 
     await this.httpPipeline.send(message);

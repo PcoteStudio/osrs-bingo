@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import type { PlayerResponse } from '@/clients/responses/playerResponse.ts';
-import { useGetAllPlayers } from '@/queries/playerQueries.ts';
-
+import { inject } from 'vue';
+import { HttpClient } from '@/clients/httpClient.ts';
 export const useGlobalStore = defineStore('globalStore', {
   state: () => {
     const authenticationStore = useAuthenticationStore();
+    const httpClient = inject(HttpClient.injectionKey)!;
 
     const loginModalState = {
       showModal: false,
@@ -25,6 +26,7 @@ export const useGlobalStore = defineStore('globalStore', {
     };
 
     return {
+      httpClient: httpClient,
       authenticationStore: authenticationStore,
       loginModalState: loginModalState,
       signupModalState: signupModalState,
@@ -41,6 +43,9 @@ export const useGlobalStore = defineStore('globalStore', {
     },
     getPlayersState: (state) => {
       return state.playersState;
+    },
+    getPlayersModalState: (state) => {
+      return state.playersState.showModal;
     },
   },
   actions: {
@@ -63,6 +68,9 @@ export const useGlobalStore = defineStore('globalStore', {
     addPlayer(player: PlayerResponse) {
       this.playersState.players.unshift(player);
       console.log('player added', this.playersState.players.length);
+    },
+    fetchPlayers() {
+      this.httpClient.getPlayers().then(players => this.playersState.players = players);
     }
   }
 });

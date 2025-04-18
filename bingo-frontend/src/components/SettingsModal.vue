@@ -25,6 +25,24 @@ watch(selectedTheme, (newTheme) => {
     life: 5000
   });
 });
+
+const loadingSeedDatabase = ref(false);
+const loadingSeedState = ref('secondary');
+const loadingSeedMessage = ref('');
+const seedDatabase = () => {
+  loadingSeedDatabase.value = true;
+
+  httpClient.seedDatabase().then(() => {
+    loadingSeedState.value = 'success';
+    loadingSeedMessage.value = 'Database seeded successfully 👌';
+  }).catch((error) => {
+    console.log(error);
+    loadingSeedState.value = 'danger';
+    loadingSeedMessage.value = 'Something went wrong 😢, blame the backend guy!';
+  }).finally(() => {
+    loadingSeedDatabase.value = false;
+  });
+};
 </script>
 
 <template>
@@ -46,10 +64,16 @@ watch(selectedTheme, (newTheme) => {
       </div>
       <div class="flex flex-col gap-1 w-fit">
         <label>Seed Database</label>
-        <Button
-          @click="httpClient.seedDatabase()"
-          label="Seed"
-        />
+        <div class="message-group">
+          <Button
+            :disabled="loadingSeedDatabase"
+            :icon="loadingSeedDatabase ? 'fas fa-spinner' : ''"
+            :severity="loadingSeedState"
+            @click="seedDatabase"
+            label="Seed"
+          />
+          <span v-if="loadingSeedMessage">{{ loadingSeedMessage }}</span>
+        </div>
       </div>
             <div class="flex flex-col gap-1 w-fit">
         <label>Drop Database</label>
@@ -67,5 +91,11 @@ watch(selectedTheme, (newTheme) => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.message-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }
 </style>

@@ -15,7 +15,6 @@ import ToastService from 'primevue/toastservice';
 import App from './App.vue';
 import router from './router';
 import Ripple from 'primevue/ripple';
-import { PiniaColada } from '@pinia/colada';
 import { AuthenticationService } from '@/services/authenticationService.ts';
 import { HttpClient } from '@/clients/httpClient.ts';
 import { AuthenticationClient } from '@/clients/authenticationClient.ts';
@@ -36,7 +35,6 @@ app.provide(HttpClient.injectionKey, httpClient);
 
 // Store
 app.use(createPinia());
-app.use(PiniaColada, {});
 
 // Router
 app.use(router);

@@ -1,17 +1,19 @@
 import { defineStore } from 'pinia';
 import { AuthenticationService } from '@/services/authenticationService.ts';
 import { inject } from 'vue';
-import { useCurrentUser } from '@/queries/userQueries.ts';
 import type { UserResponse } from '@/clients/responses/userResponse.ts';
 import { useNotificationStore } from '@/stores/notificationStore.ts';
+import { HttpClient } from '@/clients/httpClient.ts';
 
 export const useAuthenticationStore = defineStore('authenticationStore', {
   state: () => {
+    const httpClient = inject(HttpClient.injectionKey)!;
     const notificationStore = useNotificationStore();
     const authenticationService = inject(AuthenticationService.injectionKey)!;
     const user: UserResponse | undefined = undefined;
 
     return {
+      httpClient:httpClient,
       notificationStore: notificationStore,
       authenticationService: authenticationService,
       user: user as  UserResponse | undefined,
@@ -57,9 +59,7 @@ export const useAuthenticationStore = defineStore('authenticationStore', {
       });
     },
     async getUser() {
-      const query = useCurrentUser();
-      await query.refresh();
-      this.user = query.user.value;
+      this.user = await this.httpClient.getUsersMe();
     },
     async createUser(username: string, password: string, email: string,) {
       if(await this.authenticationService.createAccount(username, password, email)) {

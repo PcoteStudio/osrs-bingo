@@ -1,14 +1,13 @@
 <script setup lang="ts">
 
 import { useGlobalStore } from '@/stores/globalStore.ts';
-import { nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
 import type { PlayerResponse } from '@/clients/responses/playerResponse.ts';
-import { useGetAllPlayers } from '@/queries/playerQueries.ts';
 
 const globalStore = useGlobalStore();
-const playersState = ref(globalStore.getPlayersState);
-const { players } = useGetAllPlayers();
+const showModal = computed(() => globalStore.getPlayersState.showModal);
+const players = computed(() => globalStore.getPlayersState.players);
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS }
@@ -33,11 +32,15 @@ const addPlayer = () => {
   globalStore.addPlayer({});
 
   nextTick(() => {
-    if (playersState.value.players.length > 0) {
-      editingRows.value = [playersState.value.players[0]];
+    if (players.value.length > 0) {
+      editingRows.value = [players.value[0]];
     }
   });
 };
+
+watch(showModal, () => {
+  globalStore.fetchPlayers();
+});
 </script>
 
 <template>
@@ -68,7 +71,7 @@ const addPlayer = () => {
       </div>
     </template>
     <div class="content">
-      <DataTable :value="playersState.players"
+      <DataTable :value="players"
                  class="datatable"
                  scrollable
                  scrollHeight="35rem"
@@ -92,9 +95,9 @@ const addPlayer = () => {
             <div class="teams">
               <div v-for="team in data.teams" :key="team.id">
                 <Chip class="py-0 pl-0 pr-4"
-                      v-tooltip.top="team.event.name"
+                      v-tooltip.top="team.event?.name"
                       :label="team.name"
-                      :image="team.event.avatar"
+                      :image="team.event?.avatar"
                 />
               </div>
             </div>
@@ -103,10 +106,10 @@ const addPlayer = () => {
             <div class="teams">
               <div v-for="team in data[field]" :key="team.id">
                 <Chip class="py-0 pl-0 pr-4"
-                      v-tooltip.top="team.event.name"
+                      v-tooltip.top="team.event?.name"
                       removable
                       :label="team.name"
-                      :image="team.event.avatar"
+                      :image="team.event?.avatar"
                       @remove="removeTeam(data.id, team.id)"
                 />
               </div>
