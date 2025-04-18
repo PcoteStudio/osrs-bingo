@@ -22,9 +22,14 @@ public class AuthService(
         var user = await userRepository.GetCompleteByNameAsync(args.Username);
         if (user is null) throw new InvalidCredentialsException();
 
-        // TODO check if password needs rehashing
         var verifyPasswordResults = passwordHasher.VerifyHashedPassword(user, user.HashedPassword, args.Password);
         if (verifyPasswordResults == PasswordVerificationResult.Failed) throw new InvalidCredentialsException();
+
+        if (verifyPasswordResults == PasswordVerificationResult.SuccessRehashNeeded)
+        {
+            user.HashedPassword = passwordHasher.HashPassword(user, args.Password);
+            dbContext.Users.Update(user);
+        }
 
         return user;
     }
