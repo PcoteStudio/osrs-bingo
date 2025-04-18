@@ -49,8 +49,6 @@ public partial class TeamFeatureTest
         await Expect.StatusCodeFromResponse(HttpStatusCode.NotFound, response);
 
         // Assert response content
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var expectedContent = HttpResponseGenerator.GetExpectedJsonResponse(HttpStatusCode.NotFound);
-        Expect.EquivalentJsonWithPrettyOutput(responseContent, expectedContent);
+        await Expect.ResponseContentToMatchStatusCode(response);
     }
 }

@@ -6,6 +6,6 @@ public static partial class TestDataGenerator
 {
     public static string GeneratePlayerName()
     {
-        return RandomUtil.GetPrefixedRandomHexString("PName_", Random.Shared.Next(5, 25));
+        return RandomUtil.GetPrefixedRandomHexString("PName_", 5, 20);
     }
 }

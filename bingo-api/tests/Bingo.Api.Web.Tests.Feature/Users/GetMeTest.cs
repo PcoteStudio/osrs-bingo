@@ -43,8 +43,6 @@ public partial class UsersFeatureTest
         await Expect.StatusCodeFromResponse(HttpStatusCode.Unauthorized, getMeResponse);
 
         // Assert response content
-        var responseContent = await getMeResponse.Content.ReadAsStringAsync();
-        var expectedContent = HttpResponseGenerator.GetExpectedJsonResponse(HttpStatusCode.Unauthorized);
-        Expect.EquivalentJsonWithPrettyOutput(responseContent, expectedContent);
+        await Expect.ResponseContentToMatchStatusCode(getMeResponse);
     }
 }

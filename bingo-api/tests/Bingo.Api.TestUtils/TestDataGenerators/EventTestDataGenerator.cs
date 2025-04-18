@@ -7,7 +7,7 @@ public static partial class TestDataGenerator
 {
     public static string GenerateEventName()
     {
-        return RandomUtil.GetPrefixedRandomHexString("EName_", Random.Shared.Next(5, 25));
+        return RandomUtil.GetPrefixedRandomHexString("EName_", 5, 25);
     }
 
     public static EventEntity GenerateEventEntity()

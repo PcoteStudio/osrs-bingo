@@ -65,9 +65,7 @@ public partial class AuthenticationFeatureTest
         await Expect.StatusCodeFromResponse(HttpStatusCode.BadRequest, loginResponse);
 
         // Assert response content
-        var responseContent = await loginResponse.Content.ReadAsStringAsync();
-        var expectedContent = HttpResponseGenerator.GetExpectedJsonResponse(HttpStatusCode.BadRequest);
-        Expect.EquivalentJsonWithPrettyOutput(responseContent, expectedContent);
+        await Expect.ResponseContentToMatchStatusCode(loginResponse);
         loginResponse.Headers.Should().NotContainKey("Set-Cookie");
 
         // Act

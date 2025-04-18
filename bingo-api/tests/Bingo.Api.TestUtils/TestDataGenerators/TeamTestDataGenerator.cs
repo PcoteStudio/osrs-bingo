@@ -9,7 +9,7 @@ public static partial class TestDataGenerator
 {
     public static string GenerateTeamName()
     {
-        return RandomUtil.GetPrefixedRandomHexString("TName_", Random.Shared.Next(5, 25));
+        return RandomUtil.GetPrefixedRandomHexString("TName_", 5, 25);
     }
 
     public static TeamEntity GenerateTeamEntity()

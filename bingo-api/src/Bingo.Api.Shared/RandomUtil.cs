@@ -23,4 +23,9 @@ public static class RandomUtil
     {
         return prefix + GetRandomHexString(hexLength);
     }
+
+    public static string GetPrefixedRandomHexString(string prefix, int minHexLength, int maxHexLength)
+    {
+        return GetPrefixedRandomHexString(prefix, Random.Shared.Next(minHexLength, maxHexLength));
+    }
 }
