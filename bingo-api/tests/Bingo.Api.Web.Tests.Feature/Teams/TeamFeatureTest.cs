@@ -17,15 +17,8 @@ public partial class TeamFeatureTest
     [OneTimeSetUp]
     public void BeforeAll()
     {
-        _host = TestSetupUtil.BuildWebHost();
-        _host.Start();
+        _host = TestSetupUtil.GetStartedWebHost();
         _baseUrl = TestSetupUtil.GetRequiredHostUri(_host);
-    }
-
-    [OneTimeTearDown]
-    public void AfterAll()
-    {
-        _host.Dispose();
     }
 
     [SetUp]

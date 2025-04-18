@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
 using System.Text.Json;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataGenerators;
@@ -18,13 +17,12 @@ public partial class EventFeatureTest
         _testDataSetup
             .AddUser(out var userWithSecrets)
             .AddEvent(out var eventEntity);
-        var teamArgs = TestDataGenerator.GenerateTeamCreateArguments();
-        var postContent = JsonSerializer.Serialize(teamArgs);
-        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+        var args = TestDataGenerator.GenerateTeamCreateArguments();
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"), stringContent);
+        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"),
+            HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.Created, response);
@@ -37,5 +35,47 @@ public partial class EventFeatureTest
         savedTeam.Should().NotBeNull();
         returnedTeam.Id.Should().Be(savedTeam.Id);
         returnedTeam.Name.Should().Be(savedTeam.Name);
+    }
+
+    [Test]
+    public async Task CreateTeam_ShouldReturnForbiddenIfNotTheTeamAdmin()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddUser()
+            .AddEvent(out var eventEntity);
+        var args = TestDataGenerator.GenerateTeamCreateArguments();
+
+        // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
+        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"),
+            HttpHelper.BuildJsonStringContent(args));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.Forbidden, response);
+
+        // Assert response content
+        await Expect.ResponseContentToMatchStatusCode(response);
+    }
+
+    [Test]
+    public async Task CreateTeam_ShouldReturnUnauthorizedIfNotLoggedIn()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser()
+            .AddEvent(out var eventEntity);
+        var args = TestDataGenerator.GenerateTeamCreateArguments();
+
+        // Act
+        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"),
+            HttpHelper.BuildJsonStringContent(args));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.Unauthorized, response);
+
+        // Assert response content
+        await Expect.ResponseContentToMatchStatusCode(response);
     }
 }

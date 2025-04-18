@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
 using System.Text.Json;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataGenerators;
@@ -16,11 +15,10 @@ public partial class AuthenticationFeatureTest
     {
         // Arrange
         var args = TestDataGenerator.GenerateAuthSignupArguments();
-        var postContent = JsonSerializer.Serialize(args);
-        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
-        var signupResponse = await _client.PostAsync(new Uri(_baseUrl, "/api/auth/signup"), stringContent);
+        var signupResponse = await _client.PostAsync(new Uri(_baseUrl, "/api/auth/signup"),
+            HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.Created, signupResponse);
@@ -42,11 +40,10 @@ public partial class AuthenticationFeatureTest
         {
             args.Username = userWithSecrets.User.Username;
         });
-        var postContent = JsonSerializer.Serialize(args);
-        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
-        var signupResponse = await _client.PostAsync(new Uri(_baseUrl, "/api/auth/signup"), stringContent);
+        var signupResponse = await _client.PostAsync(new Uri(_baseUrl, "/api/auth/signup"),
+            HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.BadRequest, signupResponse);

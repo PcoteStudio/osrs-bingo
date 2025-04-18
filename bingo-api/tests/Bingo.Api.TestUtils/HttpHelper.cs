@@ -1,9 +1,18 @@
 using System.Net;
+using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace Bingo.Api.TestUtils;
 
-public static class HttpResponseGenerator
+public static class HttpHelper
 {
+    public static StringContent BuildJsonStringContent<TValue>(TValue value)
+    {
+        var postContent = JsonSerializer.Serialize(value);
+        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+        return stringContent;
+    }
+
     public static string GetExpectedJsonResponse(HttpStatusCode statusCode)
     {
         switch (statusCode)

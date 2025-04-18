@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
 using System.Text.Json;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataGenerators;
@@ -23,14 +22,11 @@ public partial class TeamFeatureTest
             .AddPlayers(Random.Shared.Next(3), out var originalPlayers);
 
         var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(5));
-        var postContent = JsonSerializer.Serialize(args);
-        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PutAsync(
-            new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players"),
-            stringContent);
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players"),
+            HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
@@ -62,14 +58,11 @@ public partial class TeamFeatureTest
             .AddEvent();
         const int teamId = 1_000_000;
         var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(5));
-        var postContent = JsonSerializer.Serialize(args);
-        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PutAsync(
-            new Uri(_baseUrl, $"/api/teams/{teamId}/players"),
-            stringContent);
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{teamId}/players"),
+            HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.NotFound, response);

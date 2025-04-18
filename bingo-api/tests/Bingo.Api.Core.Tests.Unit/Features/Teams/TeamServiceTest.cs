@@ -46,10 +46,10 @@ public class TeamServiceUnitTest
     {
         // Arrange
         var eventId = Random.Shared.Next();
-        var teamArgs = TestDataGenerator.GenerateTeamCreateArguments();
+        var args = TestDataGenerator.GenerateTeamCreateArguments();
         var team = TestDataGenerator.GenerateTeamEntity();
 
-        _teamFactoryMock.Setup(x => x.Create(eventId, teamArgs))
+        _teamFactoryMock.Setup(x => x.Create(eventId, args))
             .Returns(team).Verifiable(Times.Once);
         _teamRepositoryMock.Setup(x => x.Add(team))
             .Verifiable(Times.Once);
@@ -57,7 +57,7 @@ public class TeamServiceUnitTest
             .ReturnsAsync(1).Verifiable(Times.Once);
 
         // Act
-        var actualTeam = await _teamService.CreateTeamAsync(eventId, teamArgs);
+        var actualTeam = await _teamService.CreateTeamAsync(eventId, args);
 
         // Assert
         Assert.That(actualTeam, Is.EqualTo(team));

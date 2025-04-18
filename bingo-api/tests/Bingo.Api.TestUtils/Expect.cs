@@ -40,7 +40,7 @@ public static class Expect
     public static async Task ResponseContentToMatchStatusCode(HttpResponseMessage response)
     {
         var responseContent = await response.Content.ReadAsStringAsync();
-        var expectedContent = HttpResponseGenerator.GetExpectedJsonResponse(response.StatusCode);
+        var expectedContent = HttpHelper.GetExpectedJsonResponse(response.StatusCode);
         EquivalentJsonWithPrettyOutput(responseContent, expectedContent);
     }
 }

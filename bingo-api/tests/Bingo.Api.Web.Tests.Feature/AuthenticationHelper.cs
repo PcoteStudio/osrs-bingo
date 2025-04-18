@@ -1,6 +1,4 @@
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text.Json;
 using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataSetups;
@@ -11,14 +9,13 @@ public static class AuthenticationHelper
 {
     public static async Task LoginWithClient(HttpClient client, Uri baseUrl, string username, string password)
     {
-        var loginArgs = new AuthLoginArguments
+        var args = new AuthLoginArguments
         {
             Username = username,
             Password = password
         };
-        var postContent = JsonSerializer.Serialize(loginArgs);
-        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
-        var loginResponse = await client.PostAsync(new Uri(baseUrl, "/api/auth/login"), stringContent);
+        var loginResponse =
+            await client.PostAsync(new Uri(baseUrl, "/api/auth/login"), HttpHelper.BuildJsonStringContent(args));
         await Expect.StatusCodeFromResponse(HttpStatusCode.OK, loginResponse);
     }
 

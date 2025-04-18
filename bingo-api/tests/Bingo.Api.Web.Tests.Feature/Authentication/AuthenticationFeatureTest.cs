@@ -15,17 +15,10 @@ public partial class AuthenticationFeatureTest
     private TestDataSetup _testDataSetup;
 
     [OneTimeSetUp]
-    public async Task BeforeAll()
+    public void BeforeAll()
     {
-        _host = TestSetupUtil.BuildWebHost();
-        await _host.StartAsync();
+        _host = TestSetupUtil.GetStartedWebHost();
         _baseUrl = TestSetupUtil.GetRequiredHostUri(_host);
-    }
-
-    [OneTimeTearDown]
-    public void AfterAll()
-    {
-        _host.Dispose();
     }
 
     [SetUp]

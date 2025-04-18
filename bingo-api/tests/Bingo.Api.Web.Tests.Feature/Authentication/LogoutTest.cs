@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
 using Bingo.Api.TestUtils;
 using FluentAssertions;
 using NUnit.Framework;
@@ -13,11 +12,11 @@ public partial class AuthenticationFeatureTest
     {
         // Arrange
         _testDataSetup.AddUser(out var userWithSecrets);
-        var stringContent = new StringContent("", new MediaTypeHeaderValue("application/json"));
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var logoutResponse = await _client.PostAsync(new Uri(_baseUrl, "/api/auth/logout"), stringContent);
+        var logoutResponse = await _client.PostAsync(new Uri(_baseUrl, "/api/auth/logout"),
+            HttpHelper.BuildJsonStringContent(""));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.OK, logoutResponse);

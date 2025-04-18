@@ -23,6 +23,9 @@ public enum BingoProjects
 
 public static class TestSetupUtil
 {
+    private static readonly Dictionary<BingoProjects, IWebHost?> WebHosts = new();
+    private static readonly Dictionary<BingoProjects, bool> AreWebHostsStarted = new();
+
     private static string GetDatabaseFileName(BingoProjects project)
     {
         return project.ToString().ToLower() + "testdb.db";
@@ -59,9 +62,11 @@ public static class TestSetupUtil
         };
     }
 
-    public static IWebHost BuildWebHost(BingoProjects project = BingoProjects.Web)
+    private static IWebHost GetWebHostInstance(BingoProjects project)
     {
-        return WebHost.CreateDefaultBuilder([])
+        if (WebHosts.TryGetValue(project, out var webHost) && webHost is not null) return webHost;
+
+        webHost = WebHost.CreateDefaultBuilder([])
             .UseEnvironment("Test")
             .ConfigureServices(services =>
             {
@@ -76,11 +81,37 @@ public static class TestSetupUtil
             .UseStartup<Startup>()
             .UseUrls("http://127.0.0.1:0")
             .Build();
+
+        WebHosts.Add(project, webHost);
+        return webHost;
+    }
+
+    private static bool IsWebHostStarted(BingoProjects project)
+    {
+        return AreWebHostsStarted.TryGetValue(project, out var isStarted) && isStarted;
+    }
+
+    public static IServiceProvider GetServiceProvider(BingoProjects project)
+    {
+        return GetWebHostInstance(project).Services;
+    }
+
+    public static IWebHost GetStartedWebHost(BingoProjects project = BingoProjects.Web)
+    {
+        var webHost = GetWebHostInstance(project);
+        var isStarted = IsWebHostStarted(project);
+        if (!isStarted)
+        {
+            webHost.Start();
+            AreWebHostsStarted.Add(project, true);
+        }
+
+        return webHost;
     }
 
     public static TestDataSetup GetTestDataSetup(BingoProjects project)
     {
-        var sp = BuildWebHost(project).Services;
+        var sp = GetServiceProvider(project);
         return new TestDataSetup(
             sp.GetRequiredService<ApplicationDbContext>(),
             sp.GetRequiredService<IPasswordHasher<UserEntity>>(),

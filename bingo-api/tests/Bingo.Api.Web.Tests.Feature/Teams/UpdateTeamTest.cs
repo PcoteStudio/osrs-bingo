@@ -19,14 +19,12 @@ public partial class TeamFeatureTest
             .AddUser(out var userWithSecrets)
             .AddEvent()
             .AddTeam(out var originalTeam);
-        var teamArgs = TestDataGenerator.GenerateTeamUpdateArguments();
-        var postContent = JsonSerializer.Serialize(teamArgs);
-        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+        var args = TestDataGenerator.GenerateTeamUpdateArguments();
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}"),
-            stringContent);
+            HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
@@ -35,7 +33,7 @@ public partial class TeamFeatureTest
         var responseContent = await response.Content.ReadAsStringAsync();
         var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
         returnedTeam.Should().NotBeNull();
-        returnedTeam.Name.Should().Be(teamArgs.Name);
+        returnedTeam.Name.Should().Be(args.Name);
         returnedTeam.Id.Should().Be(originalTeam.Id);
         returnedTeam.EventId.Should().Be(originalTeam.EventId);
 
@@ -55,14 +53,12 @@ public partial class TeamFeatureTest
             .AddUser(out var userWithSecrets)
             .AddEvent();
         const int teamId = 1_000_000;
-        var teamArgs = TestDataGenerator.GenerateTeamUpdateArguments();
-        var postContent = JsonSerializer.Serialize(teamArgs);
-        var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
+        var args = TestDataGenerator.GenerateTeamUpdateArguments();
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
         var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/teams/{teamId}"),
-            stringContent);
+            HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.NotFound, response);
