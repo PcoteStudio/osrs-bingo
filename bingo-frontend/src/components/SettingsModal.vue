@@ -43,6 +43,24 @@ const seedDatabase = () => {
     loadingSeedDatabase.value = false;
   });
 };
+
+const loadingDropDatabase = ref(false);
+const loadingDropState = ref('secondary');
+const loadingDropMessage = ref('');
+const dropDatabase = () => {
+  loadingDropDatabase.value = true;
+
+  httpClient.seedDatabase().then(() => {
+    loadingDropState.value = 'success';
+    loadingDropMessage.value = 'Database deleted successfully 👀';
+  }).catch((error) => {
+    console.log(error);
+    loadingDropState.value = 'danger';
+    loadingDropMessage.value = 'Something went wrong 😢, blame the backend guy!';
+  }).finally(() => {
+    loadingDropDatabase.value = false;
+  });
+};
 </script>
 
 <template>
@@ -65,22 +83,26 @@ const seedDatabase = () => {
       <div class="flex flex-col gap-1 w-fit">
         <label>Seed Database</label>
         <div class="message-group">
-          <Button
+          <Button @click="seedDatabase"
             :disabled="loadingSeedDatabase"
             :icon="loadingSeedDatabase ? 'fas fa-spinner' : ''"
             :severity="loadingSeedState"
-            @click="seedDatabase"
             label="Seed"
           />
           <span v-if="loadingSeedMessage">{{ loadingSeedMessage }}</span>
         </div>
       </div>
-            <div class="flex flex-col gap-1 w-fit">
+      <div class="flex flex-col gap-1 w-fit">
         <label>Drop Database</label>
-        <Button
-          @click="httpClient.dropDatabase()"
-          label="Drop"
-        />
+        <div class="message-group">
+          <Button @click="dropDatabase"
+            :disabled="loadingDropDatabase"
+            :icon="loadingDropDatabase ? 'fas fa-spinner' : ''"
+            :severity="loadingDropState"
+            label="Drop"
+          />
+          <span v-if="loadingDropMessage">{{ loadingDropMessage }}</span>
+        </div>
       </div>
     </div>
   </Dialog>
