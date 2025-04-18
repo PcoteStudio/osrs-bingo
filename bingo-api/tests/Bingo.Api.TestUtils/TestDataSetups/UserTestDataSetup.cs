@@ -1,4 +1,3 @@
-using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.Data.Entities;
 using Bingo.Api.TestUtils.TestDataGenerators;
 
@@ -17,13 +16,6 @@ public partial class TestDataSetup
             userWithSecrets.User, userWithSecrets.Password
         );
         SaveEntity(userWithSecrets.User);
-
-        // Login user (with low iteration count configured)
-        var TODO = authService.LoginAsync(new AuthLoginArguments
-        {
-            Username = userWithSecrets.User.Username,
-            Password = userWithSecrets.Password
-        }).Result;
 
         return this;
     }

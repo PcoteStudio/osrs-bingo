@@ -14,11 +14,11 @@ public partial class AuthenticationFeatureTest
     public async Task LoginAsync_ShouldAutomaticallyGiveAccessToGetMe()
     {
         // Arrange
-        _testDataSetup.AddUser(out var userWithPassword);
+        _testDataSetup.AddUser(out var userWithSecrets);
         var loginArgs = new AuthLoginArguments
         {
-            Username = userWithPassword.User.Username,
-            Password = userWithPassword.Password
+            Username = userWithSecrets.User.Username,
+            Password = userWithSecrets.Password
         };
         var postContent = JsonSerializer.Serialize(loginArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));
@@ -49,11 +49,11 @@ public partial class AuthenticationFeatureTest
     public async Task LoginAsync_ShouldReturnBadRequestOnInvalidCredentials()
     {
         // Arrange
-        _testDataSetup.AddUser(out var userWithPassword);
+        _testDataSetup.AddUser(out var userWithSecrets);
         var loginArgs = new AuthLoginArguments
         {
-            Username = userWithPassword.User.Username,
-            Password = "wrong_password" + userWithPassword.Password
+            Username = userWithSecrets.User.Username,
+            Password = "wrong_password" + userWithSecrets.Password
         };
         var postContent = JsonSerializer.Serialize(loginArgs);
         var stringContent = new StringContent(postContent, new MediaTypeHeaderValue("application/json"));

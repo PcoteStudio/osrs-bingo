@@ -18,7 +18,8 @@ public class UserFactory(IUserUtil userUtil) : IUserFactory
             EmailNormalized = userUtil.NormalizeEmail(args.Email),
             Username = args.Username,
             UsernameNormalized = userUtil.NormalizeEmail(args.Username),
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            Permissions = []
         };
     }
 }

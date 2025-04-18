@@ -36,4 +36,11 @@ public static class Expect
             .WithColorOptions(JsonColorOptions)
         );
     }
+
+    public static async Task ResponseContentToMatchStatusCode(HttpResponseMessage response)
+    {
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var expectedContent = HttpResponseGenerator.GetExpectedJsonResponse(response.StatusCode);
+        EquivalentJsonWithPrettyOutput(responseContent, expectedContent);
+    }
 }

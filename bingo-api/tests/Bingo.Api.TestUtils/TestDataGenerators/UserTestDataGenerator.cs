@@ -7,7 +7,7 @@ public static partial class TestDataGenerator
 {
     public static string GenerateUserName()
     {
-        return RandomUtil.GetPrefixedRandomHexString("UName_", Random.Shared.Next(5, 25));
+        return RandomUtil.GetPrefixedRandomHexString("UName_", Random.Shared.Next(5, 20));
     }
 
     public static string GenerateUserPassword()
@@ -22,7 +22,7 @@ public static partial class TestDataGenerator
 
     public static UserEntity GenerateUserEntity()
     {
-        return new UserEntity
+        var user = new UserEntity
         {
             Id = Random.Shared.Next(),
             Username = GenerateUserName(),
@@ -30,5 +30,8 @@ public static partial class TestDataGenerator
             EmailConfirmed = true,
             Permissions = []
         };
+        user.UsernameNormalized = user.Username.ToLower();
+        user.EmailNormalized = user.Email.ToLower();
+        return user;
     }
 }

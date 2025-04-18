@@ -16,7 +16,7 @@ public static class RandomUtil
         var sb = new StringBuilder();
         foreach (var b in bytes)
             sb.Append(b.ToString("x2"));
-        return sb.ToString();
+        return sb.ToString()[..length];
     }
 
     public static string GetPrefixedRandomHexString(string prefix, int hexLength)
