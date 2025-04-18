@@ -3,13 +3,6 @@
 using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Dev;
-using Bingo.Api.Core.Features.Events;
-using Bingo.Api.Core.Features.Events.Arguments;
-using Bingo.Api.Core.Features.Players;
-using Bingo.Api.Core.Features.Players.Arguments;
-using Bingo.Api.Core.Features.Teams;
-using Bingo.Api.Core.Features.Teams.Arguments;
-using Bingo.Api.Shared;
 using Bingo.Api.Web.Events;
 using Bingo.Api.Web.Generic.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -21,11 +14,7 @@ namespace Bingo.Api.Web.Dev;
 public class DevController(
     IPermissionServiceHelper permissionServiceHelper,
     IDevService devService,
-    IEventService eventService,
-    ITeamService teamService,
-    IPlayerService playerService,
     IMapper mapper,
-    ILogger<DevController> logger,
     IHostEnvironment environment)
     : ControllerBase
 {
@@ -48,30 +37,9 @@ public class DevController(
     public async Task<ActionResult<EventResponse>> SeedAsync([FromServices] IdentityContainer identityContainer)
     {
         EnsureHasAccess(identityContainer.Identity, ["dev.seed"]);
+
         var user = (identityContainer.Identity as UserIdentity)!.User;
-
-        logger.LogInformation("Seeding an event");
-
-        var newEvent = await eventService.CreateEventAsync(user, new EventCreateArguments
-        {
-            Name = RandomUtil.GetPrefixedRandomHexString("EventName_", Random.Shared.Next(5, 20))
-        });
-        for (var i = 0; i < Random.Shared.Next(1, 10); i++)
-        {
-            var newTeam = await teamService.CreateTeamAsync(newEvent.Id, new TeamCreateArguments
-            {
-                Name = RandomUtil.GetPrefixedRandomHexString("TeamName_", Random.Shared.Next(5, 20))
-            });
-            for (var j = 0; j < Random.Shared.Next(1, 20); j++)
-            {
-                var newPlayer = await playerService.CreatePlayerAsync(new PlayerCreateArguments
-                {
-                    Name = RandomUtil.GetPrefixedRandomHexString("PlayerName_", Random.Shared.Next(5, 20)),
-                    TeamIds = [newTeam.Id]
-                });
-            }
-        }
-
+        var newEvent = await devService.SeedEventAsync(user);
         return StatusCode(StatusCodes.Status201Created, mapper.Map<EventResponse>(newEvent));
     }
 
