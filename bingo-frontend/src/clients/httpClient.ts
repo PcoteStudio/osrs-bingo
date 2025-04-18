@@ -59,6 +59,16 @@ export class HttpClient {
     await this.httpPipeline.send(message);
     return this.httpMessageResponseUtil.parseJsonResponse<Response>(message);
   }
+
+    async dropDatabase(): Promise<Response> {
+    const message = new HttpMessageBuilder()
+      .withMethod('POST')
+      .withUrl('/api/dev/drop')
+      .build();
+
+    await this.httpPipeline.send(message);
+    return this.httpMessageResponseUtil.parseJsonResponse<Response>(message);
+  }
 }
 
 class AuthenticationHttpPipelinePolicy extends HttpPipelinePolicy {

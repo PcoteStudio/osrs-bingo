@@ -1,5 +1,8 @@
+#if DEBUG || DEVELOPMENT
+
 using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
+using Bingo.Api.Core.Features.Dev;
 using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Events.Arguments;
 using Bingo.Api.Core.Features.Players;
@@ -17,6 +20,7 @@ namespace Bingo.Api.Web.Dev;
 [ApiController]
 public class DevController(
     IPermissionServiceHelper permissionServiceHelper,
+    IDevService devService,
     IEventService eventService,
     ITeamService teamService,
     IPlayerService playerService,
@@ -71,6 +75,19 @@ public class DevController(
         return StatusCode(StatusCodes.Status201Created, mapper.Map<EventResponse>(newEvent));
     }
 
+    [HttpPost("drop")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DropDatabaseAsync([FromServices] IdentityContainer identityContainer)
+    {
+        EnsureHasAccess(identityContainer.Identity, ["dev.drop"]);
+
+        await devService.DropDatabaseAsync();
+        return StatusCode(StatusCodes.Status200OK);
+    }
+
     private void EnsureHasAccess(IIdentity? identity, List<string> permissions)
     {
         if (!environment.IsDevelopment())
@@ -79,3 +96,5 @@ public class DevController(
         permissionServiceHelper.EnsureHasPermissions(identity, permissions);
     }
 }
+
+#endif

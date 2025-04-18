@@ -51,6 +51,13 @@ watch(selectedTheme, (newTheme) => {
           label="Seed"
         />
       </div>
+            <div class="flex flex-col gap-1 w-fit">
+        <label>Drop Database</label>
+        <Button
+          @click="httpClient.dropDatabase()"
+          label="Drop"
+        />
+      </div>
     </div>
   </Dialog>
 </template>

@@ -6,12 +6,26 @@ using Microsoft.Extensions.Logging;
 
 namespace Bingo.Api.Data;
 
+public interface IDbSeeder
+{
+    Task SeedDevUsersAsync();
+}
+
 public class DbSeeder(
-    DbContext dbContext,
+    ApplicationDbContext dbContext,
     IPasswordHasher<UserEntity> passwordHasher,
     IHostEnvironment environment,
-    ILogger logger)
+    ILogger logger) : IDbSeeder
 {
+    public async Task SeedDevUsersAsync()
+    {
+        if (!await dbContext.Set<UserEntity>().AnyAsync())
+        {
+            await CreateDevelopmentUserAsync("admin@local.host", "Admin", "Password1!", ["*"]);
+            await CreateDevelopmentUserAsync("user@local.host", "User", "Password1!", []);
+        }
+    }
+
     private async Task<UserEntity?> CreateDevelopmentUserAsync(string email, string username,
         string password, List<string> permissions)
     {
@@ -32,14 +46,5 @@ public class DbSeeder(
             string.Join(", ", permissions)
         );
         return user;
-    }
-
-    public async Task SeedAsync()
-    {
-        if (!await dbContext.Set<UserEntity>().AnyAsync())
-        {
-            await CreateDevelopmentUserAsync("admin@local.host", "Admin", "Password1!", ["*"]);
-            await CreateDevelopmentUserAsync("user@local.host", "User", "Password1!", []);
-        }
     }
 }

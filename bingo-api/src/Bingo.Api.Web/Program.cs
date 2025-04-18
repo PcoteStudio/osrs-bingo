@@ -17,7 +17,7 @@ public class Program
             scope.ServiceProvider.GetRequiredService<IPasswordHasher<UserEntity>>(),
             scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>(),
             scope.ServiceProvider.GetRequiredService<ILogger>()
-        ).SeedAsync();
+        ).SeedDevUsersAsync();
     }
 
     internal static async Task Main(string[] args)

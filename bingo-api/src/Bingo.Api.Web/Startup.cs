@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Database;
+using Bingo.Api.Core.Features.Dev;
 using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Items;
 using Bingo.Api.Core.Features.Npcs;
@@ -54,6 +55,7 @@ public class Startup
         services.AddAuthenticationWebService();
 
         // Features
+        services.AddDevService();
         services.AddUserService();
         services.AddEventService();
         services.AddEventWebService();

@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
                 .Value.ConnectionString
                 .Replace("{pathToData}", dataPath);
             options.UseSqlite(connectionString);
-        });
+        }, optionsLifetime: ServiceLifetime.Singleton);
+        services.AddDbContextFactory<ApplicationDbContext>();
     }
 }
