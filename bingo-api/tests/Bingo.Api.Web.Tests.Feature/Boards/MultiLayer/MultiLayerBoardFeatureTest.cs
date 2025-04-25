@@ -4,9 +4,9 @@ using Bingo.Api.TestUtils.TestDataSetups;
 using Microsoft.AspNetCore.Hosting;
 using NUnit.Framework;
 
-namespace Bingo.Api.Web.Tests.Feature.Users;
+namespace Bingo.Api.Web.Tests.Feature.Boards.MultiLayer;
 
-public partial class UsersFeatureTest
+public partial class MultiLayerBoardFeatureTest
 {
     private Uri _baseUrl;
     private HttpClient _client;

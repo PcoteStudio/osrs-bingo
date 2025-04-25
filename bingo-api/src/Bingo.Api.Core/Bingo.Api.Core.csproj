@@ -22,6 +22,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Features\Boards\Generic\"/>
+        <Folder Include="Features\Boards\SnakesAndLadders\"/>
         <Folder Include="Features\Users\Arguments\"/>
     </ItemGroup>
 </Project>

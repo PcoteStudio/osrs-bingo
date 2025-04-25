@@ -19,13 +19,13 @@ public partial class AuthenticationFeatureTest
     {
         _host = TestSetupUtil.GetStartedWebHost();
         _baseUrl = TestSetupUtil.GetRequiredHostUri(_host);
+        _testDataSetup = TestSetupUtil.GetTestDataSetup(BingoProjects.Web);
     }
 
     [SetUp]
     public void BeforeEach()
     {
         _dbContext = TestSetupUtil.GetDbContext(BingoProjects.Web);
-        _testDataSetup = TestSetupUtil.GetTestDataSetup(BingoProjects.Web);
         _client = new HttpClient();
     }
 

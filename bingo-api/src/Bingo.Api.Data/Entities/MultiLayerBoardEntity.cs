@@ -9,6 +9,7 @@ public class MultiLayerBoardEntity : BoardEntity
     private List<TileEntity>? _tiles;
     public int Width { get; set; }
     public int Height { get; set; }
+    public int Depth { get; set; }
 
     [ForeignKey("MultiLayerBoardId")]
     public List<TileEntity> Tiles

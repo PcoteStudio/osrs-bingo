@@ -12,6 +12,10 @@ public class EventEntity
 
     public int Id { get; set; }
 
+    public int? BoardId { get; set; }
+
+    [ForeignKey("EventId")] public BoardEntity? Board { get; set; }
+
     [MaxLength(255)] public string Name { get; set; } = string.Empty;
 
     public DateTimeOffset? StartTime { get; set; }
