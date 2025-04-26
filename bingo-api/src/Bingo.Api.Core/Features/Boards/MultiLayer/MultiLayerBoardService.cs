@@ -11,6 +11,7 @@ public interface IMultiLayerBoardService
 
 public class MultiLayerBoardService(
     IMultiLayerBoardFactory mlBoardFactory,
+    IMultiLayerBoardUtil boardUtil,
     IMultiLayerBoardRepository mlBoardRepository,
     ApplicationDbContext dbContext
 ) : IMultiLayerBoardService
@@ -19,6 +20,7 @@ public class MultiLayerBoardService(
         MultiLayerBoardCreateArguments args)
     {
         var mlBoard = mlBoardFactory.Create(eventId, args);
+        boardUtil.CreateBoardLayers(mlBoard);
         mlBoardRepository.Add(mlBoard);
         await dbContext.SaveChangesAsync();
         return mlBoard;

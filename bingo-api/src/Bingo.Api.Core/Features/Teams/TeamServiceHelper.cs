@@ -1,7 +1,6 @@
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Authentication.Exception;
 using Bingo.Api.Core.Features.Teams.Exceptions;
-using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Core.Features.Users.Exceptions;
 using Bingo.Api.Data.Entities;
 
@@ -15,8 +14,7 @@ public interface ITeamServiceHelper
 }
 
 public class TeamServiceHelper(
-    ITeamRepository teamRepository,
-    IUserService userService
+    ITeamRepository teamRepository
 ) : ITeamServiceHelper
 {
     public async Task EnsureIsTeamAdminAsync(IIdentity? identity, int teamId)

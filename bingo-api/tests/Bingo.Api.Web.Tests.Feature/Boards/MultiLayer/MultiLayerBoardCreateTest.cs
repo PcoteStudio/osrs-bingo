@@ -34,13 +34,14 @@ public partial class MultiLayerBoardFeatureTest
             JsonSerializer.Deserialize<MultiLayerBoardResponse>(responseContent, JsonSerializerOptions.Web);
         returnedBoard.Should().NotBeNull();
         var savedBoard = _dbContext.MultiLayerBoards
-            .Include(b => b.Tiles)
+            .Include(b => b.Layers)
             .FirstOrDefault(b => b.Id == returnedBoard.Id);
         savedBoard.Should().NotBeNull();
         returnedBoard.Id.Should().Be(savedBoard.Id);
         returnedBoard.Width.Should().Be(savedBoard.Width);
         returnedBoard.Height.Should().Be(savedBoard.Height);
         returnedBoard.Depth.Should().Be(savedBoard.Depth);
-        returnedBoard.Tiles.Count.Should().Be(savedBoard.Tiles.Count);
+        returnedBoard.Layers.Count.Should().Be(savedBoard.Layers.Count);
+        returnedBoard.Layers.Count.Should().Be(args.Depth);
     }
 }

@@ -18,8 +18,7 @@ public class TeamServiceHelperUnitTest
         _teamRepositoryMock = new Mock<ITeamRepository>(MockBehavior.Strict);
         _userServiceMock = new Mock<IUserService>(MockBehavior.Strict);
         _teamServiceHelperMock = new Mock<TeamServiceHelper>(
-            _teamRepositoryMock.Object,
-            _userServiceMock.Object
+            _teamRepositoryMock.Object
         ) { CallBase = true };
         _teamServiceHelper = _teamServiceHelperMock.Object;
     }

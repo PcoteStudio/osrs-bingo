@@ -6,6 +6,6 @@ namespace Bingo.Api.Web.Drops;
 [Serializable]
 public class DropResponse : DropShortResponse
 {
-    public NpcShortResponse Npc { get; set; }
-    public ItemShortResponse Item { get; set; }
+    public required NpcShortResponse Npc { get; set; }
+    public required ItemShortResponse Item { get; set; }
 }

@@ -9,5 +9,7 @@ public class MultiLayerBoardMappingProfile : Profile
     {
         CreateMap<MultiLayerBoardEntity, MultiLayerBoardResponse>();
         CreateMap<MultiLayerBoardEntity, MultiLayerBoardShortResponse>();
+        CreateMap<BoardLayerEntity, BoardLayerResponse>();
+        CreateMap<BoardLayerEntity, BoardLayerShortResponse>();
     }
 }

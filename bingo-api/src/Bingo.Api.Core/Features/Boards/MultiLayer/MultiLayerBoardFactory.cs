@@ -18,7 +18,7 @@ public class MultiLayerBoardFactory : IMultiLayerBoardFactory
             Width = args.Width,
             Height = args.Height,
             Depth = args.Depth,
-            Tiles = []
+            Layers = []
         };
     }
 }

@@ -9,6 +9,8 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddScoped<IMultiLayerBoardService, MultiLayerBoardService>();
         services.TryAddScoped<IMultiLayerBoardRepository, MultiLayerBoardRepository>();
+        services.TryAddSingleton<IMultiLayerBoardUtil, MultiLayerBoardUtil>();
         services.TryAddSingleton<IMultiLayerBoardFactory, MultiLayerBoardFactory>();
+        services.TryAddSingleton<IBoardLayerFactory, BoardLayerFactory>();
     }
 }

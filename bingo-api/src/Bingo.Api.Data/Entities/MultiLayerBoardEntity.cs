@@ -6,15 +6,15 @@ namespace Bingo.Api.Data.Entities;
 [Table("MultiLayerBoards")]
 public class MultiLayerBoardEntity : BoardEntity
 {
-    private List<TileEntity>? _tiles;
+    private List<BoardLayerEntity>? _layers;
     public int Width { get; set; }
     public int Height { get; set; }
     public int Depth { get; set; }
 
-    [ForeignKey("MultiLayerBoardId")]
-    public List<TileEntity> Tiles
+    [ForeignKey("BoardId")]
+    public List<BoardLayerEntity> Layers
     {
-        get => _tiles.ThrowIfNotLoaded();
-        set => _tiles = value;
+        get => _layers.ThrowIfNotLoaded();
+        set => _layers = value;
     }
 }
