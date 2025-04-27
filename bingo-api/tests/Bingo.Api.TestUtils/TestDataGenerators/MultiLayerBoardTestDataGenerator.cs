@@ -8,9 +8,24 @@ public static partial class TestDataGenerator
     {
         return new MultiLayerBoardCreateArguments
         {
-            Width = Random.Shared.Next(1, 10),
-            Height = Random.Shared.Next(1, 10),
-            Depth = Random.Shared.Next(2, 5)
+            Width = GenerateMultiLayerBoardWidth(),
+            Height = GenerateMultiLayerBoardHeight(),
+            Depth = GenerateMultiLayerBoardDepth()
         };
+    }
+
+    public static int GenerateMultiLayerBoardHeight()
+    {
+        return Random.Shared.Next(1, 10);
+    }
+
+    public static int GenerateMultiLayerBoardWidth()
+    {
+        return Random.Shared.Next(1, 10);
+    }
+
+    public static int GenerateMultiLayerBoardDepth()
+    {
+        return Random.Shared.Next(2, 6);
     }
 }
