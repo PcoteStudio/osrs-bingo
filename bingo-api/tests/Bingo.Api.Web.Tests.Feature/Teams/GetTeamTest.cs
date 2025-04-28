@@ -28,9 +28,9 @@ public partial class TeamFeatureTest
         var responseContent = await response.Content.ReadAsStringAsync();
         var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
         returnedTeam.Should().NotBeNull();
+        returnedTeam.Id.Should().Be(teamEntity.Id);
         returnedTeam.Name.Should().Be(teamEntity.Name);
         returnedTeam.EventId.Should().Be(eventEntity.Id);
-        returnedTeam.Id.Should().Be(teamEntity.Id);
     }
 
     [Test]

@@ -35,7 +35,7 @@ public partial class TeamFeatureTest
         var savedTeam = _dbContext.Teams.FirstOrDefault(t => t.Id == returnedTeam.Id);
         savedTeam.Should().NotBeNull();
         returnedTeam.Id.Should().Be(savedTeam.Id);
-        returnedTeam.Name.Should().Be(savedTeam.Name);
+        returnedTeam.Name.Should().Be(savedTeam.Name).And.Be(args.Name);
     }
 
     [Test]

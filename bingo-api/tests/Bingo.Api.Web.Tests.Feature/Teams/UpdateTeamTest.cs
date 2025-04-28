@@ -32,17 +32,12 @@ public partial class TeamFeatureTest
         // Assert response content
         var responseContent = await response.Content.ReadAsStringAsync();
         var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
-        returnedTeam.Should().NotBeNull();
-        returnedTeam.Name.Should().Be(args.Name);
-        returnedTeam.Id.Should().Be(originalTeam.Id);
-        returnedTeam.EventId.Should().Be(originalTeam.EventId);
-
-        // Assert db content
         var updatedTeam = await _dbContext.Teams.FindAsync(originalTeam.Id);
+        returnedTeam.Should().NotBeNull();
         updatedTeam.Should().NotBeNull();
-        updatedTeam.Name.Should().Be(returnedTeam.Name);
-        updatedTeam.Id.Should().Be(returnedTeam.Id);
-        updatedTeam.EventId.Should().Be(returnedTeam.EventId);
+        returnedTeam.Name.Should().Be(updatedTeam.Name).And.Be(args.Name);
+        returnedTeam.Id.Should().Be(updatedTeam.Id).And.Be(originalTeam.Id);
+        returnedTeam.EventId.Should().Be(updatedTeam.EventId).And.Be(originalTeam.EventId);
     }
 
     [Test]

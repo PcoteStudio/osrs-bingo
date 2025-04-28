@@ -35,20 +35,18 @@ public partial class TeamFeatureTest
         // Assert response content
         var responseContent = await response.Content.ReadAsStringAsync();
         var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
-        returnedTeam.Should().NotBeNull();
-        returnedTeam.Players.Count.Should().Be(originalPlayers.Count - 1);
-        returnedTeam.Players.Select(p => p.Name).Should()
-            .BeEquivalentTo(originalPlayers.Select(p => p.Name).Except([player.Name]));
-
-        // Assert db content
         var updatedTeam = await _dbContext.Teams
             .Include(x => x.Players)
             .FirstAsync(x => x.Id == originalTeam.Id);
+        returnedTeam.Should().NotBeNull();
         updatedTeam.Should().NotBeNull();
-        updatedTeam.Name.Should().Be(returnedTeam.Name);
-        updatedTeam.Id.Should().Be(returnedTeam.Id);
-        updatedTeam.EventId.Should().Be(returnedTeam.EventId);
-        updatedTeam.Players.Select(p => p.Name).Should().BeEquivalentTo(returnedTeam.Players.Select(p => p.Name));
+        returnedTeam.Players.Count.Should().Be(originalPlayers.Count - 1);
+        returnedTeam.Players.Select(p => p.Name).Should()
+            .BeEquivalentTo(originalPlayers.Select(p => p.Name).Except([player.Name]));
+        returnedTeam.Id.Should().Be(updatedTeam.Id).And.Be(originalTeam.Id);
+        returnedTeam.Name.Should().Be(updatedTeam.Name).And.Be(originalTeam.Name);
+        returnedTeam.EventId.Should().Be(updatedTeam.EventId).And.Be(originalTeam.EventId);
+        returnedTeam.Players.Select(p => p.Name).Should().BeEquivalentTo(updatedTeam.Players.Select(p => p.Name));
     }
 
     [Test]

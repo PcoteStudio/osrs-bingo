@@ -19,7 +19,8 @@ public partial class TeamFeatureTest
             .AddUser(out var userWithSecrets)
             .AddPermissions("team.update")
             .AddEvent()
-            .AddTeam(out var originalTeam);
+            .AddTeam(out var originalTeam)
+            .AddPlayers(Random.Shared.Next(3, 10), out var originalPlayers);
         var args = TestDataGenerator.GenerateTeamPlayersArguments(5);
 
         // Act
@@ -34,19 +35,18 @@ public partial class TeamFeatureTest
         // Assert response content
         var responseContent = await response.Content.ReadAsStringAsync();
         var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
-        returnedTeam.Should().NotBeNull();
-        returnedTeam.Players.Count.Should().Be(args.PlayerNames.Count);
-        returnedTeam.Players.Select(p => p.Name).Should().BeEquivalentTo(args.PlayerNames);
-
-        // Assert db content
         var updatedTeam = await _dbContext.Teams
             .Include(x => x.Players)
             .FirstAsync(x => x.Id == originalTeam.Id);
+        var expectedPlayerNames = args.PlayerNames.Concat(originalPlayers.Select(p => p.Name)).ToList();
+        returnedTeam.Should().NotBeNull();
         updatedTeam.Should().NotBeNull();
-        updatedTeam.Name.Should().Be(returnedTeam.Name);
-        updatedTeam.Id.Should().Be(returnedTeam.Id);
-        updatedTeam.EventId.Should().Be(returnedTeam.EventId);
-        updatedTeam.Players.Select(p => p.Name).Should().BeEquivalentTo(args.PlayerNames);
+        returnedTeam.Players.Count.Should().Be(expectedPlayerNames.Count);
+        returnedTeam.Players.Select(p => p.Name).Should().BeEquivalentTo(expectedPlayerNames);
+        returnedTeam.Id.Should().Be(updatedTeam.Id).And.Be(originalTeam.Id);
+        returnedTeam.Name.Should().Be(updatedTeam.Name).And.Be(originalTeam.Name);
+        returnedTeam.EventId.Should().Be(updatedTeam.EventId).And.Be(originalTeam.EventId);
+        returnedTeam.Players.Select(p => p.Name).Should().BeEquivalentTo(updatedTeam.Players.Select(p => p.Name));
     }
 
     [Test]
