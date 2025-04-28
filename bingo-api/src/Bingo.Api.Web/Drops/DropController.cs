@@ -50,9 +50,10 @@ public class DropController(
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<DropResponse>> CreateDropAsync(
         [FromServices] IdentityContainer identityContainer,
         [FromBody] DropCreateArguments args)
@@ -67,10 +68,10 @@ public class DropController(
         {
             switch (ex)
             {
-                case DropAlreadyExistsException:
-                    throw new HttpException(StatusCodes.Status400BadRequest, ex);
                 case ItemNotFoundException or NpcNotFoundException:
                     throw new HttpException(StatusCodes.Status404NotFound, ex);
+                case DropAlreadyExistsException:
+                    throw new HttpException(StatusCodes.Status409Conflict, ex);
                 default:
                     throw;
             }
@@ -82,6 +83,7 @@ public class DropController(
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<DropResponse>> UpdateDropAsync(
         [FromServices] IdentityContainer identityContainer,
         [FromRoute] int dropId,
@@ -97,8 +99,10 @@ public class DropController(
         {
             switch (ex)
             {
-                case DropNotFoundException:
+                case DropNotFoundException or ItemNotFoundException or NpcNotFoundException:
                     throw new HttpException(StatusCodes.Status404NotFound, ex);
+                case DropAlreadyExistsException:
+                    throw new HttpException(StatusCodes.Status409Conflict, ex);
                 default:
                     throw;
             }

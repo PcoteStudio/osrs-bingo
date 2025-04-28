@@ -45,22 +45,22 @@ public static partial class TestDataGenerator
         return Enumerable.Range(0, count).Select(_ => GenerateDropResponse()).ToList();
     }
 
-    public static DropCreateArguments GenerateDropCreateArguments()
+    public static DropCreateArguments GenerateDropCreateArguments(int? npcId = null, int? itemId = null)
     {
         return new DropCreateArguments
         {
-            NpcId = Random.Shared.Next(),
-            ItemId = Random.Shared.Next(),
+            NpcId = npcId ?? Random.Shared.Next(),
+            ItemId = itemId ?? Random.Shared.Next(),
             DropRate = GenerateDropRate()
         };
     }
 
-    public static DropUpdateArguments GenerateDropUpdateArguments()
+    public static DropUpdateArguments GenerateDropUpdateArguments(int? npcId = null, int? itemId = null)
     {
         return new DropUpdateArguments
         {
-            NpcId = Random.Shared.Next(),
-            ItemId = Random.Shared.Next(),
+            NpcId = npcId ?? Random.Shared.Next(),
+            ItemId = itemId ?? Random.Shared.Next(),
             DropRate = GenerateDropRate()
         };
     }

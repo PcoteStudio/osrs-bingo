@@ -57,6 +57,7 @@ public class DropService(
     public async Task<DropEntity> UpdateDropAsync(int dropId, DropUpdateArguments args)
     {
         var drop = await dropServiceHelper.GetRequiredCompleteByIdAsync(dropId);
+        await dropServiceHelper.EnsureDropDoesNotExistAsync(args.NpcId, args.ItemId);
 
         var npc = await npcServiceHelper.GetRequiredCompleteByIdAsync(args.NpcId);
         var item = await itemServiceHelper.GetRequiredCompleteByIdAsync(args.ItemId);

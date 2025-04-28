@@ -11,23 +11,26 @@ namespace Bingo.Api.Web.Tests.Feature.Drops;
 public partial class DropFeatureTest
 {
     [Test]
-    public async Task CreateDrop_ShouldReturnTheCreatedDrop()
+    public async Task UpdateDropAsync_ShouldReturnTheUpdatedDrop()
     {
         // Arrange
         _testDataSetup
             .AddUser(out var userWithSecrets)
-            .AddPermissions("drop.create")
+            .AddPermissions("drop.update")
+            .AddNpc()
+            .AddItem()
+            .AddDrop(out var drop)
             .AddNpc(out var npc)
             .AddItem(out var item);
-        var args = TestDataGenerator.GenerateDropCreateArguments(npc.Id, item.Id);
+        var args = TestDataGenerator.GenerateDropUpdateArguments(npc.Id, item.Id);
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/drops"),
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/drops/{drop.Id}"),
             HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
-        await Expect.StatusCodeFromResponse(HttpStatusCode.Created, response);
+        await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
 
         // Assert response content
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -42,19 +45,18 @@ public partial class DropFeatureTest
     }
 
     [Test]
-    public async Task CreateDrop_ShouldReturnNotFoundIfNpcDoesntExist()
+    public async Task UpdateDropAsync_ShouldReturnNotFoundIfDropDoesNotExist()
     {
         // Arrange
         _testDataSetup
             .AddUser(out var userWithSecrets)
-            .AddPermissions("drop.create")
-            .AddNpc(out var npc)
-            .AddItem(out var item);
-        var args = TestDataGenerator.GenerateDropCreateArguments(npc.Id * 10_000, item.Id);
+            .AddPermissions("drop.update");
+        const int dropId = 1_000_000;
+        var args = TestDataGenerator.GenerateDropUpdateArguments();
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/drops"),
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/drops/{dropId}"),
             HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
@@ -65,19 +67,22 @@ public partial class DropFeatureTest
     }
 
     [Test]
-    public async Task CreateDrop_ShouldReturnNotFoundIfItemDoesntExist()
+    public async Task UpdateDropAsync_ShouldReturnNotFoundIfNpcDoesNotExist()
     {
         // Arrange
         _testDataSetup
             .AddUser(out var userWithSecrets)
-            .AddPermissions("drop.create")
+            .AddPermissions("drop.update")
+            .AddNpc()
+            .AddItem()
+            .AddDrop(out var drop)
             .AddNpc(out var npc)
             .AddItem(out var item);
-        var args = TestDataGenerator.GenerateDropCreateArguments(npc.Id, item.Id * 10_000);
+        var args = TestDataGenerator.GenerateDropUpdateArguments(npc.Id * 10_000, item.Id);
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/drops"),
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/drops/{drop.Id}"),
             HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
@@ -88,20 +93,49 @@ public partial class DropFeatureTest
     }
 
     [Test]
-    public async Task CreateDrop_ShouldReturnConflictIfDropAlreadyExists()
+    public async Task UpdateDropAsync_ShouldReturnNotFoundIfItemDoesNotExist()
     {
         // Arrange
         _testDataSetup
             .AddUser(out var userWithSecrets)
-            .AddPermissions("drop.create")
+            .AddPermissions("drop.update")
+            .AddNpc()
+            .AddItem()
+            .AddDrop(out var drop)
             .AddNpc(out var npc)
-            .AddItem(out var item)
-            .AddDrop();
-        var args = TestDataGenerator.GenerateDropCreateArguments(npc.Id, item.Id);
+            .AddItem(out var item);
+        var args = TestDataGenerator.GenerateDropUpdateArguments(npc.Id, item.Id * 10_000);
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/drops"),
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/drops/{drop.Id}"),
+            HttpHelper.BuildJsonStringContent(args));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.NotFound, response);
+
+        // Assert response content
+        await Expect.ResponseContentToMatchStatusCode(response);
+    }
+
+    [Test]
+    public async Task UpdateDropAsync_ShouldReturnConflictIfDropAlreadyExists()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddPermissions("drop.update")
+            .AddNpc(out var item)
+            .AddItem(out var npc)
+            .AddDrop()
+            .AddNpc()
+            .AddItem()
+            .AddDrop(out var drop);
+        var args = TestDataGenerator.GenerateDropUpdateArguments(npc.Id, item.Id);
+
+        // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/drops/{drop.Id}"),
             HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
@@ -112,18 +146,21 @@ public partial class DropFeatureTest
     }
 
     [Test]
-    public async Task CreateDrop_ShouldReturnForbiddenIfMissingPermissions()
+    public async Task UpdateDropAsync_ShouldReturnForbiddenIfMissingPermissions()
     {
         // Arrange
         _testDataSetup
             .AddUser(out var userWithSecrets)
+            .AddNpc()
+            .AddItem()
+            .AddDrop(out var drop)
             .AddNpc(out var npc)
             .AddItem(out var item);
-        var args = TestDataGenerator.GenerateDropCreateArguments(npc.Id, item.Id);
+        var args = TestDataGenerator.GenerateDropUpdateArguments(npc.Id, item.Id);
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/drops"),
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/drops/{drop.Id}"),
             HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
@@ -134,18 +171,20 @@ public partial class DropFeatureTest
     }
 
     [Test]
-    public async Task CreateDrop_ShouldReturnUnauthorizedIfNotLoggedIn()
+    public async Task UpdateDropAsync_ShouldReturnIfNotLoggedIn()
     {
         // Arrange
         _testDataSetup
             .AddUser()
-            .AddPermissions("drop.create")
+            .AddNpc()
+            .AddItem()
+            .AddDrop(out var drop)
             .AddNpc(out var npc)
             .AddItem(out var item);
-        var args = TestDataGenerator.GenerateDropCreateArguments(npc.Id, item.Id);
+        var args = TestDataGenerator.GenerateDropUpdateArguments(npc.Id, item.Id);
 
         // Act
-        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/drops"),
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/drops/{drop.Id}"),
             HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status

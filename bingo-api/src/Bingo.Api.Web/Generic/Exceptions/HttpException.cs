@@ -39,6 +39,8 @@ public class HttpException : Exception
                 return "You are not allowed to access this resource";
             case StatusCodes.Status404NotFound:
                 return "The requested resource was not found";
+            case StatusCodes.Status409Conflict:
+                return "There was a conflict with the resource";
             default:
                 return "An error occurred";
         }

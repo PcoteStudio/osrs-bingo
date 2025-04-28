@@ -25,6 +25,8 @@ public static class HttpHelper
                 return BuildJsonResponse((int)statusCode, "You are not allowed to access this resource");
             case HttpStatusCode.NotFound:
                 return BuildJsonResponse((int)statusCode, "The requested resource was not found");
+            case HttpStatusCode.Conflict:
+                return BuildJsonResponse((int)statusCode, "There was a conflict with the resource");
             default:
                 throw new Exception("Not implemented");
         }
