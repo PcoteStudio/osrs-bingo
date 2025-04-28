@@ -9,6 +9,7 @@ public interface IPlayerRepository : IGenericRepository<PlayerEntity>
 {
     Task<List<PlayerEntity>> GetAllCompleteAsync();
     Task<PlayerEntity?> GetCompleteByIdAsync(int id);
+    Task<PlayerEntity?> GetCompleteByNameAsync(string name);
     Task<PlayerEntity?> GetByNameAsync(string name);
     Task<List<PlayerEntity>> GetByNamesAsync(IEnumerable<string> playerNames);
 }
@@ -20,6 +21,7 @@ public class PlayerRepository(ApplicationDbContext dbContext)
     {
         return DbContext.Players
             .Include(p => p.Teams)
+            .ThenInclude(t => t.Event)
             .ToListAsync();
     }
 
@@ -27,7 +29,16 @@ public class PlayerRepository(ApplicationDbContext dbContext)
     {
         return DbContext.Players
             .Include(p => p.Teams)
+            .ThenInclude(t => t.Event)
             .FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    public Task<PlayerEntity?> GetCompleteByNameAsync(string name)
+    {
+        return DbContext.Players
+            .Include(p => p.Teams)
+            .ThenInclude(t => t.Event)
+            .FirstOrDefaultAsync(p => p.Name == name);
     }
 
     public Task<PlayerEntity?> GetByNameAsync(string name)

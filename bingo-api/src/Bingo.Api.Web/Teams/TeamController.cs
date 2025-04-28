@@ -2,6 +2,7 @@ using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Events.Exceptions;
+using Bingo.Api.Core.Features.Players.Exceptions;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Teams.Exceptions;
@@ -66,6 +67,28 @@ public class TeamController(
             switch (ex)
             {
                 case TeamNotFoundException:
+                    throw new HttpException(StatusCodes.Status404NotFound, ex);
+                default:
+                    throw;
+            }
+        }
+    }
+
+    [HttpGet("/api/players/{playerId:min(0)}/teams")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<TeamResponse>> GetPlayerTeamsAsync([FromRoute] int playerId)
+    {
+        try
+        {
+            var teams = await teamService.GetPlayerTeamsAsync(playerId);
+            return StatusCode(StatusCodes.Status200OK, mapper.Map<List<TeamResponse>>(teams));
+        }
+        catch (Exception ex)
+        {
+            switch (ex)
+            {
+                case PlayerNotFoundException:
                     throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;

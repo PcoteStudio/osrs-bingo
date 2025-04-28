@@ -1,6 +1,17 @@
 namespace Bingo.Api.Core.Features.Players.Exceptions;
 
-public class PlayerNotFoundException(int playerId) : Exception($"Player {playerId} not found.")
+public class PlayerNotFoundException : Exception
 {
-    public int PlayerId { get; } = playerId;
+    public PlayerNotFoundException(int playerId) : base($"Player {playerId} not found.")
+    {
+        PlayerId = playerId;
+    }
+
+    public PlayerNotFoundException(string playerName) : base($"Player {playerName} not found.")
+    {
+        PlayerName = playerName;
+    }
+
+    public int? PlayerId { get; }
+    public string? PlayerName { get; }
 }

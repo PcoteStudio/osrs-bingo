@@ -28,8 +28,4 @@
         <ProjectReference Include="..\Bingo.Api.TestUtils\Bingo.Api.TestUtils.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Features\Players\"/>
-    </ItemGroup>
-
 </Project>

@@ -9,6 +9,7 @@ public interface ITeamService
 {
     Task<TeamEntity> AddTeamPlayersAsync(int teamId, TeamPlayersArguments args);
     Task<TeamEntity> CreateTeamAsync(int eventId, TeamCreateArguments args);
+    Task<List<TeamEntity>> GetPlayerTeamsAsync(int playerId);
     Task<TeamEntity> UpdateTeamAsync(int teamId, TeamUpdateArguments args);
     Task<TeamEntity> RemoveTeamPlayerAsync(int teamId, string playerName);
     Task<TeamEntity> UpdateTeamPlayersAsync(int teamId, TeamPlayersArguments args);
@@ -20,26 +21,10 @@ public class TeamService(
     ITeamUtil teamUtil,
     ITeamServiceHelper teamServiceHelper,
     IPlayerService playerService,
+    IPlayerServiceHelper playerServiceHelper,
     ApplicationDbContext dbContext
 ) : ITeamService
 {
-    public async Task<TeamEntity> CreateTeamAsync(int eventId, TeamCreateArguments args)
-    {
-        var team = teamFactory.Create(eventId, args);
-        teamRepository.Add(team);
-        await dbContext.SaveChangesAsync();
-        return team;
-    }
-
-    public async Task<TeamEntity> UpdateTeamAsync(int teamId, TeamUpdateArguments args)
-    {
-        var team = await teamServiceHelper.GetRequiredCompleteAsync(teamId);
-        teamUtil.UpdateTeam(team, args);
-        dbContext.Update(team);
-        await dbContext.SaveChangesAsync();
-        return team;
-    }
-
     public async Task<TeamEntity> AddTeamPlayersAsync(int teamId, TeamPlayersArguments args)
     {
         var team = await teamServiceHelper.GetRequiredCompleteAsync(teamId);
@@ -48,6 +33,29 @@ public class TeamService(
             .Where(newPlayer => team.Players
                 .All(teamPlayer => newPlayer.Id != teamPlayer.Id));
         team.Players.AddRange(newPlayers);
+        dbContext.Update(team);
+        await dbContext.SaveChangesAsync();
+        return team;
+    }
+
+    public async Task<TeamEntity> CreateTeamAsync(int eventId, TeamCreateArguments args)
+    {
+        var team = teamFactory.Create(eventId, args);
+        teamRepository.Add(team);
+        await dbContext.SaveChangesAsync();
+        return team;
+    }
+
+    public async Task<List<TeamEntity>> GetPlayerTeamsAsync(int playerId)
+    {
+        var player = await playerServiceHelper.GetRequiredCompletePlayerAsync(playerId);
+        return player.Teams;
+    }
+
+    public async Task<TeamEntity> UpdateTeamAsync(int teamId, TeamUpdateArguments args)
+    {
+        var team = await teamServiceHelper.GetRequiredCompleteAsync(teamId);
+        teamUtil.UpdateTeam(team, args);
         dbContext.Update(team);
         await dbContext.SaveChangesAsync();
         return team;

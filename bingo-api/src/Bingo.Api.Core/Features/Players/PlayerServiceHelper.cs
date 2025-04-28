@@ -6,7 +6,8 @@ namespace Bingo.Api.Core.Features.Players;
 public interface IPlayerServiceHelper
 {
     Task EnsurePlayerDoesNotExistByNameAsync(string name);
-    Task<PlayerEntity> GetRequiredCompletePlayerAsync(int teamId);
+    Task<PlayerEntity> GetRequiredCompletePlayerAsync(int playerId);
+    Task<PlayerEntity> GetRequiredCompletePlayerByNameAsync(string name);
 }
 
 public class PlayerServiceHelper(
@@ -19,10 +20,17 @@ public class PlayerServiceHelper(
         if (player is not null) throw new PlayerAlreadyExistsException(player.Name);
     }
 
-    public virtual async Task<PlayerEntity> GetRequiredCompletePlayerAsync(int teamId)
+    public virtual async Task<PlayerEntity> GetRequiredCompletePlayerAsync(int playerId)
     {
-        var player = await playerRepository.GetCompleteByIdAsync(teamId);
-        if (player is null) throw new PlayerNotFoundException(teamId);
+        var player = await playerRepository.GetCompleteByIdAsync(playerId);
+        if (player is null) throw new PlayerNotFoundException(playerId);
+        return player;
+    }
+
+    public virtual async Task<PlayerEntity> GetRequiredCompletePlayerByNameAsync(string name)
+    {
+        var player = await playerRepository.GetCompleteByNameAsync(name);
+        if (player is null) throw new PlayerNotFoundException(name);
         return player;
     }
 }
