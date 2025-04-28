@@ -41,7 +41,8 @@ public partial class TestDataSetup
             Npc = npc,
             ItemId = item.Id,
             Item = item,
-            DropRate = TestDataGenerator.GenerateDropRate()
+            DropRate = TestDataGenerator.GenerateDropRate(),
+            Ehc = TestDataGenerator.GenerateDropEhc()
         };
     }
 }

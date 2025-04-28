@@ -11,6 +11,11 @@ public static partial class TestDataGenerator
         return Random.Shared.NextDouble() * 10_000;
     }
 
+    public static double GenerateDropEhc()
+    {
+        return Random.Shared.NextDouble() * 100;
+    }
+
     public static DropEntity GenerateDropEntity()
     {
         return new DropEntity
@@ -18,7 +23,8 @@ public static partial class TestDataGenerator
             Id = Random.Shared.Next(),
             NpcId = Random.Shared.Next(),
             ItemId = Random.Shared.Next(),
-            DropRate = GenerateDropRate()
+            DropRate = GenerateDropRate(),
+            Ehc = GenerateDropEhc()
         };
     }
 
@@ -35,6 +41,7 @@ public static partial class TestDataGenerator
             NpcId = Random.Shared.Next(),
             ItemId = Random.Shared.Next(),
             DropRate = GenerateDropRate(),
+            Ehc = GenerateDropEhc(),
             Item = GenerateItemResponse(),
             Npc = GenerateNpcResponse()
         };

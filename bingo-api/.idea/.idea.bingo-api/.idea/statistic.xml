@@ -3,6 +3,7 @@
   <component name="Statistic">
     <option name="fileTypes" value="" />
     <option name="fileTypesIncluded" value="cs" />
+    <option name="excludeDotArtifactDirectory" value="true" />
     <option name="excludedDirectories">
       <list>
         <option value="$PROJECT_DIR$/src/Bingo.Api.Data/Migrations" />
