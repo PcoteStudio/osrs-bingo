@@ -14,6 +14,6 @@ public class NpcUtil : INpcUtil
     {
         npc.Name = args.Name;
         npc.Image = args.Image;
-        npc.KillsPerHours = args.KillsPerHours;
+        npc.KillsPerHour = args.KillsPerHour;
     }
 }

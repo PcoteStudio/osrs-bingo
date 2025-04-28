@@ -47,7 +47,7 @@ public class NpcController(
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -59,7 +59,7 @@ public class NpcController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "npc.create");
             var npc = await npcService.CreateNpcAsync(args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<NpcResponse>(npc));
+            return StatusCode(StatusCodes.Status201Created, mapper.Map<NpcResponse>(npc));
         }
         catch (Exception ex)
         {

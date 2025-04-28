@@ -29,7 +29,7 @@ public class StatisticsUtil
     {
         var kc = GetAverageKillCount(drop.DropRate);
         if (kc is null) return null;
-        return kc / drop.Npc.KillsPerHours;
+        return kc / drop.Npc.KillsPerHour;
     }
 
     public double? GetItemEhc(ItemEntity item)

@@ -48,9 +48,9 @@ public class DropUtil : IDropUtil
 
     public double? GetDropEhc(DropEntity drop)
     {
-        if (drop.DropRate is null || drop.Npc.KillsPerHours is null) return null;
+        if (drop.DropRate is null || drop.Npc.KillsPerHour is null) return null;
         var kc = GetAverageKillCount(drop.DropRate.Value);
         if (kc is null) return null;
-        return kc / drop.Npc.KillsPerHours;
+        return kc / drop.Npc.KillsPerHour;
     }
 }

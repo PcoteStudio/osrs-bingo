@@ -47,7 +47,7 @@ public class DropController(
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -59,7 +59,7 @@ public class DropController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "drop.create");
             var drop = await dropService.CreateDropAsync(args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
+            return StatusCode(StatusCodes.Status201Created, mapper.Map<DropResponse>(drop));
         }
         catch (Exception ex)
         {

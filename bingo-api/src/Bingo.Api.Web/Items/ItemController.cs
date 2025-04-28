@@ -47,7 +47,7 @@ public class ItemController(
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -59,7 +59,7 @@ public class ItemController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "item.create");
             var item = await itemService.CreateItemAsync(args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
+            return StatusCode(StatusCodes.Status201Created, mapper.Map<ItemResponse>(item));
         }
         catch (Exception ex)
         {

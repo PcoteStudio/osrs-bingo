@@ -28,7 +28,7 @@ public class StatisticsUtilUnitTest
     [TestCaseSource(nameof(GetKphDropRatesAndExpectedEhc))]
     public void GetDropEhc(double? kpc, double? dropRate, double? expectedEhc)
     {
-        var npc = new NpcEntity { KillsPerHours = kpc };
+        var npc = new NpcEntity { KillsPerHour = kpc };
         var dropInfo = new DropEntity { Npc = npc, DropRate = dropRate };
         var ehc = _statisticsUtil.GetDropEhc(dropInfo);
         ehc.Should().BeApproximately(expectedEhc, 0.000001);
