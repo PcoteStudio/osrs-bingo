@@ -1,5 +1,5 @@
 using Bingo.Api.Data.Entities;
-using Bingo.Api.Shared;
+using Bingo.Api.TestUtils.TestDataGenerators;
 
 namespace Bingo.Api.TestUtils.TestDataSetups;
 
@@ -36,7 +36,7 @@ public partial class TestDataSetup
         return new EventEntity
         {
             Administrators = [GetRequiredLast<UserEntity>()],
-            Name = RandomUtil.GetPrefixedRandomHexString("EName_", 5, 25)
+            Name = TestDataGenerator.GenerateEventName()
         };
     }
 }

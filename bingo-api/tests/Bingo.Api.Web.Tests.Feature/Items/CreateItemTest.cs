@@ -41,32 +41,10 @@ public partial class ItemFeatureTest
     }
 
     [Test]
-    public async Task CreateItem_ShouldReturnForbiddenIfNotTheItemAdmin()
-    {
-        // Arrange
-        _testDataSetup
-            .AddUser(out var userWithSecrets)
-            .AddUser();
-        var args = TestDataGenerator.GenerateItemCreateArguments();
-
-        // Act
-        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/items"),
-            HttpHelper.BuildJsonStringContent(args));
-
-        // Assert response status
-        await Expect.StatusCodeFromResponse(HttpStatusCode.Forbidden, response);
-
-        // Assert response content
-        await Expect.ResponseContentToMatchStatusCode(response);
-    }
-
-    [Test]
     public async Task CreateItem_ShouldReturnForbiddenIfMissingPermissions()
     {
         // Arrange
-        _testDataSetup
-            .AddUser(out var userWithSecrets);
+        _testDataSetup.AddUser(out var userWithSecrets);
         var args = TestDataGenerator.GenerateItemCreateArguments();
 
         // Act
@@ -85,8 +63,7 @@ public partial class ItemFeatureTest
     public async Task CreateItem_ShouldReturnUnauthorizedIfNotLoggedIn()
     {
         // Arrange
-        _testDataSetup
-            .AddUser();
+        _testDataSetup.AddUser();
         var args = TestDataGenerator.GenerateItemCreateArguments();
 
         // Act

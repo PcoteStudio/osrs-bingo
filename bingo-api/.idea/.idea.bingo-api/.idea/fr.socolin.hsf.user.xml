@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="fr.socolin.rider.plugins.hsf.settings.storage.UserSettingsStorageService">
+    <option name="rules" value="ruleId=3a6a9288-9a10-4ec2-b3ef-18a47a45a329&amp;pattern=%5EServiceCollectionExtensions.cs%24&amp;order=0&amp;icon=hsf.icons.built-in.RiderIcons.Diagramming.Injection&amp;priority=900&amp;annotationText=%5BDI%5D&amp;annotationStyle=synthetic&amp;disabled=false" />
+  </component>
+</project>

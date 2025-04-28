@@ -3,6 +3,8 @@ using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Drops;
 using Bingo.Api.Core.Features.Drops.Arguments;
 using Bingo.Api.Core.Features.Drops.Exceptions;
+using Bingo.Api.Core.Features.Items.Exceptions;
+using Bingo.Api.Core.Features.Npcs.Exceptions;
 using Bingo.Api.Web.Generic.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -67,6 +69,8 @@ public class DropController(
             {
                 case DropAlreadyExistsException:
                     throw new HttpException(StatusCodes.Status400BadRequest, ex);
+                case ItemNotFoundException or NpcNotFoundException:
+                    throw new HttpException(StatusCodes.Status404NotFound, ex);
                 default:
                     throw;
             }

@@ -4,6 +4,7 @@ using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Boards.MultiLayer;
 using Bingo.Api.Core.Features.Database;
 using Bingo.Api.Core.Features.Dev;
+using Bingo.Api.Core.Features.Drops;
 using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Items;
 using Bingo.Api.Core.Features.Npcs;
@@ -66,6 +67,7 @@ public class Startup
         services.AddTeamWebService();
         services.AddPlayerService();
         services.AddPlayerWebService();
+        services.AddDropService();
         services.AddDropWebService();
         services.AddItemService();
         services.AddItemWebService();

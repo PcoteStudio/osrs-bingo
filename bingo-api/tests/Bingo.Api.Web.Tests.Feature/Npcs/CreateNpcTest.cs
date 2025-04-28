@@ -42,32 +42,10 @@ public partial class NpcFeatureTest
     }
 
     [Test]
-    public async Task CreateNpc_ShouldReturnForbiddenIfNotTheNpcAdmin()
-    {
-        // Arrange
-        _testDataSetup
-            .AddUser(out var userWithSecrets)
-            .AddUser();
-        var args = TestDataGenerator.GenerateNpcCreateArguments();
-
-        // Act
-        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/npcs"),
-            HttpHelper.BuildJsonStringContent(args));
-
-        // Assert response status
-        await Expect.StatusCodeFromResponse(HttpStatusCode.Forbidden, response);
-
-        // Assert response content
-        await Expect.ResponseContentToMatchStatusCode(response);
-    }
-
-    [Test]
     public async Task CreateNpc_ShouldReturnForbiddenIfMissingPermissions()
     {
         // Arrange
-        _testDataSetup
-            .AddUser(out var userWithSecrets);
+        _testDataSetup.AddUser(out var userWithSecrets);
         var args = TestDataGenerator.GenerateNpcCreateArguments();
 
         // Act
@@ -86,8 +64,7 @@ public partial class NpcFeatureTest
     public async Task CreateNpc_ShouldReturnUnauthorizedIfNotLoggedIn()
     {
         // Arrange
-        _testDataSetup
-            .AddUser();
+        _testDataSetup.AddUser();
         var args = TestDataGenerator.GenerateNpcCreateArguments();
 
         // Act
