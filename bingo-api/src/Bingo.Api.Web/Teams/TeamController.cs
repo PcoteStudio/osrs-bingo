@@ -1,5 +1,7 @@
 using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
+using Bingo.Api.Core.Features.Events;
+using Bingo.Api.Core.Features.Events.Exceptions;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Teams.Exceptions;
@@ -10,9 +12,45 @@ namespace Bingo.Api.Web.Teams;
 
 [Route("/api/teams")]
 [ApiController]
-public class TeamController(ITeamService teamService, ITeamServiceHelper teamServiceHelper, IMapper mapper)
+public class TeamController(
+    IPermissionServiceHelper permissionServiceHelper,
+    ITeamService teamService,
+    ITeamServiceHelper teamServiceHelper,
+    IEventServiceHelper eventServiceHelper,
+    IMapper mapper)
     : ControllerBase
 {
+    [HttpPost("/api/events/{eventId:min(0)}/teams")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<TeamResponse>> CreateTeamAsync(
+        [FromServices] IdentityContainer identityContainer,
+        [FromRoute] int eventId,
+        [FromBody] TeamCreateArguments args)
+    {
+        try
+        {
+            await eventServiceHelper.EnsureIsEventAdminAsync(identityContainer.Identity, eventId);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "team.create");
+            var team = await teamService.CreateTeamAsync(eventId, args);
+            return StatusCode(StatusCodes.Status201Created, mapper.Map<TeamResponse>(team));
+        }
+        catch (Exception ex)
+        {
+            switch (ex)
+            {
+                case UserIsNotAnEventAdminException:
+                    throw new HttpException(StatusCodes.Status403Forbidden, ex);
+                case EventNotFoundException:
+                    throw new HttpException(StatusCodes.Status404NotFound, ex);
+                default:
+                    throw;
+            }
+        }
+    }
+
     [HttpGet("{teamId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -48,6 +86,7 @@ public class TeamController(ITeamService teamService, ITeamServiceHelper teamSer
         try
         {
             await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "team.update");
             var team = await teamService.UpdateTeamAsync(teamId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
@@ -78,6 +117,7 @@ public class TeamController(ITeamService teamService, ITeamServiceHelper teamSer
         try
         {
             await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "team.update");
             var team = await teamService.UpdateTeamPlayersAsync(teamId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
@@ -108,6 +148,7 @@ public class TeamController(ITeamService teamService, ITeamServiceHelper teamSer
         try
         {
             await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "team.update");
             var team = await teamService.AddTeamPlayersAsync(teamId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }
@@ -136,6 +177,7 @@ public class TeamController(ITeamService teamService, ITeamServiceHelper teamSer
         try
         {
             await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "team.update");
             var team = await teamService.RemoveTeamPlayerAsync(teamId, playerName);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
         }

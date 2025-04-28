@@ -57,7 +57,7 @@ public class NpcController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["npc.create"]);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "npc.create");
             var npc = await npcService.CreateNpcAsync(args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<NpcResponse>(npc));
         }
@@ -85,7 +85,7 @@ public class NpcController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["npc.update"]);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "npc.update");
             var npc = await npcService.UpdateNpcAsync(npcId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<NpcResponse>(npc));
         }
@@ -112,7 +112,7 @@ public class NpcController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["npc.delete"]);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "npc.delete");
             var npc = await npcService.RemoveNpcAsync(npcId);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<NpcResponse>(npc));
         }

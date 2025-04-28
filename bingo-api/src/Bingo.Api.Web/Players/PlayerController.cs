@@ -57,7 +57,7 @@ public class PlayerController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, []);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity);
             var player = await playerService.CreatePlayerAsync(args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
         }
@@ -85,7 +85,7 @@ public class PlayerController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, []);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity);
             var player = await playerService.UpdatePlayerAsync(playerId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
         }
@@ -112,7 +112,7 @@ public class PlayerController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, []);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity);
             var player = await playerService.RemovePlayerAsync(playerId);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
         }

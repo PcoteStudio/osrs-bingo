@@ -57,7 +57,7 @@ public class DropController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["drop.create"]);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "drop.create");
             var drop = await dropService.CreateDropAsync(args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
         }
@@ -85,7 +85,7 @@ public class DropController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["drop.update"]);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "drop.update");
             var drop = await dropService.UpdateDropAsync(dropId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
         }
@@ -112,7 +112,7 @@ public class DropController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["drop.delete"]);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "drop.delete");
             var drop = await dropService.RemoveDropAsync(dropId);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
         }

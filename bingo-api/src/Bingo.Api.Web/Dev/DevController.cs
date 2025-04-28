@@ -25,7 +25,7 @@ public class DevController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<string> Ping([FromServices] IdentityContainer identityContainer)
     {
-        EnsureHasAccess(identityContainer.Identity, ["dev.ping"]);
+        EnsureHasAccess(identityContainer.Identity, "dev.ping");
         return StatusCode(StatusCodes.Status200OK, "pong");
     }
 
@@ -36,7 +36,7 @@ public class DevController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<EventResponse>> SeedAsync([FromServices] IdentityContainer identityContainer)
     {
-        EnsureHasAccess(identityContainer.Identity, ["dev.seed"]);
+        EnsureHasAccess(identityContainer.Identity, "dev.database.seed");
 
         var user = (identityContainer.Identity as UserIdentity)!.User;
         var newEvent = await devService.SeedEventAsync(user);
@@ -50,13 +50,13 @@ public class DevController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DropDatabaseAsync([FromServices] IdentityContainer identityContainer)
     {
-        EnsureHasAccess(identityContainer.Identity, ["dev.drop"]);
+        EnsureHasAccess(identityContainer.Identity, "dev.database.drop");
 
         await devService.DropDatabaseAsync();
         return StatusCode(StatusCodes.Status200OK);
     }
 
-    private void EnsureHasAccess(IIdentity? identity, List<string> permissions)
+    private void EnsureHasAccess(IIdentity? identity, params string[] permissions)
     {
         if (!environment.IsDevelopment())
             throw new HttpException(StatusCodes.Status404NotFound);

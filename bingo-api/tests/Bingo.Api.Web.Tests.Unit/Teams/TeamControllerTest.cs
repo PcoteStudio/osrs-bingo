@@ -1,5 +1,6 @@
 using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
+using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Teams.Arguments;
 using Bingo.Api.Core.Features.Teams.Exceptions;
@@ -21,19 +22,25 @@ public class TeamControllerUnitTest
     [SetUp]
     public void BeforeEach()
     {
+        _permissionServiceMock = new Mock<IPermissionServiceHelper>();
         _teamServiceMock = new Mock<ITeamService>();
         _teamServiceHelperMock = new Mock<ITeamServiceHelper>();
+        _eventServiceHelperMock = new Mock<IEventServiceHelper>();
         _mapperMock = new Mock<IMapper>();
         _teamController = new TeamController(
+            _permissionServiceMock.Object,
             _teamServiceMock.Object,
             _teamServiceHelperMock.Object,
+            _eventServiceHelperMock.Object,
             _mapperMock.Object
         );
     }
 
     private TeamController _teamController;
+    private Mock<IPermissionServiceHelper> _permissionServiceMock;
     private Mock<ITeamService> _teamServiceMock;
     private Mock<ITeamServiceHelper> _teamServiceHelperMock;
+    private Mock<IEventServiceHelper> _eventServiceHelperMock;
     private Mock<IMapper> _mapperMock;
 
     [Test]

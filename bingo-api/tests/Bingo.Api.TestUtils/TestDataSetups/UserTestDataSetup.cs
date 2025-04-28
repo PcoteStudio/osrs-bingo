@@ -24,6 +24,14 @@ public partial class TestDataSetup
     {
         return AddUser(out _);
     }
+
+    public TestDataSetup AddPermissions(params string[] permissions)
+    {
+        var user = GetRequiredLast<UserEntity>();
+        user.Permissions.AddRange(permissions);
+        dbContext.SaveChanges();
+        return this;
+    }
 }
 
 public class UserWithSecrets

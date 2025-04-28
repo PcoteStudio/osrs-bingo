@@ -17,6 +17,7 @@ public partial class TeamFeatureTest
         // Arrange
         _testDataSetup
             .AddUser(out var userWithSecrets)
+            .AddPermissions("team.update")
             .AddEvent()
             .AddTeam(out var originalTeam);
         var args = TestDataGenerator.GenerateTeamPlayersArguments(5);
@@ -66,6 +67,77 @@ public partial class TeamFeatureTest
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.NotFound, response);
+
+        // Assert response content
+        await Expect.ResponseContentToMatchStatusCode(response);
+    }
+
+    [Test]
+    public async Task AddTeamPlayersAsync_ShouldReturnForbiddenIfNotTheTeamAdmin()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddPermissions("team.update")
+            .AddUser()
+            .AddEvent()
+            .AddTeam(out var originalTeam);
+        var args = TestDataGenerator.GenerateTeamPlayersArguments(5);
+
+        // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
+        var response = await _client.PostAsync(
+            new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players"),
+            HttpHelper.BuildJsonStringContent(args));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.Forbidden, response);
+
+        // Assert response content
+        await Expect.ResponseContentToMatchStatusCode(response);
+    }
+
+    [Test]
+    public async Task AddTeamPlayersAsync_ShouldReturnForbiddenIfMissingPermissions()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddEvent()
+            .AddTeam(out var originalTeam);
+        var args = TestDataGenerator.GenerateTeamPlayersArguments(5);
+
+        // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
+        var response = await _client.PostAsync(
+            new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players"),
+            HttpHelper.BuildJsonStringContent(args));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.Forbidden, response);
+
+        // Assert response content
+        await Expect.ResponseContentToMatchStatusCode(response);
+    }
+
+    [Test]
+    public async Task AddTeamPlayersAsync_ShouldReturnUnauthorizedIfNotLoggedIn()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser()
+            .AddPermissions("team.update")
+            .AddEvent()
+            .AddTeam(out var originalTeam);
+        var args = TestDataGenerator.GenerateTeamPlayersArguments(5);
+
+        // Act
+        var response = await _client.PostAsync(
+            new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players"),
+            HttpHelper.BuildJsonStringContent(args));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.Unauthorized, response);
 
         // Assert response content
         await Expect.ResponseContentToMatchStatusCode(response);

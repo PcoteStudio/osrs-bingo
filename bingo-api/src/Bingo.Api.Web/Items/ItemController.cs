@@ -57,7 +57,7 @@ public class ItemController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["item.create"]);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "item.create");
             var item = await itemService.CreateItemAsync(args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
         }
@@ -85,7 +85,7 @@ public class ItemController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["item.update"]);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "item.update");
             var item = await itemService.UpdateItemAsync(itemId, args);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
         }
@@ -112,7 +112,7 @@ public class ItemController(
     {
         try
         {
-            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, ["item.delete"]);
+            permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "item.delete");
             var item = await itemService.RemoveItemAsync(itemId);
             return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
         }

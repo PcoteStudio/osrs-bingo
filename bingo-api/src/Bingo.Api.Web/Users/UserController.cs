@@ -15,7 +15,7 @@ public class AuthController(
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<UserResponse> GetMe([FromServices] IdentityContainer identityContainer)
     {
-        permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, []);
+        permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity);
         var user = (identityContainer.Identity as UserIdentity)!.User;
         return StatusCode(StatusCodes.Status200OK, mapper.Map<UserResponse>(user));
     }

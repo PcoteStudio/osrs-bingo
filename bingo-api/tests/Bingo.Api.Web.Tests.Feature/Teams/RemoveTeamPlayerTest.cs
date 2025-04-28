@@ -17,6 +17,7 @@ public partial class TeamFeatureTest
         // Arrange
         _testDataSetup
             .AddUser(out var userWithSecrets)
+            .AddPermissions("team.update")
             .AddEvent()
             .AddTeam(out var originalTeam)
             .AddPlayers(Random.Shared.Next(3, 10), out var originalPlayers);
@@ -66,6 +67,80 @@ public partial class TeamFeatureTest
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.NotFound, response);
+
+        // Assert response content
+        await Expect.ResponseContentToMatchStatusCode(response);
+    }
+
+    [Test]
+    public async Task RemoveTeamPlayerAsync_ShouldReturnForbiddenIfNotTheTeamAdmin()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddPermissions("team.update")
+            .AddUser()
+            .AddEvent()
+            .AddTeam(out var originalTeam)
+            .AddPlayers(Random.Shared.Next(3, 10), out var originalPlayers);
+
+        var player = originalPlayers[Random.Shared.Next(originalPlayers.Count)];
+
+        // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
+        var response = await _client.DeleteAsync(
+            new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players/{player.Name}"));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.Forbidden, response);
+
+        // Assert response content
+        await Expect.ResponseContentToMatchStatusCode(response);
+    }
+
+    [Test]
+    public async Task RemoveTeamPlayerAsync_ShouldReturnForbiddenIfMissingPermissions()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddEvent()
+            .AddTeam(out var originalTeam)
+            .AddPlayers(Random.Shared.Next(3, 10), out var originalPlayers);
+
+        var player = originalPlayers[Random.Shared.Next(originalPlayers.Count)];
+
+        // Act
+        await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
+        var response = await _client.DeleteAsync(
+            new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players/{player.Name}"));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.Forbidden, response);
+
+        // Assert response content
+        await Expect.ResponseContentToMatchStatusCode(response);
+    }
+
+    [Test]
+    public async Task RemoveTeamPlayerAsync_ShouldReturnUnauthorizedIfNotLoggedIn()
+    {
+        // Arrange
+        _testDataSetup
+            .AddUser(out var userWithSecrets)
+            .AddPermissions("team.update")
+            .AddEvent()
+            .AddTeam(out var originalTeam)
+            .AddPlayers(Random.Shared.Next(3, 10), out var originalPlayers);
+
+        var player = originalPlayers[Random.Shared.Next(originalPlayers.Count)];
+
+        // Act
+        var response = await _client.DeleteAsync(
+            new Uri(_baseUrl, $"/api/teams/{originalTeam.Id}/players/{player.Name}"));
+
+        // Assert response status
+        await Expect.StatusCodeFromResponse(HttpStatusCode.Unauthorized, response);
 
         // Assert response content
         await Expect.ResponseContentToMatchStatusCode(response);

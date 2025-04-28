@@ -6,12 +6,12 @@ namespace Bingo.Api.Core.Features.Authentication;
 
 public interface IPermissionServiceHelper
 {
-    void EnsureHasPermissions(IIdentity? identity, List<string> requiredPermissions);
+    void EnsureHasPermissions(IIdentity? identity, params string[] requiredPermissions);
 }
 
 public class PermissionServiceHelper : IPermissionServiceHelper
 {
-    public void EnsureHasPermissions(IIdentity? identity, List<string> requiredPermissions)
+    public void EnsureHasPermissions(IIdentity? identity, params string[] requiredPermissions)
     {
         switch (identity)
         {

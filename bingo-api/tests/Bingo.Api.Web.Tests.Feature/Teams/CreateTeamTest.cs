@@ -2,28 +2,27 @@
 using System.Text.Json;
 using Bingo.Api.TestUtils;
 using Bingo.Api.TestUtils.TestDataGenerators;
-using Bingo.Api.Web.Boards.MultiLayer;
+using Bingo.Api.Web.Teams;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
-namespace Bingo.Api.Web.Tests.Feature.Boards.MultiLayer;
+namespace Bingo.Api.Web.Tests.Feature.Teams;
 
-public partial class MultiLayerBoardFeatureTest
+public partial class TeamFeatureTest
 {
     [Test]
-    public async Task CreateMultiLayerBoard_ShouldReturnTheCreatedMultiLayerBoard()
+    public async Task CreateTeam_ShouldReturnTheCreatedTeam()
     {
         // Arrange
         _testDataSetup
             .AddUser(out var userWithSecrets)
-            .AddPermissions("board.create")
+            .AddPermissions("team.create")
             .AddEvent(out var eventEntity);
-        var args = TestDataGenerator.GenerateMultiLayerBoardCreateArguments();
+        var args = TestDataGenerator.GenerateTeamCreateArguments();
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/mlboard"),
+        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"),
             HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
@@ -31,35 +30,27 @@ public partial class MultiLayerBoardFeatureTest
 
         // Assert response content
         var responseContent = await response.Content.ReadAsStringAsync();
-        var returnedBoard =
-            JsonSerializer.Deserialize<MultiLayerBoardResponse>(responseContent, JsonSerializerOptions.Web);
-        returnedBoard.Should().NotBeNull();
-        var savedBoard = _dbContext.MultiLayerBoards
-            .Include(b => b.Layers)
-            .FirstOrDefault(b => b.Id == returnedBoard.Id);
-        savedBoard.Should().NotBeNull();
-        returnedBoard.Id.Should().Be(savedBoard.Id);
-        returnedBoard.Width.Should().Be(savedBoard.Width);
-        returnedBoard.Height.Should().Be(savedBoard.Height);
-        returnedBoard.Depth.Should().Be(savedBoard.Depth);
-        returnedBoard.Layers.Count.Should().Be(savedBoard.Layers.Count);
-        returnedBoard.Layers.Count.Should().Be(args.Depth);
+        var returnedTeam = JsonSerializer.Deserialize<TeamResponse>(responseContent, JsonSerializerOptions.Web);
+        returnedTeam.Should().NotBeNull();
+        var savedTeam = _dbContext.Teams.FirstOrDefault(t => t.Id == returnedTeam.Id);
+        savedTeam.Should().NotBeNull();
+        returnedTeam.Id.Should().Be(savedTeam.Id);
+        returnedTeam.Name.Should().Be(savedTeam.Name);
     }
 
     [Test]
-    public async Task CreateMultiLayerBoard_ShouldReturnForbiddenIfNotTheTeamAdmin()
+    public async Task CreateTeam_ShouldReturnForbiddenIfNotTheTeamAdmin()
     {
         // Arrange
         _testDataSetup
             .AddUser(out var userWithSecrets)
-            .AddPermissions("board.create")
             .AddUser()
             .AddEvent(out var eventEntity);
-        var args = TestDataGenerator.GenerateMultiLayerBoardCreateArguments();
+        var args = TestDataGenerator.GenerateTeamCreateArguments();
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/mlboard"),
+        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"),
             HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
@@ -70,17 +61,17 @@ public partial class MultiLayerBoardFeatureTest
     }
 
     [Test]
-    public async Task CreateMultiLayerBoard_ShouldReturnForbiddenIfMissingPermissions()
+    public async Task CreateTeam_ShouldReturnForbiddenIfMissingPermissions()
     {
         // Arrange
         _testDataSetup
             .AddUser(out var userWithSecrets)
             .AddEvent(out var eventEntity);
-        var args = TestDataGenerator.GenerateMultiLayerBoardCreateArguments();
+        var args = TestDataGenerator.GenerateTeamCreateArguments();
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/mlboard"),
+        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"),
             HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
@@ -91,17 +82,16 @@ public partial class MultiLayerBoardFeatureTest
     }
 
     [Test]
-    public async Task CreateMultiLayerBoard_ShouldReturnUnauthorizedIfNotLoggedIn()
+    public async Task CreateTeam_ShouldReturnUnauthorizedIfNotLoggedIn()
     {
         // Arrange
         _testDataSetup
             .AddUser()
-            .AddPermissions("board.create")
             .AddEvent(out var eventEntity);
-        var args = TestDataGenerator.GenerateMultiLayerBoardCreateArguments();
+        var args = TestDataGenerator.GenerateTeamCreateArguments();
 
         // Act
-        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/mlboard"),
+        var response = await _client.PostAsync(new Uri(_baseUrl, $"/api/events/{eventEntity.Id}/teams"),
             HttpHelper.BuildJsonStringContent(args));
 
         // Assert response status
