@@ -110,7 +110,7 @@ public class DropController(
     }
 
     [HttpDelete("{dropId:min(0)}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -122,7 +122,7 @@ public class DropController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "drop.delete");
             var drop = await dropService.RemoveDropAsync(dropId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
+            return StatusCode(StatusCodes.Status204NoContent, mapper.Map<DropResponse>(drop));
         }
         catch (Exception ex)
         {

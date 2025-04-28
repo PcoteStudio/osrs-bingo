@@ -102,7 +102,7 @@ public class NpcController(
     }
 
     [HttpDelete("{npcId:min(0)}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -114,7 +114,7 @@ public class NpcController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "npc.delete");
             var npc = await npcService.RemoveNpcAsync(npcId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<NpcResponse>(npc));
+            return StatusCode(StatusCodes.Status204NoContent, mapper.Map<NpcResponse>(npc));
         }
         catch (Exception ex)
         {

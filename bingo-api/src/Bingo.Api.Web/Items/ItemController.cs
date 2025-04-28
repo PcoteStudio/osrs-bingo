@@ -102,7 +102,7 @@ public class ItemController(
     }
 
     [HttpDelete("{itemId:min(0)}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -114,7 +114,7 @@ public class ItemController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "item.delete");
             var item = await itemService.RemoveItemAsync(itemId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
+            return StatusCode(StatusCodes.Status204NoContent, mapper.Map<ItemResponse>(item));
         }
         catch (Exception ex)
         {

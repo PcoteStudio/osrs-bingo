@@ -17,6 +17,8 @@ public static class HttpHelper
     {
         switch (statusCode)
         {
+            case HttpStatusCode.NoContent:
+                return "";
             case HttpStatusCode.BadRequest:
                 return BuildJsonResponse((int)statusCode, "Bad request");
             case HttpStatusCode.Unauthorized:
