@@ -31,6 +31,7 @@ const loadingSeedState = ref('secondary');
 const loadingSeedMessage = ref('');
 const seedDatabase = () => {
   loadingSeedDatabase.value = true;
+  loadingSeedMessage.value = '';
 
   httpClient.seedDatabase().then(() => {
     loadingSeedState.value = 'success';
@@ -49,6 +50,7 @@ const loadingDropState = ref('secondary');
 const loadingDropMessage = ref('');
 const dropDatabase = () => {
   loadingDropDatabase.value = true;
+  loadingDropMessage.value = '';
 
   httpClient.dropDatabase().then(() => {
     loadingDropState.value = 'success';

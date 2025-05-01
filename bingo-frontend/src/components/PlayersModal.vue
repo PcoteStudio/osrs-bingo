@@ -1,46 +1,34 @@
 <script setup lang="ts">
 
 import { useGlobalStore } from '@/stores/globalStore.ts';
-import { computed, nextTick, ref, watch } from 'vue';
-import { FilterMatchMode } from '@primevue/core/api';
-import type { PlayerResponse } from '@/clients/responses/playerResponse.ts';
+import { computed, ref, watch } from 'vue';
 
 const globalStore = useGlobalStore();
 const showModal = computed(() => globalStore.getPlayersState.showModal);
 const players = computed(() => globalStore.getPlayersState.players);
 
-const filters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS }
-});
-
-const editingRows = ref([]);
-const onRowEditSave = (event) => {
-  const { newData, index } = event;
-  console.log('Save player', newData, index);
-};
-
-const removePlayer = (data: PlayerResponse) => {
-  console.log('remove', data);
-};
-
-const removeTeam = (playerId: number, teamId: number) => {
-  console.log('Remove team ' + teamId + ' from player ' + playerId);
-};
-
-const addPlayer = () => {
-  console.log('Add new player');
-  globalStore.addPlayer({});
-
-  nextTick(() => {
-    if (players.value.length > 0) {
-      editingRows.value = [players.value[0]];
-    }
-  });
-};
+const filterValue = ref('');
 
 watch(showModal, () => {
   globalStore.fetchPlayers();
 });
+
+const rowData = ref([
+  { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+  { make: "Ford", model: "F-Series", price: 33850, electric: false },
+  { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+]);
+
+// Column Definitions: Defines the columns to be displayed.
+const colDefs = ref([
+  { field: "make" },
+  { field: "model" },
+  { field: "price" },
+  { field: "electric" }
+]);
+
+
+
 </script>
 
 <template>
@@ -58,9 +46,9 @@ watch(showModal, () => {
           <InputIcon>
             <i class="pi pi-search" />
           </InputIcon>
-          <InputText v-model="filters['global'].value" placeholder="Search" />
+          <InputText v-model="filterValue" placeholder="Search" />
         </IconField>
-        <Button @click="addPlayer()"
+        <Button @click="console.log('add player')"
                 icon="fas fa-plus"
                 size="small"
                 severity="success"
@@ -71,97 +59,16 @@ watch(showModal, () => {
       </div>
     </template>
     <div class="content">
-      <DataTable :value="players"
-                 class="datatable"
-                 scrollable
-                 scrollHeight="35rem"
-                 dataKey="id"
-                 v-model:filters="filters"
-                 :globalFilterFields="['id', 'name']"
-                 v-model:editingRows="editingRows"
-                 editMode="row"
-                 @row-edit-save="onRowEditSave"
-      >
-        <template #empty> No players found. </template>
-        <template #loading> Loading players data. Please wait. </template>
-        <Column field="id" sortable header="Id" style="width: 10%"></Column>
-        <Column field="name" sortable header="Name" style="width: 30%">
-          <template #editor="{ data, field }">
-            <InputText v-model="data[field]" />
-          </template>
-        </Column>
-        <Column field="teams" header="Teams" style="width: 40%">
-          <template #body="{ data }">
-            <div class="teams">
-              <div v-for="team in data.teams" :key="team.id">
-                <Chip class="py-0 pl-0 pr-4"
-                      v-tooltip.top="team.event?.name"
-                      :label="team.name"
-                      :image="team.event?.avatar"
-                />
-              </div>
-            </div>
-          </template>
-          <template #editor="{ data, field }">
-            <div class="teams">
-              <div v-for="team in data[field]" :key="team.id">
-                <Chip class="py-0 pl-0 pr-4"
-                      v-tooltip.top="team.event?.name"
-                      removable
-                      :label="team.name"
-                      :image="team.event?.avatar"
-                      @remove="removeTeam(data.id, team.id)"
-                />
-              </div>
-              <Button @click="addTeam()"
-                      icon="fas fa-plus"
-                      size="small"
-                      severity="success"
-                      variant="outlined"
-                      rounded
-              />
-            </div>
-          </template>
-        </Column>
-        <Column field="actions" header="Actions" :rowEditor="true" style="width: 15%">
-          <template #body="{ editorInitCallback }">
-            <div class="actions">
-              <Button @click="editorInitCallback"
-                      icon="fas fa-pen"
-                      size="small"
-                      variant="text"
-                      severity="secondary"
-                      rounded
-              />
-            </div>
-          </template>
-          <template #editor="{ editorCancelCallback, editorSaveCallback }">
-            <div class="actions">
-              <Button @click="editorCancelCallback"
-                      icon="fas fa-x"
-                      size="small"
-                      variant="text"
-                      severity="secondary"
-                      rounded
-              />
-              <Button @click="editorSaveCallback"
-                      icon="fas fa-check"
-                      size="small"
-                      variant="text"
-                      severity="success"
-                      rounded
-              />
-              <Button @click="removePlayer"
-                      icon="fas fa-trash"
-                      size="small"
-                      variant="text"
-                      severity="danger"
-                      rounded
-              />
-            </div>
-          </template>
-        </Column>
-      </DataTable>
+<!--      <div v-for="player in players">-->
+<!--        {{ player.name }}-->
+<!--        <div v-for="team in player.teams">-->
+<!--          {{ team }}-->
+<!--        </div>-->
+      <ag-grid-vue
+        style="height: 500px; width: 100%;"
+        :columnDefs="colDefs"
+        :rowData="rowData">
+      </ag-grid-vue>
     </div>
   </Dialog>
 </template>
@@ -174,23 +81,10 @@ watch(showModal, () => {
   max-height: 35rem;
 }
 
-.teams {
-  display: flex;
-  gap: 0.2em;
-  flex-wrap: wrap;
-}
-
 .search-bar {
   display: flex;
   gap: 1em;
   align-items: center;
-}
-
-.actions {
-  display: flex;
-  gap: 0.2em;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
 .title {
