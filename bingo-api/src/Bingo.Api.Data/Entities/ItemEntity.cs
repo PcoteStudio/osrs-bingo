@@ -13,7 +13,7 @@ public class ItemEntity
 
     [MaxLength(255)] public string Name { get; set; } = string.Empty;
 
-    [MaxLength(255)] public string Image { get; set; } = string.Empty;
+    [MaxLength(255)] public string? Image { get; set; }
 
     [ForeignKey("ItemId")] public List<DropEntity> Drops { get; set; } = [];
 }

@@ -20,11 +20,16 @@ public partial class ItemFeatureTest
             .AddPermissions("item.update")
             .AddItem(out var originalItem);
         var args = TestDataGenerator.GenerateItemUpdateArguments();
+        const string imageDirectory = "data";
+        const string imageName = "placeholder.svg";
+
+        using var form = new MultipartFormDataContent();
+        form.Add(new StringContent(args.Name), nameof(args.Name));
+        form.Add(await HttpHelper.BuildFileContent(imageDirectory, imageName), nameof(args.Image), imageName);
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/items/{originalItem.Id}"),
-            HttpHelper.BuildJsonStringContent(args));
+        var response = await _client.PutAsync(new Uri(_baseUrl, $"/api/items/{originalItem.Id}"), form);
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.OK, response);
@@ -37,7 +42,8 @@ public partial class ItemFeatureTest
         savedItem.Should().NotBeNull();
         returnedItem.Id.Should().Be(savedItem.Id);
         returnedItem.Name.Should().Be(savedItem.Name).And.Be(args.Name);
-        returnedItem.Image.Should().Be(savedItem.Image).And.Be(args.Image);
+        returnedItem.Image.Should().Be(savedItem.Image);
+        returnedItem.Image.Length.Should().Be(2588);
         returnedItem.Drops.Count.Should().Be(savedItem.Drops.Count).And.Be(0);
     }
 

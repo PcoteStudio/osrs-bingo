@@ -1,5 +1,6 @@
 using Bingo.Api.Core.Features.Npcs.Arguments;
 using Bingo.Api.Data.Entities;
+using Bingo.Api.Shared;
 
 namespace Bingo.Api.Core.Features.Npcs;
 
@@ -12,11 +13,13 @@ public class NpcFactory : INpcFactory
 {
     public NpcEntity Create(NpcCreateArguments args)
     {
-        return new NpcEntity
+        var npc = new NpcEntity
         {
             Name = args.Name,
-            Image = args.Image,
             KillsPerHour = args.KillsPerHour
         };
+        if (args.Image is not null && args.Image.Length > 0)
+            npc.Image = ImageHelper.IFormFileToBase64(args.Image);
+        return npc;
     }
 }

@@ -52,8 +52,7 @@ public static partial class TestDataGenerator
     {
         return new ItemCreateArguments
         {
-            Name = GenerateItemName(),
-            Image = GenerateItemImage()
+            Name = GenerateItemName()
         };
     }
 
@@ -61,8 +60,7 @@ public static partial class TestDataGenerator
     {
         return new ItemUpdateArguments
         {
-            Name = GenerateItemName(),
-            Image = GenerateItemImage()
+            Name = GenerateItemName()
         };
     }
 }

@@ -1,5 +1,6 @@
 using Bingo.Api.Core.Features.Items.Arguments;
 using Bingo.Api.Data.Entities;
+using Bingo.Api.Shared;
 
 namespace Bingo.Api.Core.Features.Items;
 
@@ -13,6 +14,9 @@ public class ItemUtil : IItemUtil
     public void UpdateItem(ItemEntity item, ItemUpdateArguments args)
     {
         item.Name = args.Name;
-        item.Image = args.Image;
+        if (args.Image is not null && args.Image.Length > 0)
+            item.Image = ImageHelper.IFormFileToBase64(args.Image);
+        else
+            item.Image = null;
     }
 }

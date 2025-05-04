@@ -19,11 +19,18 @@ public partial class NpcFeatureTest
             .AddUser(out var userWithSecrets)
             .AddPermissions("npc.create");
         var args = TestDataGenerator.GenerateNpcCreateArguments();
+        const string imageDirectory = "data";
+        const string imageName = "placeholder.svg";
+
+        using var form = new MultipartFormDataContent();
+        form.Add(new StringContent(args.Name), nameof(args.Name));
+        form.Add(new StringContent(args.KillsPerHour.ToString()!), nameof(args.KillsPerHour));
+        form.Add(await HttpHelper.BuildFileContent(imageDirectory, imageName), nameof(args.Image), imageName);
 
         // Act
         await AuthenticationHelper.LoginWithClient(_client, _baseUrl, userWithSecrets);
-        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/npcs"),
-            HttpHelper.BuildJsonStringContent(args));
+        var response = await _client.PostAsync(new Uri(_baseUrl, "/api/npcs"), form);
+
 
         // Assert response status
         await Expect.StatusCodeFromResponse(HttpStatusCode.Created, response);
@@ -36,7 +43,8 @@ public partial class NpcFeatureTest
         savedNpc.Should().NotBeNull();
         returnedNpc.Id.Should().Be(savedNpc.Id);
         returnedNpc.Name.Should().Be(savedNpc.Name).And.Be(args.Name);
-        returnedNpc.Image.Should().Be(savedNpc.Image).And.Be(args.Image);
+        returnedNpc.Image.Should().Be(savedNpc.Image);
+        returnedNpc.Image.Length.Should().Be(2588);
         returnedNpc.KillsPerHour.Should().Be(savedNpc.KillsPerHour).And.Be(args.KillsPerHour);
         returnedNpc.Drops.Count.Should().Be(savedNpc.Drops.Count).And.Be(0);
     }

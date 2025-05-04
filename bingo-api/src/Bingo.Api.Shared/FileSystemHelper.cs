@@ -20,4 +20,11 @@ public static class FileSystemHelper
         throw new Exception(
             $"Failed to find a directory containing '{searchedFile}' while searching from {Directory.GetCurrentDirectory()}");
     }
+
+    public static string FindFileOfDirectory(string directory, string searchedFile)
+    {
+        var filePath = Path.Combine(directory, searchedFile);
+        var directoryPath = FindDirectoryContaining(filePath);
+        return Path.Combine(directoryPath, filePath);
+    }
 }

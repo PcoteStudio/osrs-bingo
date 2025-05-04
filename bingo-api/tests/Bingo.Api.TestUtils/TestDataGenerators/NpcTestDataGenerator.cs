@@ -60,7 +60,6 @@ public static partial class TestDataGenerator
         return new NpcCreateArguments
         {
             Name = GenerateNpcName(),
-            Image = GenerateNpcImage(),
             KillsPerHour = GenerateNpcKph()
         };
     }
@@ -70,7 +69,6 @@ public static partial class TestDataGenerator
         return new NpcUpdateArguments
         {
             Name = GenerateNpcName(),
-            Image = GenerateNpcImage(),
             KillsPerHour = GenerateNpcKph()
         };
     }

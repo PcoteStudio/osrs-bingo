@@ -1,5 +1,6 @@
 using Bingo.Api.Core.Features.Items.Arguments;
 using Bingo.Api.Data.Entities;
+using Bingo.Api.Shared;
 
 namespace Bingo.Api.Core.Features.Items;
 
@@ -12,10 +13,12 @@ public class ItemFactory : IItemFactory
 {
     public ItemEntity Create(ItemCreateArguments args)
     {
-        return new ItemEntity
+        var item = new ItemEntity
         {
-            Name = args.Name,
-            Image = args.Image
+            Name = args.Name
         };
+        if (args.Image is not null && args.Image.Length > 0)
+            item.Image = ImageHelper.IFormFileToBase64(args.Image);
+        return item;
     }
 }

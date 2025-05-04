@@ -53,7 +53,7 @@ public class NpcController(
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<NpcResponse>> CreateNpcAsync(
         [FromServices] IdentityContainer identityContainer,
-        [FromBody] NpcCreateArguments args)
+        [FromForm] NpcCreateArguments args)
     {
         try
         {
@@ -81,7 +81,7 @@ public class NpcController(
     public async Task<ActionResult<NpcResponse>> UpdateNpcAsync(
         [FromServices] IdentityContainer identityContainer,
         [FromRoute] int npcId,
-        [FromBody] NpcUpdateArguments args)
+        [FromForm] NpcUpdateArguments args)
     {
         try
         {

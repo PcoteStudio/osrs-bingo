@@ -53,7 +53,7 @@ public class ItemController(
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ItemResponse>> CreateItemAsync(
         [FromServices] IdentityContainer identityContainer,
-        [FromBody] ItemCreateArguments args)
+        [FromForm] ItemCreateArguments args)
     {
         try
         {
@@ -81,7 +81,7 @@ public class ItemController(
     public async Task<ActionResult<ItemResponse>> UpdateItemAsync(
         [FromServices] IdentityContainer identityContainer,
         [FromRoute] int itemId,
-        [FromBody] ItemUpdateArguments args)
+        [FromForm] ItemUpdateArguments args)
     {
         try
         {
