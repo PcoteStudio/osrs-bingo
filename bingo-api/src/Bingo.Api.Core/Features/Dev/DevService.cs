@@ -30,18 +30,18 @@ public class DevService(
 
         var newEvent = await eventService.CreateEventAsync(eventAdmin, new EventCreateArguments
         {
-            Name = RandomUtil.GetPrefixedRandomHexString("E_", 1, 20)
+            Name = RandomUtil.GetPrefixedRandomHexString("E_", 2, 20)
         });
         for (var i = 0; i < Random.Shared.Next(0, 10); i++)
         {
             var newTeam = await teamService.CreateTeamAsync(newEvent.Id, new TeamCreateArguments
             {
-                Name = RandomUtil.GetPrefixedRandomHexString("T_", 1, 20)
+                Name = RandomUtil.GetPrefixedRandomHexString("T_", 2, 20)
             });
             await teamService.AddTeamPlayersAsync(newTeam.Id, new TeamPlayersArguments
             {
                 PlayerNames = Enumerable.Range(0, Random.Shared.Next(0, 50)).Select(_ =>
-                    RandomUtil.GetPrefixedRandomHexString("P_", 1, 20)
+                    RandomUtil.GetPrefixedRandomHexString("P_", 2, 20)
                 ).ToList()
             });
         }
