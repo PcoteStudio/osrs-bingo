@@ -20,9 +20,6 @@ import { HttpClient } from '@/clients/httpClient.ts';
 import { AuthenticationClient } from '@/clients/authenticationClient.ts';
 import { initializeTheme, ThemeType } from '@/utils/themeUtils.ts';
 
-import { AllCommunityModule, ModuleRegistry, themeQuartz, provideGlobalGridOptions } from 'ag-grid-community'
-import { AgGridVue } from 'ag-grid-vue3';
-
 library.add(fas, far, fab);
 
 const app = createApp(App);
@@ -65,37 +62,5 @@ initializeTheme();
 
 // FontAwesome
 app.component('FontAwesomeIcon', FontAwesomeIcon);
-
-// Ag Grid
-ModuleRegistry.registerModules([AllCommunityModule]);
-provideGlobalGridOptions({
-  theme: themeQuartz
-    .withParams({
-      accentColor: "#FFFFFF",
-      backgroundColor: "#111111",
-      borderRadius: 4,
-      browserColorScheme: "dark",
-      chromeBackgroundColor: {
-        ref: "foregroundColor",
-        mix: 0.07,
-        onto: "backgroundColor"
-      },
-      columnBorder: false,
-      fontFamily: [
-        "Runescape",
-        "sans-serif"
-      ],
-      fontSize: 16,
-      foregroundColor: "#FFF",
-      headerBackgroundColor: "#060606",
-      headerFontSize: 18,
-      headerRowBorder: true,
-      rowBorder: true,
-      wrapperBorder: true,
-      wrapperBorderRadius: 12
-    })
-});
-
-app.component('AgGridVue', AgGridVue);
 
 app.mount('#app');

@@ -34,7 +34,7 @@ body {
 }
 
 body, div, span, td {
-  transform: translateZ(0) !important;
+  transform: translateZ(0);
 }
 
 .highlight {
