@@ -50,6 +50,9 @@ importers:
       '@types/md5':
         specifier: ^2.3.5
         version: 2.3.5
+      '@vueuse/components':
+        specifier: ^13.1.0
+        version: 13.1.0(vue@3.5.13(typescript@5.8.3))
       '@vueuse/core':
         specifier: ^13.1.0
         version: 13.1.0(vue@3.5.13(typescript@5.8.3))
@@ -1193,6 +1196,11 @@ packages:
         optional: true
       vue:
         optional: true
+
+  '@vueuse/components@13.1.0':
+    resolution: {integrity: sha512-2cqRdRJ1CP/a9WpDAlIZneaivUuwze2e8W0CjKHbWqJ9p7nldccwMyEqKC7N6naYvipG469IGfYk6rnT/hoKfA==}
+    peerDependencies:
+      vue: ^3.5.0
 
   '@vueuse/core@13.1.0':
     resolution: {integrity: sha512-PAauvdRXZvTWXtGLg8cPUFjiZEddTqmogdwYpnn60t08AA5a8Q4hZokBnpTOnVNqySlFlTcRYIC8OqreV4hv3Q==}
@@ -3803,6 +3811,12 @@ snapshots:
   '@vue/tsconfig@0.7.0(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))':
     optionalDependencies:
       typescript: 5.8.3
+      vue: 3.5.13(typescript@5.8.3)
+
+  '@vueuse/components@13.1.0(vue@3.5.13(typescript@5.8.3))':
+    dependencies:
+      '@vueuse/core': 13.1.0(vue@3.5.13(typescript@5.8.3))
+      '@vueuse/shared': 13.1.0(vue@3.5.13(typescript@5.8.3))
       vue: 3.5.13(typescript@5.8.3)
 
   '@vueuse/core@13.1.0(vue@3.5.13(typescript@5.8.3))':

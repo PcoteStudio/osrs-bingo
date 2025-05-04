@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores/globalStore.ts';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import fuzzySort from 'fuzzysort';
 import _ from 'lodash';
+import { UseVirtualList } from '@vueuse/components';
+import type { PlayerResponse } from '@/clients/responses/playerResponse.ts'
+import KeysResult = Fuzzysort.KeysResult;
 
 const globalStore = useGlobalStore();
 const showModal = computed(() => globalStore.getPlayersState.showModal);
-const players = computed(() => globalStore.getPlayersState.players);
-
+const players = computed(() => globalStore.getPlayersState.players || []);
 
 const filter = ref();
 const fuzzySearchKeys = [
@@ -16,21 +18,14 @@ const fuzzySearchKeys = [
   'name'
 ];
 const filteredPlayers = computed(() =>
-  fuzzySort.go(
+  [...fuzzySort.go(
     filter.value,
     players.value,
     { keys: fuzzySearchKeys, all: true }
-  ));
+  )]);
 
-const highlight = (key: string, id?: number) => {
-  if (!id)
-    return;
-
-  const results = filteredPlayers.value.find(r => r.obj.id === id);
-  if (!results)
-    return;
-
-  const elements = results[fuzzySearchKeys.indexOf(key)]
+const highlight = (key: string, data: KeysResult<PlayerResponse>) => {
+  const elements = data[fuzzySearchKeys.indexOf(key)]
     .highlight((m: string, i: number) =>
       `<span class="highlight-match" key=${i}>${m}</span>`);
 
@@ -38,7 +33,7 @@ const highlight = (key: string, id?: number) => {
     return elements.join('');
   }
 
-  return _.get(results.obj, key);
+  return _.get(data.obj, key);
 };
 
 const editRow = (value) => {
@@ -100,62 +95,66 @@ watch(showModal, () => {
         </tr>
         </thead>
         <tbody>
-        <tr v-for="player in filteredPlayers" :key="player.obj.id">
-          <td><span v-html="highlight('id', player.obj.id)" /></td>
-          <td><span v-html="highlight('name', player.obj.id)" /></td>
-          <td>
-            <div v-for="team in player.obj.teams" :key="team.id">
-              <div class="team-badge">
-                  <span class="team-icon">
-                    {{ team.id }}
-                  </span>
-                <span class="team-name">
-                    {{ team.name }}
-                  </span>
-                <button class="team-remove-button">
-                  <FontAwesomeIcon icon="fas fa-x"/>
-                </button>
-              </div>
-            </div>
-            <div class="team-badge">
-              <button class="team-add-button">
-                <FontAwesomeIcon icon="fas fa-plus"/>
-              </button>
-            </div>
-          </td>
-          <td>
-            <div class="actions">
-              <Button @click="editRow(player.obj.id)"
-                      icon="fas fa-edit"
-                      size="small"
-                      variant="text"
-                      severity="primary"
-                      rounded
-              />
-              <Button @click="cancelEditRow(player.obj.id)"
-                      icon="fas fa-x"
-                      size="small"
-                      variant="text"
-                      severity="secondary"
-                      rounded
-              />
-              <Button @click="saveEditedRow(player.obj.id)"
-                      icon="fas fa-check"
-                      size="small"
-                      variant="text"
-                      severity="success"
-                      rounded
-              />
-              <Button @click="removeRow(player.obj.id)"
-                      icon="fas fa-trash"
-                      size="small"
-                      variant="text"
-                      severity="danger"
-                      rounded
-              />
-            </div>
-          </td>
-        </tr>
+        <UseVirtualList :list="filteredPlayers" :options="{ itemHeight: 65, overscan: 20 }" height="500px">
+          <template #default="{ data }">
+            <tr>
+              <td><span v-html="highlight('id', data)" /></td>
+              <td><span v-html="highlight('name', data)" /></td>
+              <td>
+                <div v-for="team in data.obj.teams" :key="team.id">
+                  <div class="team-badge">
+                      <span class="team-icon">
+                        {{ team.id }}
+                      </span>
+                    <span class="team-name">
+                        {{ team.name }}
+                      </span>
+                    <button class="team-remove-button">
+                      <FontAwesomeIcon icon="fas fa-x"/>
+                    </button>
+                  </div>
+                </div>
+                <div class="team-badge">
+                  <button class="team-add-button">
+                    <FontAwesomeIcon icon="fas fa-plus"/>
+                  </button>
+                </div>
+              </td>
+              <td>
+                <div class="actions">
+                  <Button @click="editRow(data.obj.id)"
+                          icon="fas fa-edit"
+                          size="small"
+                          variant="text"
+                          severity="primary"
+                          rounded
+                  />
+                  <Button @click="cancelEditRow(data.obj.id)"
+                          icon="fas fa-x"
+                          size="small"
+                          variant="text"
+                          severity="secondary"
+                          rounded
+                  />
+                  <Button @click="saveEditedRow(data.obj.id)"
+                          icon="fas fa-check"
+                          size="small"
+                          variant="text"
+                          severity="success"
+                          rounded
+                  />
+                  <Button @click="removeRow(data.obj.id)"
+                          icon="fas fa-trash"
+                          size="small"
+                          variant="text"
+                          severity="danger"
+                          rounded
+                  />
+                </div>
+              </td>
+            </tr>
+          </template>
+        </UseVirtualList>
         </tbody>
       </table>
     </div>
@@ -248,7 +247,6 @@ table {
   border-radius: 12px;
   border: 1px solid #343434;
   background-color: #111111;
-  height: 500px;
   width: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
