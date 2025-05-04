@@ -1,15 +1,10 @@
 @import './base.css';
-@import 'ag-grid-community/styles/ag-theme-quartz.min.css';
 @import '@fortawesome/fontawesome-free/css/all.min.css';
 
-@layer tailwind-base, ag-grid, tailwind-utilities;
+@layer tailwind-base, tailwind-utilities;
 
 @layer tailwind-base {
   @tailwind base;
-}
-
-@layer ag-grid {
-  @tailwind 'ag-grid-community/styles/ag-grid.min.css';
 }
 
 @layer tailwind-utilities {
