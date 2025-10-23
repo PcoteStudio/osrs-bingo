@@ -73,6 +73,7 @@ public class PlayerService(
         var player = await playerRepository.GetCompleteByIdAsync(teamId);
         if (player is null) throw new PlayerNotFoundException(teamId);
         playerRepository.Remove(player);
+        await dbContext.SaveChangesAsync();
         return player;
     }
 
