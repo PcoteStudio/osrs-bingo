@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import fuzzySort from 'fuzzysort';
 import _ from 'lodash';
 import { UseVirtualList } from '@vueuse/components';
+import DataTableRow from '@/components/DataTableRow.vue'
 import type { PlayerResponse } from '@/clients/responses/playerResponse.ts'
 import KeysResult = Fuzzysort.KeysResult;
 
@@ -13,10 +14,12 @@ const showModal = computed(() => globalStore.getPlayersState.showModal);
 const players = computed(() => globalStore.getPlayersState.players || []);
 
 const filter = ref();
+
 const fuzzySearchKeys = [
   'id',
   'name'
 ];
+
 const filteredPlayers = computed(() =>
   [...fuzzySort.go(
     filter.value,
@@ -36,20 +39,17 @@ const highlight = (key: string, data: KeysResult<PlayerResponse>) => {
   return _.get(data.obj, key);
 };
 
-const editRow = (value) => {
-  console.log('editRow', value);
+const addPlayer = () => {
+  console.log('Add new player');
+  // players.value.unshift({});
 };
 
-const cancelEditRow = (value) => {
-  console.log('cancelEditRow', value);
+const saveRow = (id: number, data: any) => {
+  console.log('Datatable saveEditedRow', id, data);
 };
 
-const saveEditedRow = (value) => {
-  console.log('saveEditedRow', value);
-};
-
-const removeRow = (value) => {
-  console.log('removeRow', value);
+const deleteRow = (id: number) => {
+  console.log('Datatable removeRow', id);
 };
 
 watch(showModal, () => {
@@ -65,7 +65,7 @@ watch(showModal, () => {
   >
     <template #header>
       <span class="title">
-        Players {{ players.length }}
+        Players ({{ players.length }})
       </span>
       <div class="search-bar">
         <IconField>
@@ -74,7 +74,7 @@ watch(showModal, () => {
           </InputIcon>
           <InputText v-model="filter" placeholder="Search" />
         </IconField>
-        <Button @click="console.log('add player')"
+        <Button @click="addPlayer"
                 icon="fas fa-plus"
                 size="small"
                 severity="success"
@@ -97,62 +97,11 @@ watch(showModal, () => {
         <tbody>
         <UseVirtualList :list="filteredPlayers" :options="{ itemHeight: 65, overscan: 20 }" height="500px">
           <template #default="{ data }">
-            <tr>
-              <td><span v-html="highlight('id', data)" /></td>
-              <td><span v-html="highlight('name', data)" /></td>
-              <td>
-                <div v-for="team in data.obj.teams" :key="team.id">
-                  <div class="team-badge">
-                      <span class="team-icon">
-                        {{ team.id }}
-                      </span>
-                    <span class="team-name">
-                        {{ team.name }}
-                      </span>
-                    <button class="team-remove-button">
-                      <FontAwesomeIcon icon="fas fa-x"/>
-                    </button>
-                  </div>
-                </div>
-                <div class="team-badge">
-                  <button class="team-add-button">
-                    <FontAwesomeIcon icon="fas fa-plus"/>
-                  </button>
-                </div>
-              </td>
-              <td>
-                <div class="actions">
-                  <Button @click="editRow(data.obj.id)"
-                          icon="fas fa-edit"
-                          size="small"
-                          variant="text"
-                          severity="primary"
-                          rounded
-                  />
-                  <Button @click="cancelEditRow(data.obj.id)"
-                          icon="fas fa-x"
-                          size="small"
-                          variant="text"
-                          severity="secondary"
-                          rounded
-                  />
-                  <Button @click="saveEditedRow(data.obj.id)"
-                          icon="fas fa-check"
-                          size="small"
-                          variant="text"
-                          severity="success"
-                          rounded
-                  />
-                  <Button @click="removeRow(data.obj.id)"
-                          icon="fas fa-trash"
-                          size="small"
-                          variant="text"
-                          severity="danger"
-                          rounded
-                  />
-                </div>
-              </td>
-            </tr>
+            <DataTableRow :data="data"
+                          :highlight="highlight"
+                          @save="saveRow"
+                          @delete="deleteRow"
+            />
           </template>
         </UseVirtualList>
         </tbody>
@@ -180,69 +129,6 @@ watch(showModal, () => {
   font-size: 1.25rem;
 }
 
-.actions {
-  display: flex;
-  flex-direction: row;
-  gap: 0.2em;
-  justify-content: center;
-}
-
-.team-badge {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5em;
-
-  width: fit-content;
-  background-color: #222;
-  border-radius: 15px;
-  padding: 0.2em;
-
-  .team-name {
-    line-height: 1.5em;
-  }
-
-  .team-icon {
-    position: absolute;
-    left: 0;
-    top: 0;
-    background-color: rgba(0, 191, 255, 0.49);
-    aspect-ratio: 1/1;
-    height: 2em;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-  }
-
-  .team-name {
-    padding-left: 2em;
-  }
-
-  .team-remove-button, .team-add-button {
-    background-color: rgba(0, 0, 0, 0.5);
-    border: none;
-    border-radius: 50%;
-    height: 1.75em;
-    width: 1.75em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-
-
-    &:hover {
-      background-color: rgba(0, 0, 0, 1);
-    }
-
-    font-size: 0.7em;
-  }
-  .team-add-button {
-    background-color: rgb(35, 156, 69);
-  }
-}
-
 table {
   border-radius: 12px;
   border: 1px solid #343434;
@@ -251,7 +137,7 @@ table {
   display: grid;
   grid-template-rows: auto 1fr;
 
-  th, td {
+  th {
     padding: 0.25em 0.75em;
     text-align: left;
   }
@@ -288,12 +174,6 @@ table {
   td div {
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .actions {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-start;
   }
 }
 </style>
