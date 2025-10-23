@@ -39,15 +39,18 @@ function reset() {
 }
 
 const saveEditedRow = () => {
-  console.log('saveEditedRow', props.data.obj.id);
-  if (isDeleting.value)
+  if (isDeleting.value) {
     emit('delete', props.data.obj.id);
+  }
+  else {
+    let dataToUpdate = {
+      name: tmpName.value,
+      teams: tmpTeams.value,
+    };
+    emit('save', props.data.obj.id, dataToUpdate);
+  }
 
-  let dataToUpdate = {
-    name: tmpName.value,
-    teams: tmpTeams.value,
-  };
-  emit('save', props.data.obj.id, dataToUpdate);
+  isEditing.value = false;
 };
 
 const editRow = () => {
@@ -76,7 +79,7 @@ const addTeam = () => {
   <tr :class="{ 'is-deleting': isDeleting }">
     <td><span v-html="highlight('id', data)" /></td>
     <td>
-      <InputText v-if="isEditing" type="text" v-model="tmpName" />
+      <InputText v-if="isEditing" type="text" v-model="tmpName" @keydown.enter="saveEditedRow()" @keydown.esc="cancelEditRow()" />
       <span v-else v-html="highlight('name', data)" />
     </td>
     <td class="teams-container">

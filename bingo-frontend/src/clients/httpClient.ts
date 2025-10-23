@@ -14,6 +14,7 @@ import { AuthenticationService } from '../services/authenticationService.ts';
 import type { InjectionKey } from 'vue';
 import type { UserResponse } from '@/clients/responses/userResponse.ts';
 import type { PlayerResponse } from '@/clients/responses/playerResponse.ts';
+import type { PlayerContract } from '@/clients/contracts/playerContract.ts'
 
 export class HttpClient {
   static injectionKey : InjectionKey<HttpClient>  = Symbol("💩");
@@ -48,6 +49,33 @@ export class HttpClient {
 
     await this.httpPipeline.send(message);
     return this.httpMessageResponseUtil.parseJsonResponse<PlayerResponse[]>(message);
+  }
+
+  async updatePlayer(id: number, dataToUpdate: any): Promise<PlayerResponse> {
+    const playerContract: PlayerContract = {
+      name: dataToUpdate.name,
+      teamIds: dataToUpdate.teams?.map(t => t.id)
+    };
+    const message = new HttpMessageBuilder()
+      .withMethod('PUT')
+      .withUrl('/api/players/' + id)
+      .withJsonBody(
+        playerContract
+      )
+      .build();
+
+    await this.httpPipeline.send(message);
+    return this.httpMessageResponseUtil.parseJsonResponse<PlayerResponse>(message);
+  }
+
+  async deletePlayer(id: number): Promise<PlayerResponse> {
+    const message = new HttpMessageBuilder()
+      .withMethod('DELETE')
+      .withUrl('/api/players/' + id)
+      .build();
+
+    await this.httpPipeline.send(message);
+    return this.httpMessageResponseUtil.parseJsonResponse<PlayerResponse>(message);
   }
 
   async seedDatabase(): Promise<Response> {

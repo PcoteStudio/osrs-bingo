@@ -44,12 +44,14 @@ const addPlayer = () => {
   // players.value.unshift({});
 };
 
-const saveRow = (id: number, data: any) => {
-  console.log('Datatable saveEditedRow', id, data);
+const saveRow = (id: number, dataToUpdate: any) => {
+  console.log('Datatable saveEditedRow', id, dataToUpdate);
+  globalStore.updatePlayer(id, dataToUpdate);
 };
 
 const deleteRow = (id: number) => {
   console.log('Datatable removeRow', id);
+  globalStore.deletePlayer(id);
 };
 
 watch(showModal, () => {
@@ -61,6 +63,7 @@ watch(showModal, () => {
   <Dialog
     modal
     v-model:visible="globalStore.playersState.showModal"
+    :close-on-escape="false"
     :style="{ width: '50rem' }"
   >
     <template #header>
