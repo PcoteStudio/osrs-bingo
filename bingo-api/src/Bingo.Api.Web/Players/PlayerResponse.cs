@@ -6,4 +6,6 @@ namespace Bingo.Api.Web.Players;
 public class PlayerResponse : PlayerShortResponse
 {
     public List<TeamShortResponse> Teams { get; set; } = [];
+
+    public IEnumerable<int> TeamIds => Teams.Select(t => t.Id);
 }

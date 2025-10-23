@@ -28,4 +28,6 @@ public class TeamEntity
         get => _players.ThrowIfNotLoaded();
         set => _players = value;
     }
+
+    [NotMapped] public IEnumerable<int> PlayerIds => Players.Select(p => p.Id);
 }

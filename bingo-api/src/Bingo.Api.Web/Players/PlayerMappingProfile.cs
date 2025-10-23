@@ -7,7 +7,7 @@ public class PlayerMappingProfile : Profile
 {
     public PlayerMappingProfile()
     {
-        CreateMap<PlayerEntity, PlayerResponse>();
+        CreateMap<PlayerEntity, PlayerResponse>().ForMember(pe => pe.TeamIds, pr => pr.Ignore());
         CreateMap<PlayerEntity, PlayerShortResponse>();
     }
 }
