@@ -18,6 +18,7 @@ public class EventRepository(ApplicationDbContext dbContext)
         return DbContext.Events
             .Include(e => e.Administrators)
             .Include(e => e.Teams)
+            .ThenInclude(t => t.Players)
             .FirstOrDefaultAsync(e => e.Id == eventId);
     }
 }
