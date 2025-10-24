@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Events.Arguments;
@@ -14,8 +13,7 @@ namespace Bingo.Api.Web.Events;
 public class EventController(
     IEventService eventService,
     IEventServiceHelper eventServiceHelper,
-    IPermissionServiceHelper permissionServiceHelper,
-    IMapper mapper)
+    IPermissionServiceHelper permissionServiceHelper)
     : ControllerBase
 {
     [HttpGet]
@@ -23,7 +21,7 @@ public class EventController(
     public async Task<ActionResult<List<EventResponse>>> GetEventsAsync()
     {
         var events = await eventService.GetEventsAsync();
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<EventResponse>>(events));
+        return StatusCode(StatusCodes.Status200OK, events.ToResponseList());
     }
 
     [HttpGet("{eventId:min(0)}")]
@@ -34,7 +32,7 @@ public class EventController(
         try
         {
             var events = await eventServiceHelper.GetRequiredByIdAsync(eventId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<List<EventResponse>>(events));
+            return StatusCode(StatusCodes.Status200OK, events.ToResponse());
         }
         catch (Exception ex)
         {
@@ -58,7 +56,7 @@ public class EventController(
         permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "event.create");
         var user = (identityContainer.Identity as UserIdentity)!.User;
         var eventEntity = await eventService.CreateEventAsync(user, args);
-        return StatusCode(StatusCodes.Status201Created, mapper.Map<EventResponse>(eventEntity));
+        return StatusCode(StatusCodes.Status201Created, eventEntity.ToResponse());
     }
 
     [HttpPut("{eventId:min(0)}")]
@@ -75,7 +73,7 @@ public class EventController(
         {
             await eventServiceHelper.EnsureIsEventAdminAsync(identityContainer.Identity, eventId);
             var team = await eventService.UpdateEventAsync(eventId, args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<EventResponse>(team));
+            return StatusCode(StatusCodes.Status200OK, team.ToResponse());
         }
         catch (Exception ex)
         {

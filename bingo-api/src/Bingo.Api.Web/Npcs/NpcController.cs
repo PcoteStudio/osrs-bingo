@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Npcs;
 using Bingo.Api.Core.Features.Npcs.Arguments;
@@ -13,8 +12,7 @@ namespace Bingo.Api.Web.Npcs;
 public class NpcController(
     IPermissionServiceHelper permissionServiceHelper,
     INpcService npcService,
-    INpcServiceHelper npcServiceHelper,
-    IMapper mapper) : ControllerBase
+    INpcServiceHelper npcServiceHelper) : ControllerBase
 {
     [HttpGet("{npcId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -24,7 +22,7 @@ public class NpcController(
         try
         {
             var npc = await npcServiceHelper.GetRequiredCompleteByIdAsync(npcId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<NpcResponse>(npc));
+            return StatusCode(StatusCodes.Status200OK, npc.ToResponse());
         }
         catch (Exception ex)
         {
@@ -43,7 +41,7 @@ public class NpcController(
     public async Task<ActionResult<List<NpcResponse>>> GetNpcsAsync()
     {
         var npc = await npcService.GetNpcsAsync();
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<NpcResponse>>(npc));
+        return StatusCode(StatusCodes.Status200OK, npc.ToResponseList());
     }
 
     [HttpPost]
@@ -59,7 +57,7 @@ public class NpcController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "npc.create");
             var npc = await npcService.CreateNpcAsync(args);
-            return StatusCode(StatusCodes.Status201Created, mapper.Map<NpcResponse>(npc));
+            return StatusCode(StatusCodes.Status201Created, npc.ToResponse());
         }
         catch (Exception ex)
         {
@@ -87,7 +85,7 @@ public class NpcController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "npc.update");
             var npc = await npcService.UpdateNpcAsync(npcId, args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<NpcResponse>(npc));
+            return StatusCode(StatusCodes.Status200OK, npc.ToResponse());
         }
         catch (Exception ex)
         {
@@ -114,7 +112,7 @@ public class NpcController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "npc.delete");
             var npc = await npcService.RemoveNpcAsync(npcId);
-            return StatusCode(StatusCodes.Status204NoContent, mapper.Map<NpcResponse>(npc));
+            return StatusCode(StatusCodes.Status204NoContent, npc.ToResponse());
         }
         catch (Exception ex)
         {

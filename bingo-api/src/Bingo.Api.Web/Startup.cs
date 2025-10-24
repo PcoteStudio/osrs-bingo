@@ -13,15 +13,7 @@ using Bingo.Api.Core.Features.Teams;
 using Bingo.Api.Core.Features.Users;
 using Bingo.Api.Data;
 using Bingo.Api.Web.Authentication;
-using Bingo.Api.Web.Boards.MultiLayer;
-using Bingo.Api.Web.Drops;
-using Bingo.Api.Web.Events;
-using Bingo.Api.Web.Items;
 using Bingo.Api.Web.Middlewares;
-using Bingo.Api.Web.Npcs;
-using Bingo.Api.Web.Players;
-using Bingo.Api.Web.Teams;
-using Bingo.Api.Web.Tiles;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.EntityFrameworkCore;
@@ -62,22 +54,14 @@ public class Startup
         services.AddDevService();
         services.AddUserService();
         services.AddEventService();
-        services.AddEventWebService();
         services.AddTeamService();
-        services.AddTeamWebService();
         services.AddPlayerService();
-        services.AddPlayerWebService();
         services.AddDropService();
-        services.AddDropWebService();
         services.AddItemService();
-        services.AddItemWebService();
         services.AddNpcService();
-        services.AddNpcWebService();
-        services.AddTileWebService();
 
         // Board types
         services.AddMultiLayerBoardService();
-        services.AddMultiLayerBoardWebService();
     }
 
     public void Configure(IApplicationBuilder app, ILogger<Startup> logger, IServer server, IWebHostEnvironment env)

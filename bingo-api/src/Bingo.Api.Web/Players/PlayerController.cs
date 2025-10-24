@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Players;
 using Bingo.Api.Core.Features.Players.Arguments;
@@ -13,8 +12,7 @@ namespace Bingo.Api.Web.Players;
 public class PlayerController(
     IPermissionServiceHelper permissionServiceHelper,
     IPlayerService playerService,
-    IPlayerServiceHelper playerServiceHelper,
-    IMapper mapper) : ControllerBase
+    IPlayerServiceHelper playerServiceHelper) : ControllerBase
 {
     [HttpGet("{playerId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -24,7 +22,7 @@ public class PlayerController(
         try
         {
             var player = await playerServiceHelper.GetRequiredCompletePlayerAsync(playerId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
+            return StatusCode(StatusCodes.Status200OK, player.ToResponse());
         }
         catch (Exception ex)
         {
@@ -42,8 +40,8 @@ public class PlayerController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<PlayerResponse>>> GetPlayersAsync()
     {
-        var player = await playerService.GetPlayersAsync();
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<PlayerResponse>>(player));
+        var players = await playerService.GetPlayersAsync();
+        return StatusCode(StatusCodes.Status200OK, players.ToResponseList());
     }
 
     [HttpPost]
@@ -59,7 +57,7 @@ public class PlayerController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity);
             var player = await playerService.CreatePlayerAsync(args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
+            return StatusCode(StatusCodes.Status200OK, player.ToResponse());
         }
         catch (Exception ex)
         {
@@ -87,7 +85,7 @@ public class PlayerController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity);
             var player = await playerService.UpdatePlayerAsync(playerId, args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
+            return StatusCode(StatusCodes.Status200OK, player.ToResponse());
         }
         catch (Exception ex)
         {
@@ -114,7 +112,7 @@ public class PlayerController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity);
             var player = await playerService.RemovePlayerAsync(playerId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<PlayerResponse>(player));
+            return StatusCode(StatusCodes.Status200OK, player.ToResponse());
         }
         catch (Exception ex)
         {

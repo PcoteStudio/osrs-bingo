@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Drops;
 using Bingo.Api.Core.Features.Drops.Arguments;
@@ -15,8 +14,7 @@ namespace Bingo.Api.Web.Drops;
 public class DropController(
     IPermissionServiceHelper permissionServiceHelper,
     IDropService dropService,
-    IDropServiceHelper dropServiceHelper,
-    IMapper mapper) : ControllerBase
+    IDropServiceHelper dropServiceHelper) : ControllerBase
 {
     [HttpGet("{dropId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -26,7 +24,7 @@ public class DropController(
         try
         {
             var drop = await dropServiceHelper.GetRequiredCompleteByIdAsync(dropId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
+            return StatusCode(StatusCodes.Status200OK, drop.ToResponse());
         }
         catch (Exception ex)
         {
@@ -44,8 +42,8 @@ public class DropController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<DropResponse>>> GetDropsAsync()
     {
-        var drop = await dropService.GetDropsAsync();
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<DropResponse>>(drop));
+        var drops = await dropService.GetDropsAsync();
+        return StatusCode(StatusCodes.Status200OK, drops.ToResponseList());
     }
 
     [HttpPost]
@@ -62,7 +60,7 @@ public class DropController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "drop.create");
             var drop = await dropService.CreateDropAsync(args);
-            return StatusCode(StatusCodes.Status201Created, mapper.Map<DropResponse>(drop));
+            return StatusCode(StatusCodes.Status201Created, drop.ToResponse());
         }
         catch (Exception ex)
         {
@@ -93,7 +91,7 @@ public class DropController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "drop.update");
             var drop = await dropService.UpdateDropAsync(dropId, args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<DropResponse>(drop));
+            return StatusCode(StatusCodes.Status200OK, drop.ToResponse());
         }
         catch (Exception ex)
         {
@@ -122,7 +120,7 @@ public class DropController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "drop.delete");
             var drop = await dropService.RemoveDropAsync(dropId);
-            return StatusCode(StatusCodes.Status204NoContent, mapper.Map<DropResponse>(drop));
+            return StatusCode(StatusCodes.Status204NoContent, drop.ToResponse());
         }
         catch (Exception ex)
         {

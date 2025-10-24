@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Items;
 using Bingo.Api.Core.Features.Items.Arguments;
@@ -13,8 +12,7 @@ namespace Bingo.Api.Web.Items;
 public class ItemController(
     IPermissionServiceHelper permissionServiceHelper,
     IItemService itemService,
-    IItemServiceHelper itemServiceHelper,
-    IMapper mapper) : ControllerBase
+    IItemServiceHelper itemServiceHelper) : ControllerBase
 {
     [HttpGet("{itemId:min(0)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -24,7 +22,7 @@ public class ItemController(
         try
         {
             var item = await itemServiceHelper.GetRequiredCompleteByIdAsync(itemId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
+            return StatusCode(StatusCodes.Status200OK, item.ToResponse());
         }
         catch (Exception ex)
         {
@@ -42,8 +40,8 @@ public class ItemController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<ItemResponse>>> GetItemsAsync()
     {
-        var item = await itemService.GetItemsAsync();
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<List<ItemResponse>>(item));
+        var items = await itemService.GetItemsAsync();
+        return StatusCode(StatusCodes.Status200OK, items.ToResponseList());
     }
 
     [HttpPost]
@@ -59,7 +57,7 @@ public class ItemController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "item.create");
             var item = await itemService.CreateItemAsync(args);
-            return StatusCode(StatusCodes.Status201Created, mapper.Map<ItemResponse>(item));
+            return StatusCode(StatusCodes.Status201Created, item.ToResponse());
         }
         catch (Exception ex)
         {
@@ -87,7 +85,7 @@ public class ItemController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "item.update");
             var item = await itemService.UpdateItemAsync(itemId, args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<ItemResponse>(item));
+            return StatusCode(StatusCodes.Status200OK, item.ToResponse());
         }
         catch (Exception ex)
         {
@@ -114,7 +112,7 @@ public class ItemController(
         {
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "item.delete");
             var item = await itemService.RemoveItemAsync(itemId);
-            return StatusCode(StatusCodes.Status204NoContent, mapper.Map<ItemResponse>(item));
+            return StatusCode(StatusCodes.Status204NoContent, item.ToResponse());
         }
         catch (Exception ex)
         {

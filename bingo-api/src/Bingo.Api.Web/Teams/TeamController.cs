@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Events.Exceptions;
@@ -17,8 +16,7 @@ public class TeamController(
     IPermissionServiceHelper permissionServiceHelper,
     ITeamService teamService,
     ITeamServiceHelper teamServiceHelper,
-    IEventServiceHelper eventServiceHelper,
-    IMapper mapper)
+    IEventServiceHelper eventServiceHelper)
     : ControllerBase
 {
     [HttpPost("/api/events/{eventId:min(0)}/teams")]
@@ -36,7 +34,7 @@ public class TeamController(
             await eventServiceHelper.EnsureIsEventAdminAsync(identityContainer.Identity, eventId);
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "team.create");
             var team = await teamService.CreateTeamAsync(eventId, args);
-            return StatusCode(StatusCodes.Status201Created, mapper.Map<TeamResponse>(team));
+            return StatusCode(StatusCodes.Status201Created, team.ToResponse());
         }
         catch (Exception ex)
         {
@@ -60,7 +58,7 @@ public class TeamController(
         try
         {
             var team = await teamServiceHelper.GetRequiredCompleteAsync(teamId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
+            return StatusCode(StatusCodes.Status200OK, team.ToResponse());
         }
         catch (Exception ex)
         {
@@ -82,7 +80,7 @@ public class TeamController(
         try
         {
             var teams = await teamService.GetPlayerTeamsAsync(playerId);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<List<TeamResponse>>(teams));
+            return StatusCode(StatusCodes.Status200OK, teams.ToResponseList());
         }
         catch (Exception ex)
         {
@@ -111,7 +109,7 @@ public class TeamController(
             await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "team.update");
             var team = await teamService.UpdateTeamAsync(teamId, args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
+            return StatusCode(StatusCodes.Status200OK, team.ToResponse());
         }
         catch (Exception ex)
         {
@@ -142,7 +140,7 @@ public class TeamController(
             await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "team.update");
             var team = await teamService.UpdateTeamPlayersAsync(teamId, args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
+            return StatusCode(StatusCodes.Status200OK, team.ToResponse());
         }
         catch (Exception ex)
         {
@@ -173,7 +171,7 @@ public class TeamController(
             await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "team.update");
             var team = await teamService.AddTeamPlayersAsync(teamId, args);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
+            return StatusCode(StatusCodes.Status200OK, team.ToResponse());
         }
         catch (Exception ex)
         {
@@ -202,7 +200,7 @@ public class TeamController(
             await teamServiceHelper.EnsureIsTeamAdminAsync(identityContainer.Identity, teamId);
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "team.update");
             var team = await teamService.RemoveTeamPlayerAsync(teamId, playerName);
-            return StatusCode(StatusCodes.Status200OK, mapper.Map<TeamResponse>(team));
+            return StatusCode(StatusCodes.Status200OK, team.ToResponse());
         }
         catch (Exception ex)
         {

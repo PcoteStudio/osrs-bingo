@@ -1,6 +1,5 @@
 #if DEBUG || DEVELOPMENT
 
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Dev;
 using Bingo.Api.Web.Events;
@@ -14,7 +13,6 @@ namespace Bingo.Api.Web.Dev;
 public class DevController(
     IPermissionServiceHelper permissionServiceHelper,
     IDevService devService,
-    IMapper mapper,
     IHostEnvironment environment)
     : ControllerBase
 {
@@ -40,7 +38,7 @@ public class DevController(
 
         var user = (identityContainer.Identity as UserIdentity)!.User;
         var newEvent = await devService.SeedEventAsync(user);
-        return StatusCode(StatusCodes.Status201Created, mapper.Map<EventResponse>(newEvent));
+        return StatusCode(StatusCodes.Status201Created, newEvent.ToResponse());
     }
 
     [HttpPost("drop")]

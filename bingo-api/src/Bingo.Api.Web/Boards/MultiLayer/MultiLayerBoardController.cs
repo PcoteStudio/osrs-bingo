@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Boards.MultiLayer;
 using Bingo.Api.Core.Features.Boards.MultiLayer.Arguments;
@@ -14,8 +13,7 @@ namespace Bingo.Api.Web.Boards.MultiLayer;
 public class MultiLayerBoardController(
     IEventServiceHelper eventServiceHelper,
     IPermissionServiceHelper permissionServiceHelper,
-    IMultiLayerBoardService mlBoardService,
-    IMapper mapper)
+    IMultiLayerBoardService mlBoardService)
     : ControllerBase
 {
     [HttpPost]
@@ -32,8 +30,8 @@ public class MultiLayerBoardController(
         {
             await eventServiceHelper.EnsureIsEventAdminAsync(identityContainer.Identity, eventId);
             permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity, "board.create");
-            var eventEntity = await mlBoardService.CreateMultiLayerBoardAsync(eventId, args);
-            return StatusCode(StatusCodes.Status201Created, mapper.Map<MultiLayerBoardResponse>(eventEntity));
+            var boardEntity = await mlBoardService.CreateMultiLayerBoardAsync(eventId, args);
+            return StatusCode(StatusCodes.Status201Created, boardEntity.ToResponse());
         }
         catch (Exception ex)
         {

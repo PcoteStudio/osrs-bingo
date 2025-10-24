@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Events;
 using Bingo.Api.Core.Features.Teams;
@@ -26,13 +25,11 @@ public class TeamControllerUnitTest
         _teamServiceMock = new Mock<ITeamService>();
         _teamServiceHelperMock = new Mock<ITeamServiceHelper>();
         _eventServiceHelperMock = new Mock<IEventServiceHelper>();
-        _mapperMock = new Mock<IMapper>();
         _teamController = new TeamController(
             _permissionServiceMock.Object,
             _teamServiceMock.Object,
             _teamServiceHelperMock.Object,
-            _eventServiceHelperMock.Object,
-            _mapperMock.Object
+            _eventServiceHelperMock.Object
         );
     }
 
@@ -41,19 +38,15 @@ public class TeamControllerUnitTest
     private Mock<ITeamService> _teamServiceMock;
     private Mock<ITeamServiceHelper> _teamServiceHelperMock;
     private Mock<IEventServiceHelper> _eventServiceHelperMock;
-    private Mock<IMapper> _mapperMock;
 
     [Test]
     public async Task GetTeamAsync_ShouldReturnTheSpecifiedTeam()
     {
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
-        var teamResponse = TestDataGenerator.GenerateTeamResponse();
 
         _teamServiceHelperMock.Setup(x => x.GetRequiredCompleteAsync(team.Id))
             .ReturnsAsync(team).Verifiable(Times.Once());
-        _mapperMock.Setup(x => x.Map<TeamResponse>(team))
-            .Returns(teamResponse).Verifiable(Times.Once());
 
         // Act
         var result = await _teamController.GetTeamAsync(team.Id);
@@ -66,9 +59,9 @@ public class TeamControllerUnitTest
         // Assert response content
         objResult.Value.Should().BeOfType<TeamResponse>();
         var actualTeamResponse = objResult.Value as TeamResponse;
-        actualTeamResponse.Should().BeSameAs(teamResponse);
+        actualTeamResponse.Should().BeEquivalentTo(team.ToResponse());
 
-        Mock.VerifyAll(_teamServiceHelperMock, _mapperMock);
+        Mock.VerifyAll(_teamServiceHelperMock);
     }
 
     [Test]
@@ -96,7 +89,6 @@ public class TeamControllerUnitTest
     {
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
-        var teamResponse = TestDataGenerator.GenerateTeamResponse();
         var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = new TeamUpdateArguments();
 
@@ -104,8 +96,6 @@ public class TeamControllerUnitTest
             .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.UpdateTeamAsync(team.Id, args))
             .ReturnsAsync(team).Verifiable(Times.Once());
-        _mapperMock.Setup(x => x.Map<TeamResponse>(team))
-            .Returns(teamResponse).Verifiable(Times.Once());
 
         // Act
         var result = await _teamController.UpdateTeamAsync(identityContainer, team.Id, args);
@@ -118,9 +108,9 @@ public class TeamControllerUnitTest
         // Assert response content
         objResult.Value.Should().BeOfType<TeamResponse>();
         var actualTeamResponse = objResult.Value as TeamResponse;
-        actualTeamResponse.Should().BeSameAs(teamResponse);
+        actualTeamResponse.Should().BeEquivalentTo(team.ToResponse());
 
-        Mock.VerifyAll(_teamServiceMock, _teamServiceHelperMock, _mapperMock);
+        Mock.VerifyAll(_teamServiceMock, _teamServiceHelperMock);
     }
 
     [Test]
@@ -151,7 +141,6 @@ public class TeamControllerUnitTest
     {
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
-        var teamResponse = TestDataGenerator.GenerateTeamResponse();
         var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(0, 5));
 
@@ -159,8 +148,6 @@ public class TeamControllerUnitTest
             .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.UpdateTeamPlayersAsync(team.Id, args))
             .ReturnsAsync(team).Verifiable(Times.Once());
-        _mapperMock.Setup(x => x.Map<TeamResponse>(team))
-            .Returns(teamResponse).Verifiable(Times.Once());
 
         // Act
         var result = await _teamController.UpdateTeamPlayersAsync(identityContainer, team.Id, args);
@@ -173,9 +160,9 @@ public class TeamControllerUnitTest
         // Assert response content
         objResult.Value.Should().BeOfType<TeamResponse>();
         var actualTeamResponse = objResult.Value as TeamResponse;
-        actualTeamResponse.Should().BeSameAs(teamResponse);
+        actualTeamResponse.Should().BeEquivalentTo(team.ToResponse());
 
-        Mock.VerifyAll(_teamServiceMock, _teamServiceHelperMock, _mapperMock);
+        Mock.VerifyAll(_teamServiceMock, _teamServiceHelperMock);
     }
 
     [Test]
@@ -206,7 +193,6 @@ public class TeamControllerUnitTest
     {
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
-        var teamResponse = TestDataGenerator.GenerateTeamResponse();
         var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = TestDataGenerator.GenerateTeamPlayersArguments(Random.Shared.Next(0, 5));
 
@@ -214,8 +200,6 @@ public class TeamControllerUnitTest
             .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.AddTeamPlayersAsync(team.Id, args))
             .ReturnsAsync(team).Verifiable(Times.Once());
-        _mapperMock.Setup(x => x.Map<TeamResponse>(team))
-            .Returns(teamResponse).Verifiable(Times.Once());
 
         // Act
         var result = await _teamController.AddTeamPlayersAsync(identityContainer, team.Id, args);
@@ -228,9 +212,9 @@ public class TeamControllerUnitTest
         // Assert response content
         objResult.Value.Should().BeOfType<TeamResponse>();
         var actualTeamResponse = objResult.Value as TeamResponse;
-        actualTeamResponse.Should().BeSameAs(teamResponse);
+        actualTeamResponse.Should().BeEquivalentTo(team.ToResponse());
 
-        Mock.VerifyAll(_teamServiceMock, _teamServiceHelperMock, _mapperMock);
+        Mock.VerifyAll(_teamServiceMock, _teamServiceHelperMock);
     }
 
     [Test]
@@ -261,7 +245,6 @@ public class TeamControllerUnitTest
     {
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
-        var teamResponse = TestDataGenerator.GenerateTeamResponse();
         var identityContainer = new IdentityContainer(new UserIdentity(new UserEntity()));
         var args = TestDataGenerator.GeneratePlayerName();
 
@@ -269,8 +252,6 @@ public class TeamControllerUnitTest
             .Verifiable(Times.Once());
         _teamServiceMock.Setup(x => x.RemoveTeamPlayerAsync(team.Id, args))
             .ReturnsAsync(team).Verifiable(Times.Once());
-        _mapperMock.Setup(x => x.Map<TeamResponse>(team))
-            .Returns(teamResponse).Verifiable(Times.Once());
 
         // Act
         var result = await _teamController.RemoveTeamPlayerAsync(identityContainer, team.Id, args);
@@ -283,9 +264,9 @@ public class TeamControllerUnitTest
         // Assert response content
         objResult.Value.Should().BeOfType<TeamResponse>();
         var actualTeamResponse = objResult.Value as TeamResponse;
-        actualTeamResponse.Should().BeSameAs(teamResponse);
+        actualTeamResponse.Should().BeEquivalentTo(team.ToResponse());
 
-        Mock.VerifyAll(_teamServiceMock, _teamServiceHelperMock, _mapperMock);
+        Mock.VerifyAll(_teamServiceMock, _teamServiceHelperMock);
     }
 
     [Test]

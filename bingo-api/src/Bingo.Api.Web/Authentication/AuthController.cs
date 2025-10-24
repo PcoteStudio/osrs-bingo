@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Bingo.Api.Core.Features.Authentication.Arguments;
 using Bingo.Api.Core.Features.Users;
@@ -13,8 +12,7 @@ namespace Bingo.Api.Web.Authentication;
 [ApiController]
 public class AuthController(
     IUserService userService,
-    IAuthService authService,
-    IMapper mapper) : ControllerBase
+    IAuthService authService) : ControllerBase
 {
     [HttpPost("signup")]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -24,7 +22,7 @@ public class AuthController(
         try
         {
             var user = await userService.SignupUserAsync(args);
-            var userResponse = mapper.Map<UserResponse>(user);
+            var userResponse = user.ToResponse();
             return StatusCode(StatusCodes.Status201Created, userResponse);
         }
         catch (Exception ex)

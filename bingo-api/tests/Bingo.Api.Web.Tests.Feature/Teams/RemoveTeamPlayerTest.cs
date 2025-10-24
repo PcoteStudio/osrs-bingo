@@ -125,7 +125,7 @@ public partial class TeamFeatureTest
     {
         // Arrange
         _testDataSetup
-            .AddUser(out var userWithSecrets)
+            .AddUser()
             .AddPermissions("team.update")
             .AddEvent()
             .AddTeam(out var originalTeam)

@@ -1,30 +1,21 @@
-using AutoMapper;
 using Bingo.Api.TestUtils.TestDataGenerators;
 using Bingo.Api.Web.Teams;
+using TeamMapper = Bingo.Api.Web.Players.TeamMapper;
 
 namespace Bingo.Api.Web.Tests.Unit.Teams;
 
 [TestFixture]
-[TestOf(typeof(TeamMappingProfile))]
-public class PlayersMappingProfileUnitTest
+[TestOf(typeof(TeamMapper))]
+public class TeamMapperUnitTest
 {
-    [OneTimeSetUp]
-    public void BeforeAll()
-    {
-        _mapper = new MapperConfiguration(
-            c => { c.AddMaps(typeof(TeamMappingProfile).Assembly); }).CreateMapper();
-    }
-
-    private IMapper _mapper;
-
     [Test]
-    public void TeamEntity_ShouldBeProperlyMappedToATeamResponse()
+    public void ToShortResponse_ShouldProperlyMapToShortResponse()
     {
         // Arrange
         var team = TestDataGenerator.GenerateTeamEntity();
 
         // Act
-        var teamResponse = _mapper.Map<TeamResponse>(team);
+        var teamResponse = team.ToShortResponse();
 
         // Assert
         Assert.Multiple(() =>

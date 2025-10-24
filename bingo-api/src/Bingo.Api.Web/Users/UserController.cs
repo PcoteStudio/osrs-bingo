@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bingo.Api.Core.Features.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,8 +6,7 @@ namespace Bingo.Api.Web.Users;
 [Route("/api/users")]
 [ApiController]
 public class AuthController(
-    IPermissionServiceHelper permissionServiceHelper,
-    IMapper mapper) : ControllerBase
+    IPermissionServiceHelper permissionServiceHelper) : ControllerBase
 {
     [HttpGet("me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -17,6 +15,6 @@ public class AuthController(
     {
         permissionServiceHelper.EnsureHasPermissions(identityContainer.Identity);
         var user = (identityContainer.Identity as UserIdentity)!.User;
-        return StatusCode(StatusCodes.Status200OK, mapper.Map<UserResponse>(user));
+        return StatusCode(StatusCodes.Status200OK, user.ToResponse());
     }
 }
