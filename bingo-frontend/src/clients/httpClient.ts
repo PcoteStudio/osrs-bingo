@@ -78,6 +78,23 @@ export class HttpClient {
     return this.httpMessageResponseUtil.parseJsonResponse<PlayerResponse>(message);
   }
 
+  async createPlayer(dataToUpdate: any): Promise<PlayerResponse> {
+    const playerContract: PlayerContract = {
+      name: dataToUpdate.name,
+      teamIds: dataToUpdate.teams?.map(t => t.id)
+    };
+    const message = new HttpMessageBuilder()
+      .withMethod('POST')
+      .withUrl('/api/players/')
+      .withJsonBody(
+        playerContract
+      )
+      .build();
+
+    await this.httpPipeline.send(message);
+    return this.httpMessageResponseUtil.parseJsonResponse<PlayerResponse>(message);
+  }
+
   async seedDatabase(): Promise<Response> {
     const message = new HttpMessageBuilder()
       .withMethod('POST')

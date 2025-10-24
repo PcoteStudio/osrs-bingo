@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import KeysResult = Fuzzysort.KeysResult;
 import type { PlayerResponse } from '@/clients/responses/playerResponse.ts';
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import _ from 'lodash'
 
 const props = defineProps<{
@@ -20,6 +20,7 @@ const isEditing = ref(false);
 const isDeleting = ref(false);
 const tmpName = ref();
 const tmpTeams = ref();
+const nameInputRef = ref<HTMLInputElement>();
 
 onMounted(() => {
   reset();
@@ -28,9 +29,11 @@ onMounted(() => {
 const canSave = computed(() =>
   isDeleting.value
   || tmpName.value !== props.data.obj.name
+  || tmpName.value.length !== 0
   || !_.isEqual(tmpTeams.value, props.data.obj.teams)
-
 );
+
+const isNewValue = computed(() => !(props.data.obj.id !== undefined && props.data.obj.id >= 0));
 
 function reset() {
   tmpName.value = props.data.obj.name;
@@ -55,6 +58,9 @@ const saveEditedRow = () => {
 
 const editRow = () => {
   isEditing.value = true;
+  nextTick(() => {
+    nameInputRef.value?.$el?.focus();
+  });
 };
 
 const cancelEditRow = () => {
@@ -63,7 +69,13 @@ const cancelEditRow = () => {
 };
 
 const removeRow = () => {
-  isDeleting.value = !isDeleting.value;
+  if (isNewValue.value) {
+    isEditing.value = false;
+    emit('delete', props.data.obj.id);
+  }
+  else {
+    isDeleting.value = !isDeleting.value;
+  }
 };
 
 const removeTeam = (teamId: number) => {
@@ -73,13 +85,25 @@ const removeTeam = (teamId: number) => {
 const addTeam = () => {
   tmpTeams.value.push({})
 };
+
+defineExpose({
+  editRow
+});
 </script>
 
 <template>
   <tr :class="{ 'is-deleting': isDeleting }">
     <td><span v-html="highlight('id', data)" /></td>
     <td>
-      <InputText v-if="isEditing" type="text" v-model="tmpName" @keydown.enter="saveEditedRow()" @keydown.esc="cancelEditRow()" />
+      <InputText
+        v-if="isEditing"
+        ref="nameInputRef"
+        type="text"
+        v-model="tmpName"
+        :invalid="!tmpName"
+        @keydown.enter="saveEditedRow()"
+        @keydown.esc="cancelEditRow()"
+      />
       <span v-else v-html="highlight('name', data)" />
     </td>
     <td class="teams-container">
@@ -119,7 +143,8 @@ const addTeam = () => {
                 rounded
         />
         <template v-else>
-          <Button @click="cancelEditRow()"
+          <Button v-if="!isNewValue"
+                  @click="cancelEditRow()"
                   icon="fas fa-edit"
                   size="small"
                   variant=""

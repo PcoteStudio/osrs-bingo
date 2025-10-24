@@ -14,6 +14,7 @@ const showModal = computed(() => globalStore.getPlayersState.showModal);
 const players = computed(() => globalStore.getPlayersState.players || []);
 
 const filter = ref();
+const dataTableRefs = ref<Map<number, InstanceType<typeof DataTableRow>>>(new Map());
 
 const fuzzySearchKeys = [
   'id',
@@ -39,9 +40,30 @@ const highlight = (key: string, data: KeysResult<PlayerResponse>) => {
   return _.get(data.obj, key);
 };
 
+const setDataTableRef = (id: number, el: any) => {
+  if (el) {
+    dataTableRefs.value.set(id, el);
+  } else {
+    dataTableRefs.value.delete(id);
+  }
+};
+
 const addPlayer = () => {
   console.log('Add new player');
-  // players.value.unshift({});
+  const newPlayer = {
+    id: -Math.floor(Math.random() * 1000000),
+    name: '',
+    teams: []
+  };
+
+  globalStore.addPlayer(newPlayer);
+
+  setTimeout(() => {
+    const newRowRef = dataTableRefs.value.get(newPlayer.id);
+    if (newRowRef) {
+      newRowRef.editRow();
+    }
+  }, 100);
 };
 
 const saveRow = (id: number, dataToUpdate: any) => {
@@ -101,6 +123,7 @@ watch(showModal, () => {
         <UseVirtualList :list="filteredPlayers" :options="{ itemHeight: 65, overscan: 20 }" height="500px">
           <template #default="{ data }">
             <DataTableRow :data="data"
+                          :ref="(el) => setDataTableRef(data.obj.id, el)"
                           :highlight="highlight"
                           @save="saveRow"
                           @delete="deleteRow"

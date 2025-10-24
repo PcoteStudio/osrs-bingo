@@ -77,20 +77,35 @@ export const useGlobalStore = defineStore('globalStore', {
         .find(p => p.id === id);
 
       if (player) {
-        this.httpClient.updatePlayer(id, dataToUpdate).then(
-          response => Object.assign(player, response)
-        );
+        if (id < 0) {
+          this.httpClient.createPlayer(dataToUpdate).then(
+            response => Object.assign(player, response)
+          );
+        }
+        else {
+          this.httpClient.updatePlayer(id, dataToUpdate).then(
+            response => Object.assign(player, response)
+          );
+        }
       }
     },
     deletePlayer(id: number) {
-      this.httpClient.deletePlayer(id).then(
-        response => {
-          const index = this.playersState.players.findIndex(p => p.id === response.id);
-          if (index !== -1) {
-            this.playersState.players.splice(index, 1);
-          }
+      if (id < 0) {
+        const index = this.playersState.players.findIndex(p => p.id === id);
+        if (index !== -1) {
+          this.playersState.players.splice(index, 1);
         }
-      );
+      }
+      else {
+        this.httpClient.deletePlayer(id).then(
+          response => {
+            const index = this.playersState.players.findIndex(p => p.id === response.id);
+            if (index !== -1) {
+              this.playersState.players.splice(index, 1);
+            }
+          }
+        );
+      }
     },
   }
 });
