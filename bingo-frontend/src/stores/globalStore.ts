@@ -22,7 +22,8 @@ export const useGlobalStore = defineStore('globalStore', {
 
     const playersState = {
       showModal: false,
-      players: [] as PlayerResponse[]
+      players: [] as PlayerResponse[],
+      editingRows: [] as number[],
     };
 
     return {
@@ -67,7 +68,6 @@ export const useGlobalStore = defineStore('globalStore', {
     },
     addPlayer(player: PlayerResponse) {
       this.playersState.players.unshift(player);
-      console.log('player added', this.playersState.players.length);
     },
     fetchPlayers() {
       this.httpClient.getPlayers().then(players => this.playersState.players = players);
@@ -107,5 +107,16 @@ export const useGlobalStore = defineStore('globalStore', {
         );
       }
     },
-  }
+    togglePlayerEditingRows(id: number) {
+      const index = this.playersState.editingRows.findIndex(rowId => rowId === id);
+      if (index === -1) {
+        console.log('adding row' + id);
+        this.playersState.editingRows.push(id);
+      }
+      else {
+        console.log('removing row' + id);
+        this.playersState.editingRows.splice(index, 1);
+      }
+    }
+  },
 });

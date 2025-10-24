@@ -49,7 +49,6 @@ const setDataTableRef = (id: number, el: any) => {
 };
 
 const addPlayer = () => {
-  console.log('Add new player');
   const newPlayer = {
     id: -Math.floor(Math.random() * 1000000),
     name: '',
@@ -57,22 +56,14 @@ const addPlayer = () => {
   };
 
   globalStore.addPlayer(newPlayer);
-
-  setTimeout(() => {
-    const newRowRef = dataTableRefs.value.get(newPlayer.id);
-    if (newRowRef) {
-      newRowRef.editRow();
-    }
-  }, 100);
+  globalStore.togglePlayerEditingRows(newPlayer.id);
 };
 
 const saveRow = (id: number, dataToUpdate: any) => {
-  console.log('Datatable saveEditedRow', id, dataToUpdate);
   globalStore.updatePlayer(id, dataToUpdate);
 };
 
 const deleteRow = (id: number) => {
-  console.log('Datatable removeRow', id);
   globalStore.deletePlayer(id);
 };
 

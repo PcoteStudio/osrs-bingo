@@ -3,8 +3,11 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import KeysResult = Fuzzysort.KeysResult;
 import type { PlayerResponse } from '@/clients/responses/playerResponse.ts';
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import _ from 'lodash'
+import { useGlobalStore } from '@/stores/globalStore.ts'
+
+const globalStore = useGlobalStore();
 
 const props = defineProps<{
   highlight: (key: string, data: KeysResult<PlayerResponse>) => void;
@@ -16,7 +19,6 @@ const emit = defineEmits<{
   delete: [id: number]
 }>();
 
-const isEditing = ref(false);
 const isDeleting = ref(false);
 const tmpName = ref();
 const tmpTeams = ref();
@@ -26,6 +28,14 @@ onMounted(() => {
   reset();
 });
 
+watch(() => props.data.obj, () => {
+  reset();
+}, { deep: true });
+
+const id = computed(() => props.data?.obj?.id || 0);
+
+const isEditing = computed(() => globalStore.playersState.editingRows.includes(id.value));
+
 const canSave = computed(() =>
   isDeleting.value
   || tmpName.value !== props.data.obj.name
@@ -33,7 +43,7 @@ const canSave = computed(() =>
   || !_.isEqual(tmpTeams.value, props.data.obj.teams)
 );
 
-const isNewValue = computed(() => !(props.data.obj.id !== undefined && props.data.obj.id >= 0));
+const isNewValue = computed(() => !(id.value >= 0));
 
 function reset() {
   tmpName.value = props.data.obj.name;
@@ -43,35 +53,35 @@ function reset() {
 
 const saveEditedRow = () => {
   if (isDeleting.value) {
-    emit('delete', props.data.obj.id);
+    emit('delete', id.value);
+    globalStore.togglePlayerEditingRows(id.value);
   }
   else {
-    let dataToUpdate = {
+    const dataToUpdate = {
       name: tmpName.value,
       teams: tmpTeams.value,
     };
-    emit('save', props.data.obj.id, dataToUpdate);
+    emit('save', id.value, dataToUpdate);
+    globalStore.togglePlayerEditingRows(id.value);
   }
 
-  isEditing.value = false;
-};
-
-const editRow = () => {
-  isEditing.value = true;
-  nextTick(() => {
-    nameInputRef.value?.$el?.focus();
-  });
+  reset();
 };
 
 const cancelEditRow = () => {
   reset();
-  isEditing.value = false;
+  globalStore.togglePlayerEditingRows(id.value);
+};
+
+const editRow = () => {
+  globalStore.togglePlayerEditingRows(id.value);
 };
 
 const removeRow = () => {
   if (isNewValue.value) {
-    isEditing.value = false;
-    emit('delete', props.data.obj.id);
+    emit('delete', id.value);
+    globalStore.togglePlayerEditingRows(id.value);
+    reset();
   }
   else {
     isDeleting.value = !isDeleting.value;
@@ -85,10 +95,6 @@ const removeTeam = (teamId: number) => {
 const addTeam = () => {
   tmpTeams.value.push({})
 };
-
-defineExpose({
-  editRow
-});
 </script>
 
 <template>
