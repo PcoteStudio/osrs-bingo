@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Bingo.Api.Shared;
 
 public class NameGenerator
@@ -9,7 +11,6 @@ public class NameGenerator
     }
 
     private readonly Dictionary<NameTypes, int> _lastNamesRead = new();
-
     private readonly Dictionary<NameTypes, string[]> _namesDict = new();
     private readonly Random _random = new();
 
@@ -26,7 +27,8 @@ public class NameGenerator
     {
         var fileName = type + "_names.txt";
         var filePath = FileSystemHelper.FindFileOfDirectory("data", fileName);
-        var names = File.ReadAllLines(filePath);
+        var names = File.ReadAllLines(filePath)
+            .Select(n => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(n)).ToArray();
         _random.Shuffle(names);
         _namesDict[type] = names;
     }
@@ -37,7 +39,7 @@ public class NameGenerator
         if (nameIndex >= _namesDict[type].Length)
         {
             nameIndex = 0;
-            LoadNamesFile(type);
+            _random.Shuffle(_namesDict[type]);
         }
 
         var name = _namesDict[type][nameIndex];

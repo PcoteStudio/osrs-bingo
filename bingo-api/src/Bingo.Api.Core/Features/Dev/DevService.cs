@@ -42,7 +42,7 @@ public class DevService(
             await teamService.AddTeamPlayersAsync(newTeam.Id, new TeamPlayersArguments
             {
                 PlayerNames = Enumerable.Range(0, Random.Shared.Next(0, 50)).Select(_ =>
-                    RandomUtil.GetPrefixedRandomHexString("P_", 2, 20)
+                    nameGenerator.GetNew(NameGenerator.NameTypes.Player)
                 ).ToList()
             });
         }
