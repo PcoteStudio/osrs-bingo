@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Bingo.Api.Web.Users;
 
-[Serializable]
+[PublicAPI]
 public class UserResponse : UserPublicResponse
 {
     public string Email { get; set; } = string.Empty;

@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Bingo.Api.Web.Boards.MultiLayer;
 
-[Serializable]
+[PublicAPI]
 public class MultiLayerBoardResponse : MultiLayerBoardShortResponse
 {
     public List<BoardLayerResponse> Layers { get; set; } = [];

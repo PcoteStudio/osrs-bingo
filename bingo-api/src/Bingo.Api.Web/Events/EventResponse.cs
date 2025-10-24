@@ -1,9 +1,10 @@
 using Bingo.Api.Web.Teams;
 using Bingo.Api.Web.Users;
+using JetBrains.Annotations;
 
 namespace Bingo.Api.Web.Events;
 
-[Serializable]
+[PublicAPI]
 public class EventResponse : EventShortResponse
 {
     public List<TeamResponse> Teams { get; set; } = [];

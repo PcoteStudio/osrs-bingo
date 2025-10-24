@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Bingo.Api.Web.Tiles;
 
-[Serializable]
+[PublicAPI]
 public class TileShortResponse
 {
     public int EventId { get; set; }

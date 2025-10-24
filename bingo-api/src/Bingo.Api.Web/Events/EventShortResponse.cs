@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Bingo.Api.Web.Events;
 
-[Serializable]
+[PublicAPI]
 public class EventShortResponse
 {
     public int Id { get; set; }

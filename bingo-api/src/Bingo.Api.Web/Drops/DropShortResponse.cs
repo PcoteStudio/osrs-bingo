@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Bingo.Api.Web.Drops;
 
-[Serializable]
+[PublicAPI]
 public class DropShortResponse
 {
     public int Id { get; set; }

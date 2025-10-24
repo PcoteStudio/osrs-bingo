@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Bingo.Api.Web.Npcs;
 
-[Serializable]
+[PublicAPI]
 public class NpcShortResponse
 {
     public int Id { get; set; }

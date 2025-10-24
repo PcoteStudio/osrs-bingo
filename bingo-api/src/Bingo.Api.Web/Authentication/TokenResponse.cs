@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Bingo.Api.Web.Authentication;
 
-[Serializable]
+[PublicAPI]
 public class TokenResponse
 {
     public string AccessToken { get; set; } = string.Empty;

@@ -1,8 +1,9 @@
 using Bingo.Api.Web.Tiles;
+using JetBrains.Annotations;
 
 namespace Bingo.Api.Web.Boards.MultiLayer;
 
-[Serializable]
+[PublicAPI]
 public class BoardLayerResponse : BoardLayerShortResponse
 {
     public List<TileResponse> Tiles { get; set; } = [];

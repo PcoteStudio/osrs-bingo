@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Bingo.Api.Web.Players;
 
-[Serializable]
+[PublicAPI]
 public class PlayerShortResponse
 {
     public int Id { get; set; }

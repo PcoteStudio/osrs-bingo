@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Bingo.Api.Web.Boards.MultiLayer;
 
-[Serializable]
+[PublicAPI]
 public class BoardLayerShortResponse
 {
     public int Id { get; set; }
