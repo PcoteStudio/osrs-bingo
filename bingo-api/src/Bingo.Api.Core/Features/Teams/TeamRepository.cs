@@ -27,6 +27,9 @@ public class TeamRepository(ApplicationDbContext dbContext) : GenericRepository<
     {
         return DbContext.Teams
             .Where(t => t.EventId == eventId)
+            .Include(t => t.Event)
+            .ThenInclude(e => e.Administrators)
+            .Include(t => t.Players)
             .ToListAsync();
     }
 
