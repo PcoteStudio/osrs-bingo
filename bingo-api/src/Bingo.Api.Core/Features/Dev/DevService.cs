@@ -31,18 +31,18 @@ public class DevService(
 
         var newEvent = await eventService.CreateEventAsync(eventAdmin, new EventCreateArguments
         {
-            Name = RandomUtil.GetPrefixedRandomHexString("E_", 2, 20)
+            Name = nameGenerator.GetNew(NameTypes.Event)
         });
         for (var i = 0; i < Random.Shared.Next(0, 10); i++)
         {
             var newTeam = await teamService.CreateTeamAsync(newEvent.Id, new TeamCreateArguments
             {
-                Name = nameGenerator.GetNew(NameGenerator.NameTypes.Team)
+                Name = nameGenerator.GetNew(NameTypes.Team)
             });
             await teamService.AddTeamPlayersAsync(newTeam.Id, new TeamPlayersArguments
             {
                 PlayerNames = Enumerable.Range(0, Random.Shared.Next(0, 50)).Select(_ =>
-                    nameGenerator.GetNew(NameGenerator.NameTypes.Player)
+                    nameGenerator.GetNew(NameTypes.Player)
                 ).ToList()
             });
         }

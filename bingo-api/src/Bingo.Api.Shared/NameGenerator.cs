@@ -2,14 +2,15 @@ using System.Globalization;
 
 namespace Bingo.Api.Shared;
 
+public enum NameTypes
+{
+    Event,
+    Player,
+    Team
+}
+
 public class NameGenerator
 {
-    public enum NameTypes
-    {
-        Player,
-        Team
-    }
-
     private readonly Dictionary<NameTypes, int> _lastNamesRead = new();
     private readonly Dictionary<NameTypes, string[]> _namesDict = new();
     private readonly Random _random = new();
