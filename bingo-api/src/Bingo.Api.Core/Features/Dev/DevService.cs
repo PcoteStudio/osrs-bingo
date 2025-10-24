@@ -20,6 +20,7 @@ public class DevService(
     IEventService eventService,
     ITeamService teamService,
     IDbSeeder dbSeeder,
+    NameGenerator nameGenerator,
     ApplicationDbContext dbContext,
     ILogger<DevService> logger
 ) : IDevService
@@ -36,7 +37,7 @@ public class DevService(
         {
             var newTeam = await teamService.CreateTeamAsync(newEvent.Id, new TeamCreateArguments
             {
-                Name = RandomUtil.GetPrefixedRandomHexString("T_", 2, 20)
+                Name = nameGenerator.GetNew(NameGenerator.NameTypes.Team)
             });
             await teamService.AddTeamPlayersAsync(newTeam.Id, new TeamPlayersArguments
             {

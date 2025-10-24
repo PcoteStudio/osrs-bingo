@@ -5,6 +5,16 @@ namespace Bingo.Api.Shared;
 
 public static class RandomUtil
 {
+    public static void Shuffle<T>(this Random random, T[] array)
+    {
+        var n = array.Length;
+        while (n > 1)
+        {
+            var k = random.Next(n--);
+            (array[n], array[k]) = (array[k], array[n]);
+        }
+    }
+
     public static string GetRandomHexString(int length)
     {
         var bytes = new byte[length];

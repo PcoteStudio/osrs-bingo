@@ -1,4 +1,5 @@
 using Bingo.Api.Data;
+using Bingo.Api.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -8,6 +9,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddDevService(this IServiceCollection services)
     {
+        services.TryAddSingleton<NameGenerator>();
         services.TryAddScoped<IDbSeeder, DbSeeder>();
         services.TryAddScoped<IDevService, DevService>();
     }
